@@ -1,0 +1,34 @@
+# Introduction
+
+<!-- basic introduction to the field, comprehensible to a scientist in any discipline -->
+
+Dental calculus...
+
+<!-- In more recent years, the study of dental calculus has increased exponentially, 
+and the wealth of information contained within the mineralised matrix has been, 
+to a larger extent, acknowledged; the benefits of which span a wide variety of
+archaeological research areas, such as oral microbiome 
+characterisation (including pathogens) through the analysis of DNA and proteins 
+[@adlerSequencingAncientCalcified2013; @warinnerPathogensHostImmunity2014],
+microbotanical remains [@henryCalculusSyria2008; @hardyStarchGranulesDental2009;
+@mickleburghNewInsightsConsumption2012], 
+other organic residues from dietary compounds [@buckleyDentalCalculusCooking2014], 
+and nicotine-use [@eerkensDentalCalculusSource2018]. -->
+
+<!-- more detailed background, comprehensible to scientists in related disciplines -->
+
+Shortly after teeth are cleaned (whether mechanically or otherwise), the salivary
+pellicle attaches to the teeth. The salivary pellicle is comprised of ... 
+and provides a viable surface for bacterial attachment, prompting early coloniser
+species, such as *Streptococcus* and *Actinomyces* spp., to adhere to the tooth.
+
+
+<!-- oral biofilm models -->
+
+
+
+<!-- clearly stating the general problem being addressed by this particular study -->
+
+
+
+

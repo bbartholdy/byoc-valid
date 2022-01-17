@@ -1,4 +1,7 @@
-# Opinionated Bioinformatics Project Directory Structure
+# BYOC Validation
+
+<!-- using the Opinionated Bioinformatics Project Directory Structure
+https://github.com/paleobiotechnology/analysis-project-structure -->
 
 ![Version Badge](https://img.shields.io/badge/Version-1.0.1-brightgreen?style=for-the-badge)
 
