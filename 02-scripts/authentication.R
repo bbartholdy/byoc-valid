@@ -28,7 +28,7 @@ metadata_table <- load_map(metadata,
                            )
 
 curves <- calculate_curve(taxa_table, iso_database)
-filter_result <- simple_filter(curves, 50)
+filter_result <- simple_filter(curves, 60)
 mean(filter_result$Passed) # all passed
 plot_cuperdec(curves, metadata_table, filter_result)
 
