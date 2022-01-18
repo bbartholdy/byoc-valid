@@ -9,41 +9,31 @@ library(cuperdec)
 # upload library concentrations and data
 lib_conc <- readr::read_tsv("03-data/SYN_library_quant.tsv")
 kraken_seqtab <- readr::read_csv("03-data/sequence_table.csv")
+kraken_taxatab <- readr::read_csv("03-data/taxa_table.csv")
+metadata <- readr::read_csv("03-data/sample_metadata.csv")
 
-# cuperdec
+metadata$sample[-1] <- paste0(metadata$sample[-1], "0101") # match metadata names to sequence names
+metadata <- subset(metadata, metadata$sample %in% sample_names) # subset successful sequences (?)
 
-cuperdec::cuperdec_taxatable_ex
-cuperdec::cuperdec_database_ex
 
-taxa_table <- load_taxa_table(kraken_taxatable)
+# cuperdec ----------------------------------------------------------------
+
+cuperdec::cuperdec_metadata_ex$Env
+
+taxa_table <- load_taxa_table(kraken_taxatab)
 iso_database <- load_database(cuperdec_database_ex, target = "oral")
-metadata_table <- load_map(cuperdec_metadata_ex,
-                           sample_col = "#SampleID",
-                           source_col = "Env"
-)
-curves <- calculate_curve(taxa_table, iso_database)
-plot_cuperdec(curves, metadata_table)
-
-
-
-
-data(cuperdec_taxatable_ex)
-data(cuperdec_database_ex)
-data(cuperdec_metadata_ex)
-
-taxa_table <- load_taxa_table(cuperdec_taxatable_ex)
-iso_database <- load_database(cuperdec_database_ex, target = "oral")
-metadata_table <- load_map(cuperdec_metadata_ex,
-                           sample_col = "#SampleID",
-                           source_col = "Env"
-)
+metadata_table <- load_map(metadata,
+                           sample_col = "sample",
+                           source_col = "source"
+                           )
 
 curves <- calculate_curve(taxa_table, iso_database)
-plot_cuperdec(curves, metadata_table)
+filter_result <- simple_filter(curves, 50)
+mean(filter_result$Passed) # all passed
+plot_cuperdec(curves, metadata_table, filter_result)
 
 
-
-# decontam
+# decontam ----------------------------------------------------------------
 
 lib_conc$`Full Library Id` %in% names(kraken_seqtab)
 

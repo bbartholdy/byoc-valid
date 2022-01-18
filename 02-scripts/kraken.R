@@ -3,14 +3,12 @@ library(tidyverse)
 # Upload all kraken reports
 
 file_names <- list.files("03-data/kraken/", "_report")
-file_paths <- file.path("03-data/kraken/LIB030.A0117.unmapped.fastq.kraken2_report")
+file_paths <- paste0("03-data/kraken/", file_names)
 sample_names <- gsub(".unmapped.*", "", file_names)
-  
-setwd("03-data/kraken/")
-kraken_reports <- vector(mode = "list", length = length(file_names))
-kraken_reports <- lapply(file_names, readr::read_tsv, col_names = F)
+
+kraken_reports <- vector(mode = "list", length = length(file_paths))
+kraken_reports <- lapply(file_paths, readr::read_tsv, col_names = F)
 names(kraken_reports) <- file_names
-setwd("../../")
 
 # extract columns 2 and 8 for all cases where col 6 has "S"
 kraken_out <- lapply(kraken_reports, function(x) subset(x, x$X6 == "S")[,c(2,8)])
@@ -37,6 +35,7 @@ kraken_taxatable <- kraken_otu %>%
 
 write_csv(kraken_otu, "03-data/species_counts.csv")
 write_csv(kraken_seqtab, "03-data/sequence_table.csv")
+write_csv(kraken_taxatable, "03-data/taxa_table.csv")
 
 # quick search for ABS
 kraken_otu %>%
