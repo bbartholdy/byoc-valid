@@ -41,10 +41,11 @@ AS. To feed the bacteria, the substrata were transferred to a new plate, contain
 inoculation. 
 
 Starch treatments were initiated on day 9 to avoid starch granule counts being 
-affected by \(\alpha\)-amylase hydrolysis from inoculation saliva. 
+affected by $alpha$-amylase hydrolysis from inoculation saliva. 
 Starch treatments replaced sucrose treatments, occurring twice per day
 for six minutes. The starch treatments involved transferring the substrata to a 
-new plate containing a 0.25% (w/v) starch from potato (Roth 9441.1) solution, a 0.25% (w/v) starch from wheat (Sigma S5127) solution, and a 0.5% (w/v) mixture of equal
+new plate containing a 0.25% (w/v) starch from potato (Roth 9441.1) solution, a
+0.25% (w/v) starch from wheat (Sigma S5127) solution, and a 0.5% (w/v) mixture of equal
 concentrations (w/v) wheat and potato. All starch solutions were created in a 5%
 (w/v) sucrose solution. Before transferring biofilm samples to the starch treatments, 
 the starch plates were agitated to keep the starches in suspension in the solutions, 
@@ -58,7 +59,8 @@ and (0.04 g/l MgCl). The substrata were submerged in 1 ml/well CPMU five times d
 every two hours, for six minutes. During the mineralisation period, starch treatments
 were reduced to once per day after the five CPMU treatments. This cycle was repeated 
 for 10 days until the end of the experiment on day 24 
-(see \@ref(fig:protocol-fig) for an overview of protocol).
+(see \@ref(fig:protocol-fig) for an overview of protocol). A more detailed
+protocol is available at<!-- protocols.io -->.
 
 All laboratory work was conducted in sterile conditions under a laminar flow hood 
 to prevent starch and bacterial contamination. Control samples were included to 
@@ -78,26 +80,24 @@ were paired-end sequenced on a NextSeq (2 color chemistry) to 150bp
 <!-- EAGER settings -->
 ### Preprocessing
 
-Processing of the raw DNA reads was conducted in EAGER v. 2.4.0 [@yatesEAGER2020].
-Sequences were aligned to GRCh38 human reference genome.
+Processing of the raw DNA reads was conducted in EAGER v. 2.4.1 [@yatesEAGER2020].
+Adapter removal and read merging was performed using AdapterRemoval v. 2.3.2 [@AdapterRemovalv2]. 
+Merged reads were mapped to the human reference genome (GRCh38 <!--link-->)
+using BWA v. 0.7.17-r1188 [@BWA] with default settings (-n 0.01; -l 32).
+<!-- SAMTools-->
+<!-- endorS.py-->
+<!-- Kraken -->
+<!-- cuperdec [@yatesOralMicrobiome2021]-->
+The R package *decontam* [@R-decontam] was used to identify potential contaminants
+using library extraction blanks with a probability threshold of 0.1.
 
-Metagenomic classification in Kraken 2 [@kraken2].
+Metagenomic classification in Kraken 2 using the Standard database [@kraken2].
 
 ## FTIR
 
 <!-- FTIR specs -->
 
 Spectra were obtained using KBr and interpreted using <!-- insert reference library --> and modern calculus samples.
-
-## Amylase assay
-
-A modified \(\alpha\)-amylase (EC 3.2.1.1) assay protocol was followed (https://www.sigmaaldrich.com/technical-documents/protocols/biology/enzymatic-assay-of-a-amylase.html#M). Final volumes of standards and samples were scaled to 900 \(\mu\)l to be compatible with a 96 deepwell microplate. 
-
-Samples of AS were taken from the bottom of the plate wells on days 0 (control), 3, 5, 6, 9, and 12, from both treatment and control wells. Samples were compared to the saliva from the donor of the biofilms.
-
-Photometer specs
-
-For more detailed protocol, see <!-- protocols.io? -->
 
 ## Statistics
 

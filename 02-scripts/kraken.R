@@ -40,4 +40,4 @@ write_csv(kraken_taxatable, "03-data/taxa_table.csv")
 # quick search for ABS
 kraken_otu %>%
   filter(sample != "LIB030.A0117") %>%
-  filter(grepl("Streptococcus mitis", species))
+  filter(grepl("Rothia", species))

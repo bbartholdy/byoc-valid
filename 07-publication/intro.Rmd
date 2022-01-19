@@ -19,7 +19,7 @@ and nicotine-use [@eerkensDentalCalculusSource2018]. -->
 
 Shortly after teeth are cleaned (whether mechanically or otherwise), the salivary
 pellicle attaches to the teeth. The salivary pellicle is comprised of ... 
-and provides a viable surface for bacterial attachment, prompting early coloniser
+and provides a viable surface for bacterial attachment, prompting early-coloniser
 species, such as *Streptococcus* and *Actinomyces* spp., to adhere to the tooth.
 
 
@@ -29,6 +29,11 @@ species, such as *Streptococcus* and *Actinomyces* spp., to adhere to the tooth.
 
 <!-- clearly stating the general problem being addressed by this particular study -->
 
+We present an oral biofilm model to ... as a viable proxy for dental calculus,
+providing a method for fundamental research on dental calculus in the past. We validated the
+model using FTIR to verify the mineral composition, and metagenomic classification
+to verify the bacterial composition against real dental calculus. We found that
+...
 
-
-
+The method essentially provides unlimited material for experimentation, rather
+than using the limited archaeological material currently available.

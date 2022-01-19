@@ -18,8 +18,6 @@ metadata <- subset(metadata, metadata$sample %in% sample_names) # subset success
 
 # cuperdec ----------------------------------------------------------------
 
-cuperdec::cuperdec_metadata_ex$Env
-
 taxa_table <- load_taxa_table(kraken_taxatab)
 iso_database <- load_database(cuperdec_database_ex, target = "oral")
 metadata_table <- load_map(metadata,
@@ -29,7 +27,6 @@ metadata_table <- load_map(metadata,
 
 curves <- calculate_curve(taxa_table, iso_database)
 filter_result <- simple_filter(curves, 60)
-mean(filter_result$Passed) # all passed
 plot_cuperdec(curves, metadata_table, filter_result)
 
 
@@ -44,9 +41,12 @@ kraken_seqtab <- kraken_seqtab %>%
   as.matrix()
 
 # test for contaminants
-isContaminant(kraken_seqtab, conc = lib_conc$`Quantification post-Indexing total`)
+contaminants <- isContaminant(kraken_seqtab, 
+                              conc = lib_conc$`Quantification post-Indexing total`)
 
 # filter out contaminant species
 
+taxatable_decontam <- kraken_taxatab %>%
+  filter(!contaminants$contaminant)
 
-
+write_csv(taxatable_decontam, "03-data/taxatable_decontam.csv")
