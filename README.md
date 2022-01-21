@@ -3,7 +3,7 @@
 <!-- using the Opinionated Bioinformatics Project Directory Structure
 https://github.com/paleobiotechnology/analysis-project-structure -->
 
-![Version Badge](https://img.shields.io/badge/Version-1.0.1-brightgreen?style=for-the-badge)
+![Version Badge](https://img.shields.io/badge/Version-0.0.0.9000-brightgreen?style=for-the-badge)
 
 ## Table of Contents
 
