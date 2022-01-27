@@ -46,7 +46,7 @@ vignettes/*.pdf
 ## PROJECT SPECIFIC ##
 ######################
 
-03-data/
+#03-data/
 04-analysis/
 **/*.bam
 **/*.sam.gz
