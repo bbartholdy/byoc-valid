@@ -47,7 +47,7 @@ vignettes/*.pdf
 ######################
 
 #03-data/
-04-analysis/
+#04-analysis/
 **/*.bam
 **/*.sam.gz
 **/*.sam
