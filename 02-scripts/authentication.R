@@ -11,6 +11,8 @@ lib_conc <- readr::read_tsv("03-data/SYN_library_quant.tsv")
 kraken_seqtab <- readr::read_csv("03-data/sequence_table.csv")
 kraken_taxatab <- readr::read_csv("03-data/taxa_table.csv")
 metadata <- readr::read_csv("03-data/sample_metadata.csv")
+file_names <- list.files("03-data/kraken/", "_report")
+sample_names <- gsub(".unmapped.*", "", file_names)
 
 metadata$sample[-1] <- paste0(metadata$sample[-1], "0101") # match metadata names to sequence names
 metadata <- subset(metadata, metadata$sample %in% sample_names) # subset successful sequences (?)
