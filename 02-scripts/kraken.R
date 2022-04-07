@@ -29,9 +29,9 @@ kraken_otu <- kraken_out %>%
   rename(count = X2,
          species = X8)
 
-kraken_otu_filtered <- kraken_otu %>%
+kraken_otu_filtered <- kraken_otu #%>%
   #mutate(count = replace_na(count, 0)) %>%
-  filter(count > 1000)
+  #filter(count > 1000)
 
 # Species in the rows and samples in the column
 
@@ -40,11 +40,8 @@ kraken_seqtab <- kraken_otu %>%
 
 kraken_otufilter_table <- kraken_otu_filtered %>%
   pivot_wider(names_from = sample, values_from = count) %>%
-  mutate(across(where(is.numeric), replace_na, 0))
-
-write_csv(kraken_otu, "04-analysis/species_counts.csv")
-write_csv(kraken_seqtab, "04-analysis/sequence_table.csv")
-write_tsv(kraken_otufilter_table, "04-analysis/OTUfilter_table.tsv")
+  mutate(across(where(is.numeric), replace_na, 0)) #%>%
+  #rename("OTU ID" = species)
 
 # quick search for ABS
 kraken_otu %>%
@@ -53,23 +50,28 @@ kraken_otu %>%
 
 # Prepare metadata --------------------------------------------------------
 
-sink <- c("sediment", "skin", "stool", "library control")
 sample_metadata$sample[-1] <- paste0(sample_metadata$sample[-1], "0101") # match metadata names to sequence names
 
 colnames(source_samples) <- c("sample", "source") # match column names to sample_metadata
 
+source_samples <- source_samples %>%
+  mutate(SourceSink = "source")
+
 metadata <- sample_metadata %>% # combine source metadata with samples
+  mutate(SourceSink = "sink") %>%
   bind_rows(source_samples) %>%
-  mutate(SourceSink = if_else(
-    source %in% sink, "sink", "source"
-  )) %>%
-  rename(Env = source) %>%
-  filter(sample %in% sample_names) # subset successful sequences
+  rename(Env = source,
+         "#SampleID" = sample) %>%
+  filter(`#SampleID` %in% sample_names) # subset successful sequences
 
 #metadata <- subset(metadata, metadata$sample %in% sample_names) # subset successful sequences (?)
 
 # mapping for SourceTracker
 
 st_map <- metadata %>%
-  select(sample, Env, SourceSink) %>% 
+  select(`#SampleID`, Env, SourceSink) %>% 
   write_tsv(here("04-analysis/ST-map.txt"))
+
+write_csv(kraken_otu, "04-analysis/species_counts.csv")
+write_csv(kraken_seqtab, "04-analysis/sequence_table.csv")
+write_tsv(kraken_otufilter_table, "04-analysis/OTUfilter_table.tsv")
