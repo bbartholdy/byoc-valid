@@ -5,18 +5,15 @@
 
 library(decontam)
 library(cuperdec)
+library(tidyverse)
+library(here)
 
-# upload library concentrations and data
-lib_conc <- readr::read_tsv("03-data/SYN_library_quant.tsv")
-kraken_seqtab <- readr::read_csv("03-data/sequence_table.csv")
-kraken_taxatab <- readr::read_csv("03-data/taxa_table.csv")
-metadata <- readr::read_csv("03-data/sample_metadata.csv")
-file_names <- list.files("03-data/kraken/", "_report")
+# upload data
+lib_conc <- readr::read_tsv(here("03-data/SYN_library_quant.tsv")) # library concentrations
+kraken_seqtab <- readr::read_csv(here("03-data/sequence_table.csv"))
+kraken_taxatab <- readr::read_csv(here("03-data/taxa_table.csv"))
+file_names <- list.files(here("03-data/kraken/"), "_report")
 sample_names <- gsub(".unmapped.*", "", file_names)
-
-metadata$sample[-1] <- paste0(metadata$sample[-1], "0101") # match metadata names to sequence names
-metadata <- subset(metadata, metadata$sample %in% sample_names) # subset successful sequences (?)
-
 
 # cuperdec ----------------------------------------------------------------
 
@@ -51,4 +48,4 @@ contaminants <- isContaminant(kraken_seqtab,
 taxatable_decontam <- kraken_taxatab %>%
   filter(!contaminants$contaminant)
 
-write_csv(taxatable_decontam, "03-data/taxatable_decontam.csv")
+write_csv(taxatable_decontam, here("03-data/taxatable_decontam.csv"))

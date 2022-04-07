@@ -41,8 +41,6 @@ curves <- calculate_curve(taxa_table, iso_database)
 filter_result <- simple_filter(curves, 60)
 ```
 
-
 ```{r}
 plot_cuperdec(curves, metadata_table, filter_result)
 ```
-

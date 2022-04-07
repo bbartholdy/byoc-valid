@@ -1,0 +1,38 @@
+# Discussion
+
+<!-- Big summary/important statement for the science -->
+Here, we present a long-term oral biofilm model with mineralisation to address
+a variety of research questions related to dental calculus, both in the present
+and in the past.
+The performance of the model as a proxy for dental calculus, was evaluated
+using metagenomic screening for bacterial composition, and FTIR for mineral 
+structure.
+<!-- Scientific findings as extension of previous work -->
+
+<!-- Findings' scientific implications -->
+
+<!-- secondary findings -->
+
+<!-- How this engineering will facilitate future research -->
+
+<!-- Forward-looking statements about the field as a whole -->
+
+<!-- a summary/importance of the engineering aspect of the work -->
+
+<!-- How it facilitates scientific research -->
+
+<!-- limitations of the platform show which questions would be unanswered -->
+Research relating to $alpha$-amylase activity and its effect on the oral biome
+(whether dietary or otherwise) requires addition of amylase to the microcosm, as
+it is not present in the naturally in the system (as shown in <!--cite starch paper-->). The reason for the absence of $alpha$-amylase is not clear...
+There is of course no renewable source for $alpha$-amylase once the inoculations
+have been completed; furthermore, there does not seem to be any retention of $alpha$-amylase
+by amylase-binding bacteria (ABB).
+<!-- Why is it not present???
+compare ABS species in samples (both media and final calculus) to ABS species in plaque/calculus. Different proportions? No need for a-amylase with sucrose feedings?-->.
+
+<!-- How it will facilitate the specific topic of research (e.g. archaeology) -->
+
+This method can be used for a wide range of methods-testing (e.g. DNA, proteomics, etc.) 
+as well as training for various sampling methods, and contamination protocol testing.
+The microcosm also has dietary applications, which can be seen elsewhere <!-- [bartholdy] -->.
