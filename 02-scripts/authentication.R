@@ -12,8 +12,9 @@ library(here)
 lib_conc <- readr::read_tsv(here("03-data/SYN_library_quant.tsv")) # library concentrations
 #kraken_seqtab <- readr::read_csv(here("04-analysis/sequence_table.csv"))
 kraken_taxatab <- readr::read_csv(here("04-analysis/OTUfilter_table.tsv"))
-sourcetracker <- readr::read_tsv(here("04-analysis/sourcetracker_output/mixing_proportions.txt"))
-sourcetracker_stdevs <- readr::read_tsv(here("04-analysis/sourcetracker_output/mixing_proportions_stds.txt"))
+sourcetracker <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker_output/mixing_proportions.txt"))
+sourcetracker_stdevs <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker_output/mixing_proportions_stds.txt"))
+
 metadata <- readr::read_csv(here("03-data/sample_metadata.csv"))
 file_names <- list.files(here("04-analysis/kraken/"), "_report")
 sample_names <- gsub(".unmapped.*", "", file_names)
@@ -21,15 +22,45 @@ sample_names <- gsub(".unmapped.*", "", file_names)
 
 # SourceTracker -----------------------------------------------------------
 
+# sourcetracker with plaque source samples included
 sourcetracker_long <- sourcetracker %>%
-  pivot_longer(cols = where(is.numeric), values_to = "proportion", names_to = "source")
+  pivot_longer(cols = where(is.numeric), 
+               values_to = "proportion", 
+               names_to = "source")
+
+# Arrange samples by age
+day_order <- metadata %>%
+  filter(SourceSink == "sink") %>%
+  arrange(day) %>%
+  .$`#SampleID`
+
+day_order <- day_order[day_order %in% sourcetracker$SampleID]
+#day_order <- rep(day_order, each = 6)
 
 sourcetracker_long %>% 
+  #mutate(SampleID = fct_reorder(SampleID, day_order)) %>%
+  ggplot(aes(x = SampleID, proportion, fill = source)) +
+    geom_col() +
+    scale_fill_viridis_d() +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90)) +
+    scale_x_discrete(limits = day_order)
+
+ggsave(here("sourcetracker_plot3.png"), width = 10, height = 7, units = "in")
+
+# sourcetracker with plaque source samples removed
+sourcetracker2_long <- sourcetracker2 %>%
+  pivot_longer(cols = where(is.numeric), 
+               values_to = "proportion", 
+               names_to = "source")
+
+sourcetracker2_long %>% 
   ggplot(aes(SampleID, proportion, fill = source)) +
     geom_col() +
     scale_fill_viridis_d() +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90))
+    theme(axis.text.x = element_text(angle = 90)) +
+    scale_x_discrete(limits = day_order)
 
 # cuperdec ----------------------------------------------------------------
 

@@ -2,29 +2,29 @@
 
 <!-- basic introduction to the field, comprehensible to a scientist in any discipline -->
 
-Dental calculus...
-
-<!-- In more recent years, the study of dental calculus has increased exponentially, 
-and the wealth of information contained within the mineralised matrix has been, 
-to a larger extent, acknowledged; the benefits of which span a wide variety of
-archaeological research areas, such as oral microbiome 
-characterisation (including pathogens) through the analysis of DNA and proteins 
-[@adlerSequencingAncientCalcified2013; @warinnerPathogensHostImmunity2014],
-microbotanical remains [@henryCalculusSyria2008; @hardyStarchGranulesDental2009;
-@mickleburghNewInsightsConsumption2012], 
-other organic residues from dietary compounds [@buckleyDentalCalculusCooking2014], 
-and nicotine-use [@eerkensDentalCalculusSource2018]. -->
+Dental calculus is quickly becoming the go-to substance for exploring health and
+diet in past populations. Studies using archaeological dental calculus span a wide
+range of topics in different regions and time periods. These include characterisation
+of the oral microbiome and its evolution in past populations
+[@velskoMicrobialDifferences2019; @adlerSequencingAncientCalcified2013; @warinnerPathogensHostImmunity2014; @kazarinaPostmedievalMicrobial2021; @yatesOralMicrobiome2021],
+extraction of microbotanical remains
+[@henryCalculusSyria2008; @hardyStarchGranulesDental2009;@mickleburghNewInsightsConsumption2012]
+and other residues [@buckleyDentalCalculusCooking2014; @hendyProteomicCalculus2018]
+to infer dietary patterns, and nicotine-use [@eerkensDentalCalculusSource2018].
 
 <!-- more detailed background, comprehensible to scientists in related disciplines -->
 
+<!-- dental plaque/calculus formation and calculus composition -->
 Shortly after teeth are cleaned (whether mechanically or otherwise), the salivary
 pellicle attaches to the teeth. The salivary pellicle is comprised of ... 
 and provides a viable surface for bacterial attachment, prompting early-coloniser
-species, such as those within genus *Streptococcus* and *Actinomyces*, to adhere to the tooth.
+species, such as those within genus *Streptococcus* and *Actinomyces*, to adhere to the tooth. 
 
 
-<!-- oral biofilm models -->
+<!-- oral biofilm models. History, types, etc. -->
+Oral biofilm models are commonly used in dental research to...
 
+No applications so far in archaeology.
 
 
 <!-- clearly stating the general problem being addressed by this particular study -->

@@ -31,8 +31,10 @@ by amylase-binding bacteria (ABB).
 <!-- Why is it not present???
 compare ABS species in samples (both media and final calculus) to ABS species in plaque/calculus. Different proportions? No need for a-amylase with sucrose feedings?-->.
 
+<!-- limitations of FTIR and DNA analysis for validation of the model. -->
+
 <!-- How it will facilitate the specific topic of research (e.g. archaeology) -->
 
 This method can be used for a wide range of methods-testing (e.g. DNA, proteomics, etc.) 
 as well as training for various sampling methods, and contamination protocol testing.
-The microcosm also has dietary applications, which can be seen elsewhere <!-- [bartholdy] -->.
+The model also has dietary applications, which can be seen elsewhere <!-- [bartholdy] -->.

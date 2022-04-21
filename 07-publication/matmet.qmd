@@ -102,6 +102,8 @@ using library extraction blanks with a probability threshold of 0.1.
 
 Metagenomic classification in Kraken 2 using the Standard database [@kraken2].
 
+Reference samples downloaded from... Singletons were removed.
+
 ## FTIR
 
 <!-- FTIR specs -->
