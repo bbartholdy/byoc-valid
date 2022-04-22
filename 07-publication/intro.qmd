@@ -16,21 +16,21 @@ to infer dietary patterns, and nicotine-use [@eerkensDentalCalculusSource2018].
 
 <!-- dental plaque/calculus formation and calculus composition -->
 Shortly after teeth are cleaned (whether mechanically or otherwise), the salivary
-pellicle attaches to the teeth. The salivary pellicle is comprised of ... 
+pellicle attaches to the teeth. The salivary pellicle is comprised of ...
 and provides a viable surface for bacterial attachment, prompting early-coloniser
-species, such as those within genus *Streptococcus* and *Actinomyces*, to adhere to the tooth. 
-
+species, such as those within genus *Streptococcus* and *Actinomyces*, to adhere to
+the tooth. 
 
 <!-- oral biofilm models. History, types, etc. -->
 Oral biofilm models are commonly used in dental research to...
 
 No applications so far in archaeology.
 
-
 <!-- clearly stating the general problem being addressed by this particular study -->
 
-We present an oral biofilm model that can serve as a viable proxy for dental calculus,
-and provide a method for fundamental research on dental calculus in the past. 
+We present an oral biofilm model that can serve as a viable proxy for dental
+calculus,
+and provide a method for fundamental research on dental calculus in the past.
 We validated the
 model using FTIR to verify the mineral composition, and metagenomic classification
 to verify the bacterial composition against real dental calculus. We found that
