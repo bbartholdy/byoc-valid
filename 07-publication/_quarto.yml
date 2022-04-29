@@ -1,0 +1,13 @@
+title: TBD
+author: |
+  B.P. Bartholdy, I. Velsko, S. Gur-Arieh, Z. Fagernäs, S. Seng, A.G. Henry
+format: 
+  html:
+    keep-md: true
+  pdf:
+    keep-tex: true
+    documentclass: article
+citation-location: document
+abstract-title: Abstract
+abstract: |
+  This is the abstract for the paper.
