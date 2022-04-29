@@ -2,8 +2,6 @@
 library(tidyverse)
 library(here)
 
-sample_metadata <- readr::read_csv(here("03-data/sample_metadata.csv"))
-
 # Upload all kraken reports
 
 file_names <- list.files("04-analysis/kraken/", "_report")
