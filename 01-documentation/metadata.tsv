@@ -1,0 +1,109 @@
+#SampleID	Env	SourceSink	Project	day	plate	row	treatment
+LIB030.A0117	library control	sink	NA	NA	NA	NA	NA
+SYN001.A0101	saliva	sink	NA	0	NA	NA	NA
+SYN002.A0101	saliva	sink	NA	3	NA	NA	NA
+SYN003.A0101	saliva	sink	NA	5	NA	NA	NA
+SYN014.A0101	medium	sink	NA	5	1	D	control
+SYN014.C0101	medium	sink	NA	9	1	D	control
+SYN015.B0101	medium	sink	NA	7	1	D	control
+SYN015.D0101	medium	sink	NA	12	1	D	control
+SYN015.E0101	medium	sink	NA	15	1	D	control
+SYN015.F0101	medium	sink	NA	18	1	D	control
+SYN015.G0101	medium	sink	NA	21	1	D	control
+SYN015.H0101	medium	sink	NA	24	1	D	control
+SYN017.A0101	medium	sink	NA	5	2	A	control
+SYN017.B0101	medium	sink	NA	7	2	A	control
+SYN017.D0101	medium	sink	NA	12	2	A	control
+SYN017.E0101	medium	sink	NA	15	2	A	control
+SYN017.F0101	medium	sink	NA	18	2	A	control
+SYN017.G0101	medium	sink	NA	21	2	A	control
+SYN018.C0101	medium	sink	NA	9	2	A	control
+SYN018.H0101	medium	sink	NA	24	2	A	control
+SYN005.I0101	calculus	sink	NA	24	1	A	potato
+SYN006.I0101	calculus	sink	NA	24	1	A	potato
+SYN008.I0101	calculus	sink	NA	24	1	B	wheat
+SYN009.I0101	calculus	sink	NA	24	1	B	wheat
+SYN012.I0101	calculus	sink	NA	24	1	C	mix
+SYN013.I0101	calculus	sink	NA	24	1	C	mix
+SYN015.I0101	calculus	sink	NA	24	1	D	control
+SYN016.I0101	calculus	sink	NA	24	1	D	control
+SYN018.I0101	calculus	sink	NA	24	2	A	control
+SYN019.I0101	calculus	sink	NA	24	2	A	control
+SYN021.I0101	calculus	sink	NA	24	2	B	mix
+SYN022.I0101	calculus	sink	NA	24	2	B	mix
+SYN023.I0101	calculus	sink	NA	24	2	C	wheat
+SYN025.I0101	calculus	sink	NA	24	2	C	wheat
+SYN026.I0101	calculus	sink	NA	24	2	D	potato
+SYN028.I0101	calculus	sink	NA	24	2	D	potato
+SRS014477	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS063215	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS019129	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS019120	saliva	source	NA	NA	NA	NA	NA
+SRS014468	saliva	source	NA	NA	NA	NA	NA
+SRS015055	saliva	source	NA	NA	NA	NA	NA
+SRS013950	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS014692	saliva	source	NA	NA	NA	NA	NA
+SRS015064	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS019029	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS014107	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS013942	saliva	source	NA	NA	NA	NA	NA
+SRS014691	subgingival_plaque	source	NA	NA	NA	NA	NA
+SRS021960	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS045313	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS047265	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS051378	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS015755	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS015378	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS022149	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS064493	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS052604	supragingival_plaque	source	NA	NA	NA	NA	NA
+SRS019333	supragingival_plaque	source	NA	NA	NA	NA	NA
+ERR1883419	sediment	source	NA	NA	NA	NA	NA
+ERR1883420	sediment	source	NA	NA	NA	NA	NA
+ERR1883421	sediment	source	NA	NA	NA	NA	NA
+ERR1883422	sediment	source	NA	NA	NA	NA	NA
+ERR1883423	sediment	source	NA	NA	NA	NA	NA
+ERR1883424	sediment	source	NA	NA	NA	NA	NA
+ERR1883430	sediment	source	NA	NA	NA	NA	NA
+ERR1883436	sediment	source	NA	NA	NA	NA	NA
+ERR1883438	sediment	source	NA	NA	NA	NA	NA
+SRR1631060	skin	source	NA	NA	NA	NA	NA
+SRR1631061	skin	source	NA	NA	NA	NA	NA
+SRR1631063	skin	source	NA	NA	NA	NA	NA
+SRR1631064	skin	source	NA	NA	NA	NA	NA
+SRR1633008	skin	source	NA	NA	NA	NA	NA
+SRR3184100	skin	source	NA	NA	NA	NA	NA
+SRR3184876	skin	source	NA	NA	NA	NA	NA
+SRR3189411	skin	source	NA	NA	NA	NA	NA
+SRR3189416	skin	source	NA	NA	NA	NA	NA
+SRR3189418	skin	source	NA	NA	NA	NA	NA
+SRR059389	stool	source	NA	NA	NA	NA	NA
+SRR059425	stool	source	NA	NA	NA	NA	NA
+SRR059455	stool	source	NA	NA	NA	NA	NA
+SRR059917	stool	source	NA	NA	NA	NA	NA
+SRR060358	stool	source	NA	NA	NA	NA	NA
+SRR1761677	stool	source	NA	NA	NA	NA	NA
+SRR1761682	stool	source	NA	NA	NA	NA	NA
+SRR1761688	stool	source	NA	NA	NA	NA	NA
+SRR1761692	stool	source	NA	NA	NA	NA	NA
+SRR1761697	stool	source	NA	NA	NA	NA	NA
+SRR1761698	stool	source	NA	NA	NA	NA	NA
+SRR1761705	stool	source	NA	NA	NA	NA	NA
+SRR1761710	stool	source	NA	NA	NA	NA	NA
+SRR1761718	stool	source	NA	NA	NA	NA	NA
+SRR1761721	stool	source	NA	NA	NA	NA	NA
+SRR1929408	stool	source	NA	NA	NA	NA	NA
+SRR1930121	stool	source	NA	NA	NA	NA	NA
+SRR1930123	stool	source	NA	NA	NA	NA	NA
+SRR1930141	stool	source	NA	NA	NA	NA	NA
+SRR1930145	stool	source	NA	NA	NA	NA	NA
+JAE006.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE007.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE008.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE009.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE010.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE012.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE013.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE014.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE015.A0101	modern calculus	source	NA	NA	NA	NA	NA
+JAE016.A0101	modern calculus	source	NA	NA	NA	NA	NA

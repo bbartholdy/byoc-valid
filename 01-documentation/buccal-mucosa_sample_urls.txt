@@ -1,0 +1,10 @@
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS052668.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS015040.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS056892.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS065133.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS016349.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS016503.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS024017.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS043803.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS043239.tar.bz2
+http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS043646.tar.bz2
