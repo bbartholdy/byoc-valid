@@ -1,12 +1,38 @@
+# Script to create species tables from Kraken reports
 library(tidyverse)
 library(here)
 
 # Upload data -------------------------------------------------------------
 
-#sample_metadata <- readr::read_csv(here("03-data/sample_metadata.csv"))
-kraken_otu <- readr::read_csv(here("03-data/kraken-OTU_long.csv"))
-metadata <- readr::read_tsv("03-data/metadata.tsv")
-#source_samples <- readr::read_csv(here("03-data/source_samples_key.csv"))
+metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+
+# Upload all kraken reports
+
+file_names <- list.files("04-analysis/kraken/", "_report")
+file_paths <- paste0("04-analysis/kraken/", file_names)
+sample_names <- gsub(".unmapped.*", "", file_names)
+
+kraken_reports <- vector(mode = "list", length = length(file_paths))
+kraken_reports <- lapply(file_paths, readr::read_tsv, col_names = F)
+names(kraken_reports) <- file_names
+
+# extract columns 2 and 8 for all cases where col 6 has "S"
+kraken_data <- lapply(kraken_reports, function(x) subset(x, x$X6 == "S")[,c(2,8)])
+
+# merge all *_report files
+# add Sample name column to each data frame, then merge all data frames
+
+for(i in 1:length(kraken_data)){
+  kraken_data[[i]]$sample <- sample_names[i]
+}
+
+kraken_otu_long <- kraken_data %>%
+  reduce(full_join, by = c("X2", "X8", "sample")) %>%
+  rename(count = X2,
+         species = X8)
+
+#write_csv(kraken_otu_long, here("03-data/kraken-OTU_long.csv"))
+
 
 file_names <- list.files("04-analysis/kraken/", "_report")
 #file_paths <- paste0("04-analysis/kraken/", file_names)
@@ -16,7 +42,7 @@ sample_names <- gsub(".unmapped.*", "", file_names)
 
 # filter species by relative abundance
   # species with lower than 0.001% relative abundance removed
-kraken_otu_filtered <- kraken_otu %>%
+kraken_otu_filtered <- kraken_otu_long %>%
   mutate(count = replace_na(count, 0)) %>%
   group_by(sample) %>%
   mutate(rel_abund = count / sum(count),
@@ -29,30 +55,21 @@ kraken_otufilter_table <- kraken_otu_filtered %>%
   select(!c(rel_abund, sum_abund)) %>%
   pivot_wider(names_from = sample, values_from = count) %>%
   mutate(across(where(is.numeric), replace_na, 0)) #%>%
-#rename("OTU ID" = species)
 
-#write_csv(kraken_otu, here("04-analysis/species_counts.csv"))
-#write_csv(kraken_seqtab, here("04-analysis/sequence_table.csv"))
+# names of BYOC samples
+which_samples <- metadata %>%
+  filter(SourceSink == "sink") %>%
+  .$`#SampleID`
+
+# isolate the BYOC samples
+sample_taxatable <- kraken_otu_filtered %>% 
+  select(!c(rel_abund, sum_abund)) %>% 
+  filter(sample %in% which_samples) %>%
+  pivot_wider(names_from = sample, values_from = count) %>%
+  mutate(across(where(is.numeric), replace_na, 0))
+
+write_tsv(sample_taxatable, here("04-analysis/pre-decontam_sample_taxatable.tsv"))
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
-
-
-# Prepare metadata --------------------------------------------------------
-
-# sample_metadata$sample[-1] <- paste0(sample_metadata$sample[-1], "0101") # match metadata names to sequence names
-# 
-# colnames(source_samples) <- c("sample", "source") # match column names to sample_metadata
-# 
-# source_metadata <- source_samples %>%
-#   mutate(SourceSink = "source")
-# 
-# metadata <- sample_metadata %>% # combine source metadata with samples
-#   mutate(SourceSink = "sink") %>%
-#   bind_rows(source_metadata) %>%
-#   rename(Env = source,
-#          "#SampleID" = sample) %>%
-#   filter(`#SampleID` %in% sample_names) # subset successful sequences
-
-#metadata <- subset(metadata, metadata$sample %in% sample_names) # subset successful sequences (?)
 
 # mapping for SourceTracker
 
@@ -66,16 +83,8 @@ st_map_plaque_comb <- metadata %>%
                         "plaque", Env)) %>%
   write_tsv(here("04-analysis/sourcetracker/ST_comb-plaque-map.txt"))
 
-# st_noplaque_map <- st_map %>%
-#   filter(Env != "supragingival_plaque",
-#          Env != "subgingival_plaque") %>%
-#   write_tsv(here("04-analysis/ST-noplaque-map.txt"))
-# 
-# kraken_otu_noplaque <- kraken_otu %>%
-#   filter(sample %in% st_noplaque_map$`#SampleID`,
-#          count > 1000) %>%
-#   pivot_wider(names_from = sample, values_from = count) %>%
-#   mutate(across(where(is.numeric), replace_na, 0))
+# map with combined plaque sources and no sediments
+st_map_nosedi <- st_map_plaque_comb %>% 
+  filter(Env != "sediment") %>% 
+  write_tsv(here("04-analysis/sourcetracker/ST_no-sedi.txt"))
 
-#write_tsv(kraken_otu_noplaque, here("04-analysis/OTUnoplaque_table.tsv"))
-#write_tsv(metadata, here("03-data/metadata.tsv"))

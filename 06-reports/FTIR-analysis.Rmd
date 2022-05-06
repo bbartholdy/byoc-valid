@@ -1,0 +1,271 @@
+---
+title: "FTIR analysis"
+output: html_notebook
+---
+
+## Introduction
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(message = FALSE,
+                      warning = FALSE)
+library(tidyverse)
+library(patchwork)
+library(here)
+ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
+grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+```
+
+```{r}
+#| label: setup-echo
+#| eval: false
+
+# Loading libraries and data
+library(tidyverse)
+library(patchwork)
+library(here)
+ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
+grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+```
+
+
+To determine the mineral composition and crystallisation of the artificial dental
+calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy. We
+compared the spectra of artificial dental calculus with spectra of archaeological
+dental calculus, as well as splitting factors.
+
+### Materials
+
+```{r}
+grind_data %>%
+  filter(Sample == "Artificial calculus") %>%
+  group_by(day) %>% 
+  summarise(
+    n = n()
+    )
+
+comb_samples <- ftir_metadata %>%
+  filter(str_detect(sample, "\\+")) %>%
+  separate_rows(sample, sep = "\\+") %>%
+  mutate(
+    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D1-6]+"),
+    sample = case_when(
+      is.na(sample_name) ~ paste0("F", day, ".", sample),
+      TRUE ~ sample
+      ),
+    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D1-6]+")
+  )
+```
+
+23 model biofilm samples from days 7, 16, 20, and 24, were analysed. Reference
+samples for comparison included two modern calculus samples and an archaeological
+calculus sample. The
+archaeological sample was an isolated tooth from Middenbeemster, a rural Dutch
+site from the 19th century. Samples
+`r paste0(unique(comb_samples$sample_names), coll = ", ")`
+had to be combined to
+provide enough material for analysis. Only samples collected on the same day
+were combined with each other. Samples from days 7 and 12 did
+not produce enough material for a grind curve. They were largely composed of
+organics and proteins, I would not be able to produce a splitting factor, anyway.
+
+### Methods
+
+Samples were ground with KBr and pressed under up to two tons of pressure.
+Repeated measurements were taken and after different grinding durations, and
+a grind curve was produced following Asscher et al.
+[-@asscherAtomicDisorder2011].
+Samples were ground and analysed up to six times (a-f) for the grind curve.
+The analysis was conducted at Haifa University with a Thermo Nicolet is5
+spectrometer in transmission,
+at 4 cm$^{-1}$ resolution, with an average of 32 scans between wavenumbers 4000
+and 400 cm$^{-1}$.
+The splitting factor was calculated following Asscher et al.
+[-@asscherAtomicDisorder2011],
+using the full width at half maximum (FWHM) of the main peak at 1035. Grinds a-f
+represent different levels of grinding. Samples denoted with an 'a' were ground
+for the least amount of time and 'f' the most.
+
+### Results
+
+```{r}
+#| label: results-setup
+ftir_classic <- theme_classic()
+```
+
+
+```{r message=FALSE, warning=FALSE}
+#| label: day-7-spectra
+#| fig-cap: "Two spectra from biofilm sampled on day 7 of the experiment."
+ftir_data %>%
+  filter(
+    day == 7,
+    sample != "F7",
+    sample != "F7.1A6_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+      scale_x_continuous(
+    n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    )
+```
+
+
+Day 7 spectra show large organic component, especially proteins (and collagen?).
+The hydroxyapatite peak is present at around 1040, but the doublet around 600 is
+poorly defined or absent.
+
+```{r}
+#| label: day-16-spectra
+#| fig-cap: "Spectra from biofilm sampled on day 16 of the experiment."
+ftir_data %>%
+  filter(
+    day == 16,
+    is.na(grind),
+    sample != "F16.2D2",
+    sample != "F16.1D6"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_continuous(
+      n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    )
+```
+
+Day 16, the mineral phase has become more prominent than the organic. The
+hydroxyapatite peak is now the main peak, and the doublet is well-defined.
+There is still some variability in relative heights of the peaks between samples.
+
+```{r message=FALSE, warning=FALSE}
+#| label: day-24-spectra
+#| fig-cap: "Two spectra from the final biofilm product sampled on day 24 of the experiment."
+ftir_data %>%
+  filter(
+    day == 24,
+    is.na(grind),
+    str_detect(sample, "[_]", negate = T),
+    sample != "F24.1B3",
+    sample != "F24.2C3",
+    sample != "F24.2D3",
+    sample != "F24.2A4",
+    sample != "F24.2B4"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_continuous(
+      n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    )
+```
+
+
+Day 24, the mineral phase continues to dominate. The main peak
+is the hydroxyapatite peak at around 1039 with a well-defined doublet at 604 and
+565.
+
+```{r message=FALSE, warning=FALSE}
+#| label: arch-calc-spectra
+#| fig-cap: "Two spectra from a single sample of archaeological calculus with different grinding levels (c and d)."
+ftir_data %>%
+  filter(
+    str_detect(sample, "MB11_grind_[cd]")
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_continuous(
+      n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    )
+```
+
+The reference calculus is similar to the later biofilm samples. The main
+difference is the a lower protein component seen as a lower Amide I peak at
+around 1637.
+
+```{r}
+#| label: compare-calc-spectra
+#| fig-cap: "Spectra from a sample of archaeological calculus is compared with a final product biofilm sample."
+ftir_data %>%
+  filter(
+    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_continuous(
+      n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    )
+```
+
+
+The carbonate peak
+at 1421 is not as well-developed as the reference spectrum. Protein at 1654.
+
+The reference spectrum consists of carbonate (peaks 1418, 1458, 876), hydroxyapatite
+(peaks 1036, 604, 566), and protein (1637, Amide I).
+
+Both day 24 and modern reference resemble bone.
+
+#### Grind curves
+
+Splitting factors were calculated from the grinding measurements, grinding curve created
+exploring crystallinity (crystal size) order, and disorder. Disorder is a steep slope
+and large FWHM.
+
+Samples are similar to fresh bone and dentin. No appreciable differences between days 16, 20,
+and 24.
+
+```{r message=FALSE, warning=FALSE}
+#| grind-plots
+grind_all_plot <- grind_data %>%
+  group_by(day, Sample) %>%
+  ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = F) +
+  theme_minimal() +
+  labs(col = "Sample", shape = "Sample",
+       x = "FWHM of the 1035 peak",
+       y = "Splitting factor")
+
+# isolate calculus samples to see diffs between days and the 'real deal'
+grind_calc_plot <- grind_data %>%
+  filter(Sample == "Artificial calculus" | Sample == "Archaeological calculus") %>%
+  ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+  geom_point(size = 2, alpha = 0.6) +
+  geom_smooth(method = "lm", se = F) +
+  labs(col = "Sample", shape = "Sample",
+       x = "FWHM of the 1035 peak",
+       y = "Splitting factor") +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    axis.ticks = element_blank(),
+    legend.position = "none",
+    panel.border = element_rect(
+      colour = "grey", 
+      fill = "transparent", size = 1),
+    panel.background = element_rect(fill = "white")
+    ) +
+  scale_colour_viridis_d(end = 0.4)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+#| label: grind-curve-inset
+#| fig-cap: "(A) Grinding curves of multiple substances, and (B) calculus-only."
+grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right = 1, top = 1) + 
+  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+```
+
+## Conclusion
+
+The artificial samples resemble both the modern reference samples and the
+archaeological sample in mineral composition and crystallinity. The grinding
+curves for days 16, 20, and 24 were very similar, suggesting that the CPMU
+solution (introduced on day 16) may not have much of an effect.
