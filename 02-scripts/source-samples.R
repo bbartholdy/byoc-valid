@@ -1,5 +1,4 @@
-library(dplyr)
-library(magrittr)
+library(tidyverse)
 library(here)
 
 # Upload data -------------------------------------------------------------
@@ -72,3 +71,104 @@ mucosa_meta <- mucosa %>%
 
 metadata <- metadata %>%
   bind_rows(hospital_meta, mucosa_meta)
+
+
+# Input TSV ---------------------------------------------------------------
+
+metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+indoor_samples <- readr::read_delim("indoor-samples.txt", delim = "\t", col_names = F)
+tsv_template <- readr::read_tsv("01-documentation/TSV_template.tsv")
+
+# Metadata
+
+sample_names <- unique(str_extract(indoor_samples$X1, "^[SRR0-9]+"))
+file_names <- indoor_samples
+
+indoor_meta <- tibble("#SampleID" = sample_names, "Env" = "indoor_air", "SourceSink" = "source",
+                      "Project" = "PRJNA422794")
+
+metadata <- indoor_meta %>%
+  bind_rows(metadata)
+
+# Input TSV
+
+r1 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", file_names$X1[str_detect(file_names$X1, "_1")])
+r2 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", file_names$X1[str_detect(file_names$X1, "_2")])
+
+indoor_input <- tibble(
+  "Sample_Name" = sample_names,
+  "Library_ID" = sample_names,
+  "Lane" = 1,
+  "Colour_Chemistry" = 4,
+  "SeqType" = "PE",
+  "Organism" = NA,
+  "Strandedness" = "double",
+  "UDG_Treatment" = "none",
+  "R1" = r1,
+  "R2" = r2,
+  "BAM" = NA
+)
+
+write_tsv(indoor_input, "01-documentation/indoor_input.tsv")
+
+metadata <- metadata %>%
+  filter(Env != "indoor_air")
+
+
+mucosa_names <- mucosa_meta$`#SampleID`
+indoor_names <- unique(hospital_meta$`#SampleID`)
+
+mucosa_r1 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", mucosa_names, ".denovo_duplicates_marked.trimmed.1.fastq")
+mucosa_r2 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", mucosa_names, ".denovo_duplicates_marked.trimmed.2.fastq")
+
+indoor_r1 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", indoor_names, "_1.fastq.gz")
+indoor_r2 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", indoor_names, "_2.fastq.gz")
+
+
+mucosa_input <- tibble(
+  "Sample_Name" = mucosa_names,
+  "Library_ID" = mucosa_names,
+  "Lane" = 1,
+  "Colour_Chemistry" = 4,
+  "SeqType" = "PE",
+  "Organism" = "Human",
+  "Strandedness" = "double",
+  "UDG_Treatment" = "none",
+  "R1" = mucosa_r1,
+  "R2" = mucosa_r2,
+  "BAM" = NA
+)
+
+hospital_input <- tibble(
+  "Sample_Name" = indoor_names,
+  "Library_ID" = indoor_names,
+  "Lane" = 1,
+  "Colour_Chemistry" = 4,
+  "SeqType" = "PE",
+  "Organism" = NA,
+  "Strandedness" = "double",
+  "UDG_Treatment" = "none",
+  "R1" = indoor_r1,
+  "R2" = indoor_r2,
+  "BAM" = NA
+)
+
+mucosa_indoor_input <- mucosa_input %>%
+  bind_rows(hospital_input)
+
+write_tsv(mucosa_indoor_input, here("04-analysis/eager/mucosa-indoor_input.tsv"))
+
+calculus_input <- readr::read_tsv(here("04-analysis/eager/calculus_input.tsv"))
+
+source_input <- read_tsv(here("04-analysis/eager/source_input.tsv"))
+
+source_input <- bind_rows(mucosa_indoor_input, calculus_input, source_input)
+view(source_input)
+
+source_input <- source_input %>%
+  mutate(Organism = if_else(str_detect(Sample_Name, "ERR"), NA_character_, Organism))
+
+source_input %>%
+  mutate(test = str_detect(Sample_Name, "[ERR]+")) %>% view
+
+write_tsv(source_input, here("04-analysis/eager/source_input.tsv"))
