@@ -8,8 +8,9 @@ output: html_notebook
 ```{r}
 #| label: setup
 #| include: false
-knitr::opts_chunk$set(message = FALSE,
-                      warning = FALSE)
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE)
 library(tidyverse)
 library(patchwork)
 library(here)
@@ -93,7 +94,10 @@ for the least amount of time and 'f' the most.
 
 ```{r}
 #| label: results-setup
-ftir_classic <- theme_classic()
+# calculate wavenumber of highest peak
+# ftir_data <- ftir_data %>%
+#   group_by(sample) %>% 
+#   mutate(max_peak = wavenumber[which(abs == max(abs))])
 ```
 
 
@@ -127,7 +131,8 @@ ftir_data %>%
     day == 16,
     is.na(grind),
     sample != "F16.2D2",
-    sample != "F16.1D6"
+    sample != "F16.1D6",
+    sample != "F16.1B2"
     ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
@@ -153,7 +158,6 @@ ftir_data %>%
     sample != "F24.2C3",
     sample != "F24.2D3",
     sample != "F24.2A4",
-    sample != "F24.2B4"
     ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
@@ -189,17 +193,22 @@ around 1637.
 
 ```{r}
 #| label: compare-calc-spectra
+#| warning: false
 #| fig-cap: "Spectra from a sample of archaeological calculus is compared with a final product biofilm sample."
 ftir_data %>%
   filter(
-    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3"
+    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
+      sample == "modern_ref1"
     ) %>%
+  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.4,
+                         TRUE ~ abs)) %>% 
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
     theme_classic() +
     scale_x_continuous(
       n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    )
+    ) +
+    scale_colour_viridis_d()
 ```
 
 
@@ -208,8 +217,6 @@ at 1421 is not as well-developed as the reference spectrum. Protein at 1654.
 
 The reference spectrum consists of carbonate (peaks 1418, 1458, 876), hydroxyapatite
 (peaks 1036, 604, 566), and protein (1637, Amide I).
-
-Both day 24 and modern reference resemble bone.
 
 #### Grind curves
 

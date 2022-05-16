@@ -26,10 +26,10 @@ clean_ftir <- function(x, normalise = FALSE) {
 # Upload data -------------------------------------------------------------
 
 grind_data_raw <- readr::read_csv(here("03-data/FTIR/grind-curve_archDC.csv"))
-ftir_files <- list.files(here("04-analysis/FTIR"), ".CSV", full.names = T)
+ftir_files <- list.files(here("04-analysis/FTIR"), "(?i).CSV", full.names = T)
 ftir_data_list <- lapply(ftir_files, read_csv, col_names = c("wavenumber", "abs"))
 sample_names <- list.files(here("04-analysis/FTIR/")) %>%
-  str_remove(".CSV")
+  str_remove("(?i).CSV")
 names(ftir_data_list) <- sample_names
 
 # Prepare data ------------------------------------------------------------
@@ -82,7 +82,8 @@ ftir_metadata <- sample_names %>%
     well = str_extract(sample_name, "^(?<=A-Z0-9).[A-Z0-9]+"),
     source = case_when(
       str_detect(sample_name, "F") ~ "Artificial", 
-      str_detect(sample_name, "Arch") ~ "Archaeological"))
+      str_detect(sample_name, "Arch") ~ "Archaeological",
+      str_detect(sample_name, "modern") ~ "Modern"))
 
 # combine samples with their metadata
 
