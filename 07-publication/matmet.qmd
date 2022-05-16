@@ -5,21 +5,21 @@
 ## Biofilm growth
 
 In this study we employ a multispecies oral biofilm model following a modified
-protocol from Sissons and colleagues [-@sissonsMultistationDentalPlaque1991] and
+protocol from Sissons and colleagues [-@sissonsMultistationPlaque1991] and
 Shellis [-@shellisSyntheticSalivaCultural1978]. The setup comprises a polypropylene 
 24 deepwell PCR plate (KingFisher 97003510) with a lid containing 24 pegs (substrata), which 
 is autoclaved at 120&deg;C, 1 bar overpressure, for 20 mins.
  
 The artificial saliva (AS) is a modified version of the basal medium mucin (BMM)
-described by Sissons and colleagues [-@sissonsMultistationDentalPlaque1991]. 
+described by Sissons and colleagues [-@sissonsMultistationPlaque1991]. 
 It contains 2.5 g/l partially purified mucin from porcine stomach (Type III, Sigma M1778), 
 5 g/l trypticase peptone (Roth 2363.1), 10 g/l proteose peptone (Oxoid LP0085),
 5 g/l yeast extract (BD 211921), 2.5 g/l KCl, 0.35 g/l NaCl, 1.8 mmol/l CaCl~2~, 
-5.2 mmol/l Na~2~HPO~4~ [@sissonsMultistationDentalPlaque1991], 6.4 mmol/l NaHCO~3~ 
+5.2 mmol/l Na~2~HPO~4~ [@sissonsMultistationPlaque1991], 6.4 mmol/l NaHCO~3~ 
 [@shellisSyntheticSalivaCultural1978], 2.5 mg/l haemin. This is subsequently 
 adjusted to pH 7 with NaOH pellets and stirring, autoclaved (15 min, 120&deg;C, 
 1 bar overpressure), and supplemented with 5.8 \(mu\)mol/l menadione, 5 mmol/l urea, 
-and 1 mmol/l arginine [@sissonsMultistationDentalPlaque1991].
+and 1 mmol/l arginine [@sissonsMultistationPlaque1991].
 
 <!-- add to protocols.io -->
 Fresh whole saliva (WS) for inoculation was provided by a 31-year-old male donor 
@@ -54,7 +54,7 @@ and during treatments, the rpm was increased to 60.
 After 15 days, mineralisation was encouraged with a 
 calcium phosphate monofluorophosphate urea (CPMU) solution containing 
 20 mmol/l CaCl~2~, 12 mmol/l NaH~2~PO~4~, 5 mmol/l Na~2~PO~3~F, 500 mmol/l Urea
-[@pearceConcomitantDepositionStrontium1987; @sissonsMultistationDentalPlaque1991], 
+[@pearceConcomitantDepositionStrontium1987; @sissonsMultistationPlaque1991], 
 and (0.04 g/l MgCl). The substrata were submerged in 1 ml/well CPMU five times daily, 
 every two hours, for six minutes. During the mineralisation period, starch treatments
 were reduced to once per day after the five CPMU treatments. This cycle was repeated 

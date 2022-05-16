@@ -6,25 +6,35 @@ Dental calculus is quickly becoming the go-to substance for exploring health and
 diet in past populations. Studies using archaeological dental calculus span a wide
 range of topics in different regions and time periods. These include characterisation
 of the oral microbiome and its evolution in past populations
-[@velskoMicrobialDifferences2019; @adlerSequencingAncientCalcified2013; @warinnerPathogensHostImmunity2014; @kazarinaPostmedievalMicrobial2021; @yatesOralMicrobiome2021],
+[@velskoMicrobialDifferences2019; @adlerSequencingAncient2013; @warinnerPathogensHost2014; @kazarinaPostmedievalMicrobial2021; @yatesOralMicrobiome2021],
 extraction of microbotanical remains
-[@henryCalculusSyria2008; @hardyStarchGranulesDental2009;@mickleburghNewInsightsConsumption2012]
-and other residues [@buckleyDentalCalculusCooking2014; @hendyProteomicCalculus2018]
-to infer dietary patterns, and nicotine-use [@eerkensDentalCalculusSource2018].
+[@henryCalculusSyria2008; @hardyStarchGranulesDental2009;@mickleburghNewInsights2012]
+and other residues [@buckleyDentalCalculus2014; @hendyProteomicCalculus2018]
+to infer dietary patterns, and nicotine-use [@eerkensDentalCalculus2018].
 
 <!-- more detailed background, comprehensible to scientists in related disciplines -->
 
 <!-- dental plaque/calculus formation and calculus composition -->
-Shortly after teeth are cleaned (whether mechanically or otherwise), the salivary
-pellicle attaches to the teeth. The salivary pellicle is comprised of ...
-and provides a viable surface for bacterial attachment, prompting early-coloniser
-species, such as those within genus *Streptococcus* and *Actinomyces*, to adhere to
-the tooth. 
+Shortly after teeth are cleaned (whether mechanically or otherwise), a salivary
+pellicle attaches to the teeth forming the acquired pellicle. The pellicle is
+comprised mainly of proteins and provides a viable surface for bacterial attachment,
+prompting early-coloniser species, such as those within genus *Streptococcus* and
+*Actinomyces*, to attach to the tooth [@marshDentalPlaque2006]. Once the surface
+has been ... by the specialists in surface-attachment, other species of bacteria
+can attach to their surface, allowing adhesion of species that are not usually
+capable of attaching to a surface. This, now, diverse community of bacteria is able
+to secrete polysaccharides, proteins, lipids, and nucleic acids, into their immediate
+environment to form a biofilm matrix. The matrix provides an adaptive advantage
+to the organisms within by [providing] resistance to antibiotics and mechanical
+removal, as well as transporting nutrition from outside the biofilm and facilitating
+distribution of nutrition within [@flemmingBiofilmsEmergent2016].
 
 <!-- oral biofilm models. History, types, etc. -->
-Oral biofilm models are commonly used in dental research to...
+Oral biofilm models are commonly used in dental research to assess the efficacy
+of certain treatments on dental pathogens<!--citations-->.
 
-No applications so far in archaeology.
+As far as we know, archaelogists have not yet made use of biofilm models in their
+research.
 
 <!-- clearly stating the general problem being addressed by this particular study -->
 
