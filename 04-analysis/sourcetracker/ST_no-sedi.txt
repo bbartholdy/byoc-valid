@@ -1,14 +1,4 @@
 #SampleID	Env	SourceSink
-SRR6431719	indoor_air	source
-SRR6431720	indoor_air	source
-SRR6431721	indoor_air	source
-SRR6431722	indoor_air	source
-SRR6431723	indoor_air	source
-SRR6431724	indoor_air	source
-SRR6431725	indoor_air	source
-SRR6431726	indoor_air	source
-SRR6431727	indoor_air	source
-SRR6431728	indoor_air	source
 LIB030.A0117	library control	sink
 SYN001.A0101	saliva	sink
 SYN002.A0101	saliva	sink
@@ -108,3 +98,11 @@ JAE013.A0101	modern calculus	source
 JAE014.A0101	modern calculus	source
 JAE015.A0101	modern calculus	source
 JAE016.A0101	modern calculus	source
+SRR6129806	indoor_air	source
+SRR6129807	indoor_air	source
+SRR6129808	indoor_air	source
+SRR6129810	indoor_air	source
+SRR6129809	indoor_air	source
+SRR5420280	indoor_air	source
+SRR5420282	indoor_air	source
+SRR6129811	indoor_air	source
