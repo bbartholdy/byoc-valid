@@ -1,0 +1,11 @@
+Sample_Name	Library_ID	Lane	Colour_Chemistry	SeqType	Organism	Strandedness	UDG_Treatment	BAM	R1	R2
+JAE006.A0101	JAE006.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE006.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE006.A0101_R2_humfilt.fastq.gz
+JAE007.A0101	JAE007.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE007.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE007.A0101_R2_humfilt.fastq.gz
+JAE008.A0101	JAE008.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE008.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE008.A0101_R2_humfilt.fastq.gz
+JAE009.A0101	JAE009.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE009.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE009.A0101_R2_humfilt.fastq.gz
+JAE010.A0101	JAE010.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE010.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE010.A0101_R2_humfilt.fastq.gz
+JAE012.A0101	JAE012.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE012.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE012.A0101_R2_humfilt.fastq.gz
+JAE013.A0101	JAE013.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE013.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE013.A0101_R2_humfilt.fastq.gz
+JAE014.A0101	JAE014.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE014.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE014.A0101_R2_humfilt.fastq.gz
+JAE015.A0101	JAE015.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE015.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE015.A0101_R2_humfilt.fastq.gz
+JAE016.A0101	JAE016.A0101	1	2	PE	Human	double	none	NA	/home/bartholdybp/data1/databases/refseq/source/JAE016.A0101_R1_humfilt.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/JAE016.A0101_R2_humfilt.fastq.gz
