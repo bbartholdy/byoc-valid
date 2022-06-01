@@ -1,6 +1,8 @@
 ---
 title: "FTIR analysis"
-output: html_notebook
+output: 
+  word_document: default
+  html_notebook: default
 ---
 
 ## Introduction
@@ -11,6 +13,7 @@ output: html_notebook
 knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE)
+options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
 library(tidyverse)
 library(patchwork)
 library(here)
@@ -41,24 +44,25 @@ dental calculus, as well as splitting factors.
 ### Materials
 
 ```{r}
-grind_data %>%
-  filter(Sample == "Artificial calculus") %>%
-  group_by(day) %>% 
-  summarise(
-    n = n()
-    )
-
 comb_samples <- ftir_metadata %>%
-  filter(str_detect(sample, "\\+")) %>%
+  #filter(str_detect(sample, "\\+")) %>%
   separate_rows(sample, sep = "\\+") %>%
   mutate(
-    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D1-6]+"),
+    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D0-6]+"),
     sample = case_when(
       is.na(sample_name) ~ paste0("F", day, ".", sample),
       TRUE ~ sample
       ),
-    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D1-6]+")
+    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D0-6]+")
   )
+
+comb_samples %>%
+  filter(source == "Artificial") %>%
+  group_by(day) %>% 
+  summarise(
+    n = n()
+    ) %>%
+  knitr::kable()
 ```
 
 23 model biofilm samples from days 7, 16, 20, and 24, were analysed. Reference
@@ -72,6 +76,19 @@ provide enough material for analysis. Only samples collected on the same day
 were combined with each other. Samples from days 7 and 12 did
 not produce enough material for a grind curve. They were largely composed of
 organics and proteins, I would not be able to produce a splitting factor, anyway.
+
+```{r}
+#| label: grind-data-summary
+grind_data %>%
+  filter(Sample == "Artificial calculus") %>%
+  group_by(day) %>% 
+  summarise(
+    n = n()
+    ) %>%
+  knitr::kable()
+```
+
+Table: Summary of samples used in grinding curves.
 
 ### Methods
 
@@ -98,6 +115,17 @@ for the least amount of time and 'f' the most.
 # ftir_data <- ftir_data %>%
 #   group_by(sample) %>% 
 #   mutate(max_peak = wavenumber[which(abs == max(abs))])
+grind_sample_order <- c(
+  "Archaeological calculus",
+  "Artificial calculus day 16",
+  "Artificial calculus day 20",
+  "Artificial calculus day 24",
+  "Archaeological bone",
+  "Bone-Dentine",
+  "Bone-Dentine_2",
+  "Enamel",
+  "Enamel_2",
+  "Enamel_3")
 ```
 
 
@@ -194,21 +222,20 @@ around 1637.
 ```{r}
 #| label: compare-calc-spectra
 #| warning: false
-#| fig-cap: "Spectra from a sample of archaeological calculus is compared with a final product biofilm sample."
+#| fig-cap: "Spectra from archaeological calculus, modern reference calculus, and artificial calculus are compared. Absorbance was shifted to allow comparison of the three spectra, so the absorbance should be interpreted as relative, not absolute."
 ftir_data %>%
   filter(
     str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
       sample == "modern_ref1"
     ) %>%
-  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.4,
+  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.45,
                          TRUE ~ abs)) %>% 
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
     theme_classic() +
     scale_x_continuous(
       n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    ) +
-    scale_colour_viridis_d()
+    )
 ```
 
 
@@ -220,24 +247,26 @@ The reference spectrum consists of carbonate (peaks 1418, 1458, 876), hydroxyapa
 
 #### Grind curves
 
-Splitting factors were calculated from the grinding measurements, grinding curve created
-exploring crystallinity (crystal size) order, and disorder. Disorder is a steep slope
-and large FWHM.
+Splitting factors were calculated from the grinding measurements, and a
+grinding curve was created to explore crystallinity (crystal size) order, and
+disorder. Disorder is a steep slope and large FWHM.
 
 Samples are similar to fresh bone and dentin. No appreciable differences between days 16, 20,
 and 24.
 
 ```{r message=FALSE, warning=FALSE}
-#| grind-plots
+#| label: grind-plots
 grind_all_plot <- grind_data %>%
+  mutate(
+    Sample_day = factor(Sample_day, levels = grind_sample_order)) %>%
   group_by(day, Sample) %>%
-  ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
-  geom_point(size = 2, alpha = 0.6) +
-  geom_smooth(method = "lm", se = F) +
-  theme_minimal() +
-  labs(col = "Sample", shape = "Sample",
-       x = "FWHM of the 1035 peak",
-       y = "Splitting factor")
+    ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = F) +
+    theme_minimal() +
+    labs(col = "Sample", shape = "Sample",
+         x = "FWHM of the 1035 peak",
+         y = "Splitting factor")
 
 # isolate calculus samples to see diffs between days and the 'real deal'
 grind_calc_plot <- grind_data %>%
@@ -264,15 +293,17 @@ grind_calc_plot <- grind_data %>%
 
 
 ```{r message=FALSE, warning=FALSE}
-#| label: grind-curve-inset
-#| fig-cap: "(A) Grinding curves of multiple substances, and (B) calculus-only."
+#| label: fig-grind-curve-inset
+#| fig-cap: "(A) Grinding curves of multiple materials; and (B) calculus-only materials, including biofilm samples from three days, and an archaeological calclulus sample."
 grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right = 1, top = 1) + 
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 ```
 
 ## Conclusion
 
-The artificial samples resemble both the modern reference samples and the
-archaeological sample in mineral composition and crystallinity. The grinding
-curves for days 16, 20, and 24 were very similar, suggesting that the CPMU
-solution (introduced on day 16) may not have much of an effect.
+The artificial samples from day 24 resemble both the modern reference samples and the
+archaeological sample in mineral composition and crystallinity. 
+Overall, the spectra of the artificial calculus show an increase in the
+inorganic component and a decrease in the organic protein component over time.
+The grinding curves for days 16, 20, and 24 were very similar, suggesting
+that the CPMU solution (introduced on day 16) may not have much of an effect.
