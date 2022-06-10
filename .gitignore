@@ -61,5 +61,5 @@ vignettes/*.pdf
 **/*.fasta
 **/*.fna
 **/*.fa
-
+**/*.nb.html
 
