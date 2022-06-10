@@ -1,89 +1,43 @@
-sample	sample_name	day	grind	well	source
-ArchDC_MB11_grind_a	ArchDC	NA	a	NA	Archaeological
-ArchDC_MB11_grind_b	ArchDC	NA	b	NA	Archaeological
-ArchDC_MB11_grind_c	ArchDC	NA	c	NA	Archaeological
-ArchDC_MB11_grind_d	ArchDC	NA	d	NA	Archaeological
-ArchDC_MB11_grind_e	ArchDC	NA	e	NA	Archaeological
-ArchDC_MB11_grind_f	ArchDC	NA	f	NA	Archaeological
-F12.1A5+F12.B1_B	F12.1A5	12	NA	NA	Artificial
-F12.1A5+F12.B1	F12.1A5	12	NA	NA	Artificial
-F12.1D1+F12.1D2	F12.1D1	12	NA	NA	Artificial
-F16.1A2	F16.1A2	16	NA	NA	Artificial
-F16.1B2_grind_a	F16.1B2	16	a	NA	Artificial
-F16.1B2_grind_b	F16.1B2	16	b	NA	Artificial
-F16.1B2_grind_c	F16.1B2	16	c	NA	Artificial
-F16.1B2_grind_d	F16.1B2	16	d	NA	Artificial
-F16.1B2_grind_e	F16.1B2	16	e	NA	Artificial
-F16.1B2_grind_f	F16.1B2	16	f	NA	Artificial
-F16.1B2	F16.1B2	16	NA	NA	Artificial
-F16.1C6	F16.1C6	16	NA	NA	Artificial
-F16.1C6+1D6_grind_a	F16.1C6	16	a	NA	Artificial
-F16.1C6+1D6_grind_b	F16.1C6	16	b	NA	Artificial
-F16.1C6+1D6_grind_c	F16.1C6	16	c	NA	Artificial
-F16.1C6+1D6_grind_e	F16.1C6	16	e	NA	Artificial
-F16.1C6+1D6_grind_f	F16.1C6	16	f	NA	Artificial
-F16.1D6	F16.1D6	16	NA	NA	Artificial
-F16.2B2	F16.2B2	16	NA	NA	Artificial
-F16.2C2_grind_a	F16.2C2	16	a	NA	Artificial
-F16.2C2_grind_b	F16.2C2	16	b	NA	Artificial
-F16.2C2_grind_c	F16.2C2	16	c	NA	Artificial
-F16.2C2_grind_d	F16.2C2	16	d	NA	Artificial
-F16.2C2_grind_e	F16.2C2	16	e	NA	Artificial
-F16.2D2_b	F16.2D2	16	NA	NA	Artificial
-F16.2D2	F16.2D2	16	NA	NA	Artificial
-F20.1A1_b	F20.1A1	20	NA	NA	Artificial
-F20.1A1	F20.1A1	20	NA	NA	Artificial
-F20.1B5_grind_a	F20.1B5	20	a	NA	Artificial
-F20.1B5_grind_b	F20.1B5	20	b	NA	Artificial
-F20.1B5_grind_c	F20.1B5	20	c	NA	Artificial
-F20.1B5_grind_d	F20.1B5	20	d	NA	Artificial
-F20.1B5_grind_e	F20.1B5	20	e	NA	Artificial
-F20.1B5	F20.1B5	20	NA	NA	Artificial
-F20.1D5_grind_a	F20.1D5	20	a	NA	Artificial
-F20.1D5_grind_b	F20.1D5	20	b	NA	Artificial
-F20.1D5_grind_c	F20.1D5	20	c	NA	Artificial
-F20.1D5_grind_d	F20.1D5	20	d	NA	Artificial
-F20.1D5_grind_e	F20.1D5	20	e	NA	Artificial
-F20.1D5	F20.1D5	20	NA	NA	Artificial
-F20.2A5_b	F20.2A5	20	NA	NA	Artificial
-F20.2A5	F20.2A5	20	NA	NA	Artificial
-F20.2C5+2D5_grind_a	F20.2C5	20	a	NA	Artificial
-F20.2C5+2D5_grind_b	F20.2C5	20	b	NA	Artificial
-F20.2C5+2D5_grind_c	F20.2C5	20	c	NA	Artificial
-F20.2C5+2D5_grind_d	F20.2C5	20	d	NA	Artificial
-F20.2C5+2D5_grind_e	F20.2C5	20	e	NA	Artificial
-F20.2D5	F20.2D5	20	NA	NA	Artificial
-F24.1A3_grind_a	F24.1A3	24	a	NA	Artificial
-F24.1A3_grind_b	F24.1A3	24	b	NA	Artificial
-F24.1A3_grind_c	F24.1A3	24	c	NA	Artificial
-F24.1A3_grind_d	F24.1A3	24	d	NA	Artificial
-F24.1A3_grind_e	F24.1A3	24	e	NA	Artificial
-F24.1A3	F24.1A3	24	NA	NA	Artificial
-F24.1B3_b	F24.1B3	24	NA	NA	Artificial
-F24.1B3	F24.1B3	24	NA	NA	Artificial
-F24.1C2	F24.1C2	24	NA	NA	Artificial
-F24.1D3_grind_a	F24.1D3	24	a	NA	Artificial
-F24.1D3_grind_b	F24.1D3	24	b	NA	Artificial
-F24.1D3_grind_c	F24.1D3	24	c	NA	Artificial
-F24.1D3_grind_d	F24.1D3	24	d	NA	Artificial
-F24.1D3_grind_e	F24.1D3	24	e	NA	Artificial
-F24.1D3_grind_f	F24.1D3	24	f	NA	Artificial
-F24.1D3	F24.1D3	24	NA	NA	Artificial
-F24.2A4_b	F24.2A4	24	NA	NA	Artificial
-F24.2A4	F24.2A4	24	NA	NA	Artificial
-F24.2B4	F24.2B4	24	NA	NA	Artificial
-F24.2C3_b	F24.2C3	24	NA	NA	Artificial
-F24.2C3	F24.2C3	24	NA	NA	Artificial
-F24.2C3+2D3_grind_a	F24.2C3	24	a	NA	Artificial
-F24.2C3+2D3_grind_b	F24.2C3	24	b	NA	Artificial
-F24.2C3+2D3_grind_c	F24.2C3	24	c	NA	Artificial
-F24.2C3+2D3_grind_d	F24.2C3	24	d	NA	Artificial
-F24.2C3+2D3_grind_e	F24.2C3	24	e	NA	Artificial
-F24.2D3_B	F24.2D3	24	NA	NA	Artificial
-F24.2D3	F24.2D3	24	NA	NA	Artificial
-F7.1A6_b	F7.1A6	7	NA	NA	Artificial
-F7.1A6	F7.1A6	7	NA	NA	Artificial
-F7.2D1	F7.2D1	7	NA	NA	Artificial
-F7	F7	7	NA	NA	Artificial
-modern_ref1	modern	NA	NA	NA	Modern
-modern_ref2	modern	NA	NA	NA	Modern
+sample_id	day	well	source	comb	grind	tube	experiment	sample	plate	position	treatment	weight_mg
+ArchDC	NA	NA	Archaeological	NA	TRUE	NA	NA	NA	NA	NA	NA	NA
+F12.1A5	12	NA	Artificial	F12.1A5+F12.B1_B	FALSE	F12.1A5	N	calculus	1	A5	starch	2.15
+F12.B1	12	NA	Artificial	F12.1A5+F12.B1_B	FALSE	NA	NA	NA	NA	NA	NA	NA
+F12.1D1	12	NA	Artificial	F12.1D1+F12.1D2	FALSE	F12.1D1	N	calculus	1	D1	control	0.44
+F12.1D2	12	NA	Artificial	F12.1D1+F12.1D2	FALSE	F12.1D2	N	calculus	1	D2	control	0.44
+F16.1A2	16	NA	Artificial	NA	FALSE	F16.1A2	N	calculus	1	A2	starch	1.56
+F16.1B2	16	NA	Artificial	NA	TRUE	F16.1B2	N	calculus	1	B2	starch	2.08
+F16.1C6	16	NA	Artificial	NA	FALSE	F16.1C6	N	calculus	1	C6	control	3.09
+F16.1D6	16	NA	Artificial	F16.1C6+F16.1D6_grind_a	TRUE	F16.1D6	N	calculus	1	D6	control	2.09
+F16.2B2	16	NA	Artificial	NA	FALSE	F16.2B2	N	calculus	2	B2	starch	1.53
+F16.2C2	16	NA	Artificial	NA	TRUE	F16.2C2	N	calculus	2	C2	control	1.72
+F16.2D2	16	NA	Artificial	NA	FALSE	F16.2D2	N	calculus	2	D2	control	1.93
+F20.1A1	20	NA	Artificial	NA	FALSE	F20.1A1	N	calculus	1	A1	starch	2.86
+F20.1B5	20	NA	Artificial	NA	TRUE	F20.1B5	N	calculus	1	B5	starch	4.87
+F20.1D5	20	NA	Artificial	NA	TRUE	F20.1D5	N	calculus	1	D5	control	9.13
+F20.2A5	20	NA	Artificial	NA	FALSE	F20.2A5	N	calculus	2	A5	starch	1.44
+F20.2C5	20	NA	Artificial	F20.2C5+F20.2D5_grind_a	TRUE	F20.2C5	N	calculus	2	C5	control	0.64
+F20.2D5	20	NA	Artificial	F20.2C5+F20.2D5_grind_a	TRUE	F20.2D5	N	calculus	2	D5	control	2.05
+F24.1A3	24	NA	Artificial	NA	TRUE	F24.1A3	N	calculus	1	A3	starch	4.27
+F24.1B3	24	NA	Artificial	NA	FALSE	F24.1B3	N	calculus	1	B3	starch	2.07
+F24.1C2	24	NA	Artificial	NA	FALSE	F24.1C2	N	calculus	1	C2	control	5.54
+F24.1D3	24	NA	Artificial	NA	TRUE	F24.1D3	N	calculus	1	D3	control	7.37
+F24.2A4	24	NA	Artificial	NA	FALSE	F24.2A4	N	calculus	2	A4	starch	2.49
+F24.2B4	24	NA	Artificial	NA	FALSE	F24.2B4	N	calculus	2	B4	starch	1.99
+F24.2C3	24	NA	Artificial	NA	FALSE	F24.2C3	N	calculus	2	C3	control	3.46
+F24.2D3	24	NA	Artificial	F24.2C3+F24.2D3_grind_a	TRUE	F24.2D3	N	calculus	2	D3	control	3.77
+F7.1A6	7	NA	Artificial	NA	FALSE	F7.1A6	N	calculus	1	A6	starch	1.2
+F7.2D1	7	NA	Artificial	NA	FALSE	F7.2D1	N	calculus	2	D1	control	0.39
+F7	7	NA	Artificial	NA	FALSE	NA	NA	NA	NA	NA	NA	NA
+modern-ref_1	NA	NA	Modern	NA	FALSE	NA	NA	NA	NA	NA	NA	NA
+modern-ref_2	NA	NA	Modern	NA	FALSE	NA	NA	NA	NA	NA	NA	NA
+F12.1B1	12	NA	NA	NA	NA	F12.1B1	N	calculus	1	B1	starch	1.34
+F12.2A6	12	NA	NA	NA	NA	F12.2A6	N	calculus	2	A6	starch	0.31
+F12.2B6	12	NA	NA	NA	NA	F12.2B6	N	calculus	2	B6	starch	0.09
+F12.2C6	12	NA	NA	NA	NA	F12.2C6	N	calculus	2	C6	control	0.22
+F12.2D6	12	NA	NA	NA	NA	F12.2D6	N	calculus	2	D6	control	0.46
+F7.1C4	7	NA	NA	NA	NA	F7.1C4	N	calculus	1	C4	control	0.17
+F16.2A2	16	NA	NA	NA	NA	F16.2A2	N	calculus	2	A2	starch	0.47
+F20.1C3	20	NA	NA	NA	NA	F20.1C3	N	calculus	1	C3	control	0.15
+F20.2B5	20	NA	NA	NA	NA	F20.2B5	N	calculus	2	B5	starch	0.68
+F24.1C5	24	NA	NA	NA	NA	F24.1C5	N	calculus	1	C5	control	2.45
+F24.2C4	24	NA	NA	NA	NA	F24.2C4	N	calculus	2	C4	control	3.44
