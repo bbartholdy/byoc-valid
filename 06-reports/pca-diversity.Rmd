@@ -23,7 +23,7 @@ sample per row, and one column per taxon
 
 ```{r convert-table}
 species_otu_table <- species_abundance_long %>%
-  select(!rel_abund) %>% 
+  dplyr::select(!rel_abund) %>% 
   pivot_wider(
     names_from = "species",
     values_from = "count"
@@ -31,7 +31,7 @@ species_otu_table <- species_abundance_long %>%
   mutate(across(where(is.numeric), replace_na, 0))
 
 genus_otu_table <- genus_abundance_long %>%
-  select(!rel_abund) %>% 
+  dplyr::select(!rel_abund) %>% 
   pivot_wider(
     names_from = "genus",
     values_from = "count"
@@ -43,7 +43,7 @@ Metadata for the included samples are prepared,
 
 ```{r metadata}
 analysis_metadata <- species_otu_table %>%
-  select(sample) %>%
+  dplyr::select(sample) %>%
   rename(`#SampleID` = sample) %>%
   left_join(metadata) # include only samples in comb_otu_table
 ```
@@ -61,24 +61,12 @@ Data are converted to a matrix for further analysis with the
 [**vegan**](https://cran.r-project.org/web/packages/vegan/index.html)
 R packages.
 
-## Experiment samples only
-
 ```{r}
 sample_otu_matrix <- species_otu_table %>%
   filter(str_detect(sample, "SYN")) %>% 
   column_to_rownames(var = "sample") %>%
   as.matrix()
-```
 
-
-## Artificial calculus and comparative oral sources
-
-Data are converted to a matrix for further analysis with the
-[**mixOmics**](http://mixomics.org/) and
-[**vegan**](https://cran.r-project.org/web/packages/vegan/index.html)
-R packages.
-
-```{r}
 species_otu_matrix <- species_otu_table %>%
   column_to_rownames(var = "sample") %>%
   as.matrix()
@@ -88,14 +76,64 @@ genus_otu_matrix <- genus_otu_table %>%
   as.matrix()
 ```
 
+# Diversity
 
-# PCA analysis
+## Alpha
+
+### Experiment duration
+
+Shannon index across the course of the experiment.
+
+```{r}
+# Shannon index for samples
+alpha_div <- diversity(species_otu_matrix)
+
+alpha_div %>% 
+  as_tibble(rownames = "sample") %>%
+  rename("#SampleID" = sample) %>% 
+  left_join(analysis_metadata, by = "#SampleID") %>% 
+  mutate(day = as_factor(day)) %>% 
+  filter(!is.na(day)) %>% 
+  ggplot(aes(x = day, y = value, col = day)) +
+    geom_boxplot() +
+    geom_jitter(width = 0.2) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.4),
+          legend.position = "none",
+          panel.grid.major.x = element_blank())
+```
+
+Not really enough samples to make any relevant interpretations.
+
+### Sample types
+
+Shannon index was calculated for each sample and compared between sample types.
+
+```{r}
+alpha_div %>%
+  as_tibble(rownames = "sample") %>%
+  rename("#SampleID" = sample) %>% 
+  left_join(analysis_metadata, by = "#SampleID") %>% 
+  ggplot(aes(x = Env, y = value, col = Env)) +
+    geom_boxplot() +
+    geom_jitter(width = 0.2) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.4),
+          legend.position = "none",
+          panel.grid.major.x = element_blank())
+```
+
+Higher overall alpha diversity in the comparative samples than the artificial
+samples.
+
+
+## Beta
 
 sPCA using the **mixOmics** R package.
 
 Centered log-ratio (CLR) transformation with 1 offset.
 
-## Experiment samples only
+### Experiment samples only
 
 ```{r}
 clr_sample <- logratio.transfo(sample_otu_matrix, "CLR", 1)
@@ -118,7 +156,7 @@ sample_princomp %>%
   ggplot(
     aes(
       x = PC1, y = PC2, 
-      col = sample_metadata$Env, 
+      col = as.factor(sample_metadata$day),
       shape = sample_metadata$Env
      )
     ) +
@@ -130,7 +168,7 @@ sample_princomp %>%
       y = paste(
         "PC2", 
         scales::percent(sample_explain_var[[2]], accuracy = 0.1)),
-      col = "Sample type",
+      col = "Sampling day",
       shape = "Sample type"
       ) +
     theme_bw() +
@@ -140,7 +178,7 @@ sample_princomp %>%
 PC1 discriminates the saliva samples from the medium and calculus samples,
 while PC2 mainly discriminates calculus from medium.
 
-## Artificial calculus and comparative oral sources
+### Artificial calculus and comparative oral sources
 
 ```{r}
 clr_species <- logratio.transfo(species_otu_matrix, "CLR", 1)
@@ -173,8 +211,12 @@ spca_compar %>%
       y = paste(
         "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
       )
-    )
+    ) +
+  scale_colour_viridis_d()
 ```
+
+The artificial calculus clusters with the medium, while the modern
+reference calculus clusters with plaque and saliva.
 
 Main drivers of discrimination. (include loading vectors)
 
@@ -191,7 +233,6 @@ plotVar(spca_species, cutoff = 0.92)
 ```
 
 ```{r}
-
 biplot(spca_species, comp = 1:2, cutoff = 0.92, group = analysis_metadata$Env, ind.names = F)
 ```
 
@@ -205,44 +246,4 @@ plotVar(spca_genus, cutoff = 0.9)
 biplot(spca_genus, comp = 1:2, cutoff = 0.92, group = analysis_metadata$Env, ind.names = F)
 ```
 
-
-# Diversity
-
-## alpha
-
-```{r}
-# Shannon index for samples
-
-alpha_div <- diversity(species_otu_matrix)
-
-alpha_div %>%
-  as_tibble(rownames = "sample") %>%
-  rename("#SampleID" = sample) %>% 
-  left_join(analysis_metadata, by = "#SampleID") %>% 
-  ggplot(aes(x = Env, y = value, fill = Env)) +
-    geom_boxplot() +
-    geom_jitter(width = 0.2) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45),
-          legend.position = "none",
-          panel.grid.major.x = element_blank())
-```
-
-Higher overall alpha diversity in the comparative samples than the artificial
-samples.
-
-## beta
-
-```{r}
-sample_counts_offset <- sample_counts %>%
-    relocate(sample_metadata$`#SampleID`) %>% # relocate columns to match metadata
-    as.matrix() %>%
-    t() %>%
-    + 1
-group_day <- as.factor(sample_metadata$day)
-group_treatment <- sample_metadata$treatment
-group_treatment[is.na(group_treatment)] <- 0
-group_plate <- as.factor(sample_metadata$plate)
-group_env <- as.factor(sample_metadata$Env)
-```
 

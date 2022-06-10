@@ -18,18 +18,27 @@ species_properties <- bac_properties %>%
   right_join(species_abundance_long, by = "species") %>%
   mutate(abs = if_else(is.na(abs), FALSE, abs))
 
+# top_species_names <- species_abundance_long %>% 
+#   group_by(sample) %>% 
+#   arrange(desc(rel_abund)) %>% 
+#   slice_head(n = 4) %>% 
+#   .$species %>% 
+#   unique()
+
 top_species_names <- species_abundance_long %>% 
-  group_by(sample) %>% 
-  arrange(desc(rel_abund)) %>% 
-  slice_head(n = 4) %>% 
+  filter(rel_abund > 0.1) %>% 
   .$species %>% 
   unique()
 
 top_abundance_species <- species_abundance_long %>% 
   mutate(
     top_species = case_when(
-      species %in% top_species_names ~ species,
-      TRUE ~ "other"), # label all species below top 10 as 'other' so the rel_abund still sums to 1
+      rel_abund > 0.1 ~ species,
+      TRUE ~ "other"
+    ),
+    # top_species = case_when(
+    #  species %in% top_species_names ~ species,
+    #   TRUE ~ "other"), # label all species below top 10 as 'other' so the rel_abund still sums to 1
     top_species = as_factor(top_species)) %>% 
   mutate(
     top_species = factor(
@@ -60,10 +69,6 @@ day_order <- analysis_metadata %>%
   arrange(desc(day)) %>% # order by sampling day (ascending)
   .$`#SampleID` # isolate sample names
 
-# Plot colours
-my_pallette <- c(viridisLite::plasma(n = length(top_species_names)), "grey") 
-names(my_pallette) <- levels(top_abundance_species$top_species)
-my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
 
 my_pallette2 <- c(viridisLite::magma(n = length(top_genus_names)), "grey") 
 names(my_pallette2) <- levels(top_abundance_genus$top_genus)
@@ -90,7 +95,7 @@ analysis_colours <- analysis_metadata %>%
 
 # Within the experiment
 
-time series
+Plotting species abundances across the experiment.
 
 ## Genus composition
 
@@ -102,6 +107,17 @@ top_abundance_genus %>%
     theme_void() +
     scale_y_discrete(limits = day_order) +
     my_scale2 +
+    theme(axis.text = element_text())
+
+genus_abundance_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  mutate(top_genus = case_when(rel_abund > 0.05 ~ genus,
+                               TRUE ~ "other")) %>% 
+  ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
+    geom_col() +
+    theme_void() +
+    scale_y_discrete(limits = day_order) +
+    #my_scale2 +
     theme(axis.text = element_text())
 ```
 
@@ -115,6 +131,23 @@ sample. Remaining species are designated as 'other'.
 
 ```{r}
  # label all species below top 10 as 'other' so the rel_abund still sums to 1 for plotting
+
+
+# Plot colours
+my_pallette <- c(viridisLite::plasma(n = length(top_species_names)), "grey") 
+names(my_pallette) <- levels(top_abundance_species$top_species)
+my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
+
+# Plot colours
+species_colours_sample <- top_abundance_species %>% 
+  filter(str_detect(sample, "SYN")) %>%
+  mutate(top_species = as.character(top_species)) %>% 
+  .$top_species %>%
+  unique()
+my_pallette <- c(viridisLite::plasma(n = length(species_colours_sample) - 1), "grey") 
+names(my_pallette) <- c(species_colours_sample[which(species_colours_sample != "other")], "other")
+my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
+
 top_abundance_species %>%
   filter(str_detect(sample, "SYN")) %>%
   #arrange(day) %>%
@@ -124,6 +157,49 @@ top_abundance_species %>%
     scale_y_discrete(limits = day_order) +
     my_scale +
     theme(axis.text = element_text())
+
+species_abundance_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  mutate(top_species = case_when(rel_abund > 0.05 ~ species,
+                               TRUE ~ "other")) %>% 
+  ggplot(aes(x = rel_abund, y = sample, fill = top_species)) +
+    geom_col() +
+    theme_void() +
+    scale_y_discrete(limits = day_order) +
+    #my_scale2 +
+    theme(axis.text = element_text())
+```
+
+### Mean proportions
+
+The proportions of species across sample type (i.e. calculus, medium, saliva)
+were calculated by taking the sum of species counts per sample
+type and dividing it by the sum of all species-counts within each sample type.
+
+The plot displays the top species across all sample types. There is little overlap
+of species between sample types.
+
+```{r}
+## NOT THE WAY TO DO THIS ##
+mean_proportions <- species_abundance_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  rename(`#SampleID` = sample) %>%
+  left_join(analysis_metadata, by = "#SampleID") %>% 
+  #mutate(species = as_factor(species)) %>% 
+  #rowwise(species, Env) %>%
+  mutate(count = replace_na(count, 0)) %>% 
+  group_by(Env, species) %>%
+  summarise(sum_count = sum(count)) %>%
+  group_by(Env,.add = F) %>%
+  mutate(mean_prop = sum_count / sum(sum_count)) %>% 
+  na.omit() %>% 
+  dplyr::select(!sum_count) %>% 
+  arrange(desc(mean_prop)) %>%
+  slice_head(n = 6)
+
+mean_proportions %>% 
+  ggplot(aes(x = mean_prop, y = species, fill = Env)) +
+    geom_col(position = "dodge", width = 0.7)
 ```
 
 ### Oxygen tolerance
@@ -148,8 +224,13 @@ species_properties %>%
       values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))))
 ```
 
+Generally an increase of anaerobes over the course of the experiment, at the
+expense of facultative anaerobes. Low proportion of aerobes throughout the
+experiment.
 
 ### Amylase-binding species
+
+Relative abundance of ABS per sample. Different treatments indicated by text colour.
 
 ```{r}
 species_properties %>% 
@@ -172,12 +253,13 @@ species_properties %>%
 ```{r}
 analysis_metadata %>%
   filter(str_detect(`#SampleID`, "SYN")) %>% 
-  select(`#SampleID`, treatment)
+  dplyr::select(`#SampleID`, treatment)
 ```
 
 Table with relative abundance of ABS in samples grouped by treatment.
 
 ```{r}
+## NOT WORKING PROPERLY ##
 species_properties %>%
   rename("#SampleID" = sample) %>%
   left_join(analysis_metadata, by = "#SampleID") %>%
@@ -192,7 +274,8 @@ species_properties %>%
 
 The presence of ABS was unrelated to the presence of starch.
 Although, the highest proportion of ABS was found in the control samples, which
-were not exposed to starch at any point during the experiment.
+were not exposed to starch at any point during the experiment. These results
+may be irrelevant since there is no amylase in the model, except during inoculation.
 
 # Comparative samples
 
@@ -212,8 +295,35 @@ Species outside of the top 10 are labeled 'other'.
 
 ### Mean proportions
 
-Calculate mean proportions of species by sample type 
-(calculus, sub-plaque, modern calculus, sup-plaque).
+The proportions of species across sample type (i.e. calculus, modern calculus,
+plaque, etc.) were calculated by taking the sum of species counts per sample
+type and dividing it by the sum of all species-counts within each sample type.
+
+The plot displays the top species across all sample types. There is little overlap
+of species between sample types.
+
+```{r}
+## NOT WORKING PROPERLY ##
+mean_proportions <- species_abundance_long %>%
+  rename(`#SampleID` = sample) %>%
+  left_join(analysis_metadata, by = "#SampleID") %>% 
+  #mutate(species = as_factor(species)) %>% 
+  #rowwise(species, Env) %>%
+  mutate(count = replace_na(count, 0)) %>% 
+  group_by(Env, species) %>%
+  summarise(sum_count = sum(count)) %>%
+  group_by(Env,.add = F) %>%
+  mutate(mean_prop = sum_count / sum(sum_count)) %>% 
+  na.omit() %>% 
+  select(!sum_count) %>% 
+  arrange(desc(mean_prop)) %>%
+  slice_head(n = 5)
+
+mean_proportions %>% 
+  ggplot(aes(x = mean_prop, y = species, fill = Env)) +
+    geom_col(position = "dodge", width = 0.7)
+```
+
 
 ### Oxygen tolerance
 
@@ -230,7 +340,17 @@ species_properties %>%
     #theme(axis.text.x = element_text(angle = 90)) +
 ```
 
-
+```{r}
+## NOT WORKING PROPERLY ##
+species_properties %>%
+  rename("#SampleID" = sample) %>%
+  left_join(analysis_metadata, by = "#SampleID") %>%
+  #mutate(abs = if_else(abs == TRUE, "yes", "no")) %>%
+  #filter(abs == TRUE) %>%
+  group_by(Env, `Oxygen tolerance`) %>%
+  summarise(rel_abund = count / sum(count),
+            sd = sd(rel_abund))
+```
 
 ### Amylase-binding species
 
@@ -248,13 +368,18 @@ Amylase-binding species are seemingly underrepresented in the artificial calculu
 samples compared to the comparative samples.
 
 ```{r}
+## NOT WORKING PROPERLY ##
 species_properties %>%
   rename("#SampleID" = sample) %>%
   left_join(analysis_metadata, by = "#SampleID") %>%
   #mutate(abs = if_else(abs == TRUE, "yes", "no")) %>%
-  filter(abs == TRUE) %>%
-  group_by(Env) %>%
-  summarise(abs_abund = mean(rel_abund),
-            sd = sd(rel_abund))
+  #filter(abs == TRUE) %>%
+  #mutate(rel_abund = na_if(rel_abund, 0)) %>% 
+  group_by(Env, abs) %>%
+  summarise(mean_prop = mean(abs, na.rm = T),
+            sd = sd(rel_abund)) #%>%
+  group_by(Env, .add = F) %>%
+  mutate(rel_abund = abund / sum(abund)) #%>%
+  filter(abs == T)
 ```
 

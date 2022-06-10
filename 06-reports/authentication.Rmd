@@ -20,7 +20,7 @@ library(tidyverse)
 
 Upload the data and metadata.
 
-```{r}
+```{r message=FALSE}
 #| label: data-upload
 # upload data
 lib_conc <- readr::read_tsv(here("01-documentation/SYN_library_quant.tsv")) # library concentrations
@@ -97,6 +97,12 @@ Table summary
 biom summarize-table -i 04-analysis/sourcetracker/OTUs1000filter_table.biom > 04-analysis/sourcetracker/summary_OTUs1000filter-table.txt
 ```
 
+Convert to TSV for use with the **decontam** package.
+
+```sh
+biom convert -i 04-analysis/sourcetracker/OTUs1000filter_table.biom -o 04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv --to-tsv
+```
+
 Run SourceTracker 2 on the filtered OTU table with rarefaction depth of 10000
 for both source and samples. Samples and sources were mapped in the
 [ST_comb-plaque-map.txt](../04-analysis/sourcetracker/ST_comb-plaque-map.txt).
@@ -141,6 +147,93 @@ sourcetracker2 \
 ```
 
 The full results can be found in [04-analysis/sourcetracker/sourcetracker2_output](../04-analysis/sourcetracker/sourcetracker2_output2/)
+
+```{r}
+# sourcetracker with plaque source samples included
+
+sourcetracker2_long <- sourcetracker2 %>%
+  pivot_longer(cols = where(is.numeric), 
+               values_to = "proportion", 
+               names_to = "SampleID") %>%
+  rename(source = ...1)
+
+sourcetracker2.2_long <- sourcetracker2.2 %>%
+  pivot_longer(cols = where(is.numeric), 
+               values_to = "proportion", 
+               names_to = "SampleID") %>%
+  rename(source = ...1)
+
+
+# Arrange samples by age
+day_order <- metadata %>%
+  filter(SourceSink == "sink") %>%
+  arrange(day) %>%
+  filter(`#SampleID` %in% colnames(sourcetracker2.2)) %>%
+  .$`#SampleID`
+
+# sourcetracker with plaque source samples removed
+
+
+# contributions in problematic samples
+
+problem_samples <- sourcetracker2.2_long %>%
+  filter(source == "Unknown",
+         proportion > 0.2) %>%
+  .$SampleID
+
+#file_names_problems <- paste0("04-analysis/sourcetracker/sourcetracker2_output/", problem_samples, ".feature_table.txt")
+file_names_problems <- paste0("04-analysis/sourcetracker/sourcetracker2_output/", problem_samples, ".feature_table.txt")
+
+file_names_all <- paste0(
+  "04-analysis/sourcetracker/sourcetracker2_output/", 
+  unique(sourcetracker2_long$SampleID), 
+  ".feature_table.txt")
+all_data <- lapply(as.list(file_names_all), read_tsv)
+
+names(all_data) <- unique(sourcetracker2_long$SampleID)
+
+all_list_long <- lapply(all_data, function(x) x %>% 
+                              pivot_longer(cols = where(is.numeric),
+                                           values_to = "count",
+                                           names_to = "taxon") %>%
+                              rename(source = ...1)
+)
+
+all_data_long <- all_list_long %>% 
+  map_df(~ as_tibble(.x), .id = "SampleID")
+
+
+# How many unknowns are actually oral taxa
+
+iso_database <- load_database(cuperdec_database_ex, target = "oral")
+oral_taxa <- iso_database %>%
+  filter(Isolation_Source == TRUE)
+
+#ggsave(here("unknowns_plot1.png"), width = 10, height = 7, units = "in")
+
+unknown_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
+  #group_by(SampleID) %>%
+  #mutate(proportion = ) # proportion of taxon count in sample
+  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
+  geom_col(position = "fill") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+all_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
+  #group_by(SampleID) %>%
+  #mutate(proportion = ) # proportion of taxon count in sample
+  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
+    geom_col(position = "fill") +
+    scale_fill_viridis_d() +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90)) +
+    scale_x_discrete(limits = day_order)
+```
+
 
 ### Visualisation of sources
 

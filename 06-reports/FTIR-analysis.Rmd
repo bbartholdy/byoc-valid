@@ -1,7 +1,7 @@
 ---
 title: "FTIR analysis"
 output: 
-  word_document: default
+  #word_document: default
   html_notebook: default
 ---
 
@@ -17,6 +17,7 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
 library(tidyverse)
 library(patchwork)
 library(here)
+library(plotly)
 ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
 grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
@@ -41,41 +42,32 @@ calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy. We
 compared the spectra of artificial dental calculus with spectra of archaeological
 dental calculus, as well as splitting factors.
 
-### Materials
+## Materials
 
 ```{r}
-comb_samples <- ftir_metadata %>%
-  #filter(str_detect(sample, "\\+")) %>%
-  separate_rows(sample, sep = "\\+") %>%
-  mutate(
-    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D0-6]+"),
-    sample = case_when(
-      is.na(sample_name) ~ paste0("F", day, ".", sample),
-      TRUE ~ sample
-      ),
-    sample_name = str_extract(sample, "F[0-9]+.[0-9A-D0-6]+")
-  )
-
-comb_samples %>%
+#| label: ftir-summ
+n_samples <- ftir_metadata %>%
   filter(source == "Artificial") %>%
   group_by(day) %>% 
   summarise(
-    n = n()
-    ) %>%
-  knitr::kable()
+    n = n(),
+    weight = mean(weight_mg, na.rm = T)
+    )
+
+knitr::kable(n_samples, digits = 2, caption = "Summary of FTIR samples used in analysis, including weight in mg.")
 ```
 
-23 model biofilm samples from days 7, 16, 20, and 24, were analysed. Reference
+`r sum(n_samples$n)` model biofilm samples from days 7, 16, 20, and 24, were analysed. Reference
 samples for comparison included two modern calculus samples and an archaeological
 calculus sample. The
 archaeological sample was an isolated tooth from Middenbeemster, a rural Dutch
 site from the 19th century. Samples
-`r paste0(unique(comb_samples$sample_names), coll = ", ")`
+`r paste0(subset(ftir_metadata, !is.na(ftir_metadata$comb))$sample_id)`
 had to be combined to
 provide enough material for analysis. Only samples collected on the same day
-were combined with each other. Samples from days 7 and 12 did
+were combined with each other (`r paste(unique(subset(ftir_metadata, !is.na(ftir_metadata$comb))$comb))`). Samples from days 7 and 12 did
 not produce enough material for a grind curve. They were largely composed of
-organics and proteins, I would not be able to produce a splitting factor, anyway.
+organics and proteins, i.e. would not be able to produce a splitting factor, anyway.
 
 ```{r}
 #| label: grind-data-summary
@@ -90,31 +82,25 @@ grind_data %>%
 
 Table: Summary of samples used in grinding curves.
 
-### Methods
+## Methods
 
 Samples were ground with KBr and pressed under up to two tons of pressure.
 Repeated measurements were taken and after different grinding durations, and
-a grind curve was produced following Asscher et al.
-[-@asscherAtomicDisorder2011].
+a grind curve was produced following -@asscherAtomicDisorder2011.
 Samples were ground and analysed up to six times (a-f) for the grind curve.
 The analysis was conducted at Haifa University with a Thermo Nicolet is5
 spectrometer in transmission,
 at 4 cm$^{-1}$ resolution, with an average of 32 scans between wavenumbers 4000
 and 400 cm$^{-1}$.
-The splitting factor was calculated following Asscher et al.
-[-@asscherAtomicDisorder2011],
+The splitting factor was calculated following -@asscherAtomicDisorder2011,
 using the full width at half maximum (FWHM) of the main peak at 1035. Grinds a-f
 represent different levels of grinding. Samples denoted with an 'a' were ground
 for the least amount of time and 'f' the most.
 
-### Results
+## Results
 
 ```{r}
 #| label: results-setup
-# calculate wavenumber of highest peak
-# ftir_data <- ftir_data %>%
-#   group_by(sample) %>% 
-#   mutate(max_peak = wavenumber[which(abs == max(abs))])
 grind_sample_order <- c(
   "Archaeological calculus",
   "Artificial calculus day 16",
@@ -129,9 +115,11 @@ grind_sample_order <- c(
 ```
 
 
-```{r message=FALSE, warning=FALSE}
-#| label: day-7-spectra
-#| fig-cap: "Two spectra from biofilm sampled on day 7 of the experiment."
+```{r}
+#| label: ind-spectra
+#| fig-cap: "Spectra from all experiment sampling days."
+#| warning: false
+# day 7
 ftir_data %>%
   filter(
     day == 7,
@@ -141,15 +129,152 @@ ftir_data %>%
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
     theme_classic() +
-      scale_x_continuous(
-    n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    )
+    scale_x_reverse()
+# day 12
+ftir_data %>%
+  filter(
+    day == 12
+    #sample != "F7",
+    #sample != "F7.1A6_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 16
+ftir_data %>%
+  filter(
+    day == 16,
+    is.na(grind),
+    sample != "F16.2D2",
+    sample != "F16.1D6",
+    sample != "F16.1B2"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 24 (final product)
+ftir_data %>%
+  filter(
+    day == 24,
+    is.na(grind),
+    str_detect(sample, "[_]", negate = T),
+    sample != "F24.1B3",
+    sample != "F24.2C3",
+    sample != "F24.2D3",
+    sample != "F24.2A4",
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
 ```
 
+### Day 7
 
-Day 7 spectra show large organic component, especially proteins (and collagen?).
-The hydroxyapatite peak is present at around 1040, but the doublet around 600 is
-poorly defined or absent.
+```{r}
+#| label: int-plot-day7
+#| warning: false
+int_plot_7 <- ftir_data %>%
+  filter(
+    sample == "F7.1A6"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+plotly::ggplotly(int_plot_7)
+```
+
+Day 7 spectra have large O--H absorbance bands in stretching mode around 3400 cm$^{-1}$,
+as well as three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$. There is a clear amide I peak at 1650 and a less
+pronounced amide II peak at 1545 cm$^{-1}$. 
+In the 'fingerprint' region, C--O$_3^{2-}$ at 1400 absorbance band corresponding to the v~3~ stretching vibrations, P--O~4~ absorbance band
+corresponding to the v~3~ antisymmetric stretching vibrations
+at 1080, and minor phosphate absorption bands around 500 cm$^{-1}$ in
+sample F7.1A6, but absent in sample F7.2D1. The absorption bands at 1080
+cm$^{-1}$ could also be a C--N stretching mode from aliphatic amines.
+The relative absorbance of O--H and Amide I and II bands are higher than the
+phosphate bands, representing a relatively higher content of lipids and proteins
+than inorganic content. Large variation between spectra.
+
+### Day 12
+
+```{r}
+#| label: int-plot-day12
+#| warning: false
+ftir_data %>%
+  filter(
+    sample == "F12.1D1+F12.1D2"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+ggplotly()
+```
+
+Day 12, amide I and II continue to be the dominant peaks, and a higher ratio
+of both amide and O--H to PO~4~ v~3~ absorbance bands.
+Three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$. Reduced variation between two of the three spectra.
+
+What is the absorbance band at 1080?? Is it actually  Phosphate??
+
+### Day 16
+
+```{r}
+#| label: int-plot-day16
+#| warning: false
+ftir_data %>%
+  filter(
+    sample == "F16.2B2"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+ggplotly()
+```
+
+Day 16, the ratio of O--H and amides to PO~4~ has shifted, with
+the main peak shifting to the PO~4~ v~3~ absorbance band at 1040
+(except in sample F16.1A2). A well-defined PO~4~ doublet at 600 and 560 is
+present. Small CO$_3^{2-}$ stretching vibrations at 870 cm$^{-1}.
+Decreased variability between the spectra, with most spectra exhibiting a
+higher phosphate-to-protein/lipid ratio.
+
+### Day 24
+
+```{r}
+#| label: int-plot-day24
+#| warning: false
+ftir_data %>%
+  filter(
+    sample == "F24.1D3"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+ggplotly()
+```
+
+Day 24, 
+Very little variation between all of the spectra.
+
+the mineral phase continues to dominate. The main peak
+is the hydroxyapatite peak at around 1039 with a well-defined doublet at 604 and
+565. Reduction in lipids and microorganisms. (Jain et al. and Rohanizadeh et al.)
+
 
 ```{r}
 #| label: day-16-spectra
@@ -167,12 +292,9 @@ ftir_data %>%
     theme_classic() +
     scale_x_continuous(
       n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    )
+    ) +
+    scale_x_reverse()
 ```
-
-Day 16, the mineral phase has become more prominent than the organic. The
-hydroxyapatite peak is now the main peak, and the doublet is well-defined.
-There is still some variability in relative heights of the peaks between samples.
 
 ```{r message=FALSE, warning=FALSE}
 #| label: day-24-spectra
@@ -192,13 +314,75 @@ ftir_data %>%
     theme_classic() +
     scale_x_continuous(
       n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    )
+    ) +
+    scale_x_reverse()
 ```
 
 
-Day 24, the mineral phase continues to dominate. The main peak
-is the hydroxyapatite peak at around 1039 with a well-defined doublet at 604 and
-565.
+```{r int-plot}
+int_plot <- ftir_data %>%
+  filter(sample == "F24.1D3"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_continuous(
+      n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    ) +
+    scale_x_reverse()
+plotly::ggplotly(int_plot)
+```
+
+
+## Across sampling days
+
+```{r}
+#| label: all-days
+#| fig-cap: "Select samples from all sampling days."
+# day 6: F7.1A6
+# day 12: F12.1D1+F12.1D2
+# day 16: F16.2B2
+# day 24: F24.1D3 
+ftir_data %>%
+  filter(
+    sample == "F7.1A6" |
+    sample == "F12.1D1+F12.1D2" |
+    sample == "F16.2B2" |
+    sample == "F24.1D3"
+    ) %>%
+  mutate(abs = case_when(sample == "F7.1A6" ~ abs + 1.35,
+                         sample == "F12.1D1+F12.1D2" ~ abs + 0.9,
+                         sample == "F16.2B2" ~ abs + 0.45,
+                         TRUE ~ abs)) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
+```
+
+The main difference in the samples across the experiment, with
+increasing age, is an
+increase in the main peak at around 1040 cm-1, appearance of
+the phosphate doublet around 600 and 560 cm-1 between day 12
+and 16, an increase
+in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm-1,
+and a reduction of the C--H2 and C--H3 stretching vibrations.
+All samples were dried before analysis, so reduction in water content is likely
+due to the mineralisation process?
+
+High lipid and protein content consistent with the presence of extracellular
+polysaccharides and bacteria within a matrix. Microbial DNA and RNA may be
+visible from peaks around 1200--800 cm$^{-1}$ on days 7 and 12, which are
+later obscured by the increasing phosphate peak at 1040 cm$^{-1}$
+[@jainIsolationCharacterization2013]. The presence of water indicated by
+the O--H stretch is also consistent with a biofilm, which is around 90%
+water [@bergerOralBiofilms2018].
+
+Collagen at around 1659 and 1552 [@rohanizadehUltrastructuralStudy2005]?
+
+## Reference samples
 
 ```{r message=FALSE, warning=FALSE}
 #| label: arch-calc-spectra
@@ -212,12 +396,13 @@ ftir_data %>%
     theme_classic() +
     scale_x_continuous(
       n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    )
+    ) +
+    scale_x_reverse()
 ```
 
 The reference calculus is similar to the later biofilm samples. The main
 difference is the a lower protein component seen as a lower Amide I peak at
-around 1637.
+around 1637 compared to the carbonate peak at around 1420.
 
 ```{r}
 #| label: compare-calc-spectra
@@ -233,17 +418,47 @@ ftir_data %>%
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
     theme_classic() +
-    scale_x_continuous(
-      n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    )
+    # scale_x_continuous(
+    #   n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    # ) +
+    scale_x_reverse()
 ```
 
 
 The carbonate peak
 at 1421 is not as well-developed as the reference spectrum. Protein at 1654.
 
-The reference spectrum consists of carbonate (peaks 1418, 1458, 876), hydroxyapatite
+The reference spectrum consists of carbonate (peaks around 1420, 1460, 870), hydroxyapatite
 (peaks 1036, 604, 566), and protein (1637, Amide I).
+Hydroxyapatite represented as phosphate absorption bands at
+~1040cm-1 (PO v3 stretch) and , and at 600 and 550.
+
+Collagen (proline??? proline is a secondary amine) likely represented as the carboxylic acid stretch at 3200-2600.
+Stretch probably also includes bacteria and amine/amide
+
+ZOOM IN ON REGION 1800-500 cm-1
+
+```{r warning=FALSE}
+ftir_data %>%
+  filter(
+    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
+      sample == "modern_ref1",
+    wavenumber < 1800,
+    ) %>%
+  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.45,
+                         TRUE ~ abs)) %>% 
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    # scale_x_continuous(
+    #   n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    # ) +
+    scale_x_reverse()
+```
+
+The main difference in the region from 2000 to 500 cm-1 is the prominance of the
+amide I peak in the artificial sample, which is lacking in the archaeological and
+modern reference calculus samples.
 
 #### Grind curves
 
@@ -299,7 +514,16 @@ grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right 
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 ```
 
-## Conclusion
+## Discussion
+
+Hydroxyapatite already present by day 7, but relatively low compared
+to proteins and lipids. No signs of a brushite signature, meaning the
+shift from brushite to hydroxyapatite will have started prior to day 7.
+
+The presence of collagen in dental calculus is still not clear. It may be result
+of external contamination [@mackiePreservationMetaproteome2017] or end-products
+of collagen degradation (e.g. carboxyterminal telopeptide of type I collagen, ICTP)
+[@gursoySalivaryCollagen2013].
 
 The artificial samples from day 24 resemble both the modern reference samples and the
 archaeological sample in mineral composition and crystallinity. 
