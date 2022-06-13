@@ -5,10 +5,19 @@
 Software versions:
 
 ```{r}
-readr::read_tsv("../software_versions.csv", col_names = c("Software", "Version"))
+readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("Software", "Version"))
 ```
 
 ### Kraken reference database
 
 The reference database used in the EAGER pipeline was the Standard Kraken 2 database,
 downloaded from <https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20210517.tar.gz>
+
+## R
+
+R packages:
+
+```{r}
+# load renv list
+```
+
