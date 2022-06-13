@@ -57,9 +57,6 @@ abs_vector <- c("Streptococcus mitis", "Streptococcus oralis",
                 "Streptococcus salivarius", "Streptococcus vestibularis",
                 "Streptococcus mutans")
 
-all_species_names %>%
-  filter(str_detect(value, regex("streptococcus", ignore_case = T))) %>% view()
-
 bac_properties <- sample_oxytol %>%
   mutate(abs = case_when(species %in% abs_vector ~ TRUE,
                          TRUE ~ FALSE))
