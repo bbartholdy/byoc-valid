@@ -1,8 +1,11 @@
 ---
 title: "FTIR analysis"
-output: 
-  #word_document: default
+always_allow_html: true
+output:
+  word_document: default
   html_notebook: default
+  html_document:
+    df_print: paged
 ---
 
 ## Introduction
@@ -36,7 +39,6 @@ grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 ```
 
-
 To determine the mineral composition and crystallisation of the artificial dental
 calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy. We
 compared the spectra of artificial dental calculus with spectra of archaeological
@@ -57,15 +59,14 @@ n_samples <- ftir_metadata %>%
 knitr::kable(n_samples, digits = 2, caption = "Summary of FTIR samples used in analysis, including weight in mg.")
 ```
 
-`r sum(n_samples$n)` model biofilm samples from days 7, 16, 20, and 24, were analysed. Reference
-samples for comparison included two modern calculus samples and an archaeological
-calculus sample. The
-archaeological sample was an isolated tooth from Middenbeemster, a rural Dutch
-site from the 19th century. Samples
+`r sum(n_samples$n)` model biofilm samples from days 7, 16, 20, and 24, were analysed.
+Reference samples for comparison included two modern calculus samples and an
+archaeological calculus sample. The archaeological sample was an isolated tooth
+from Middenbeemster, a rural Dutch site from the 19th century. Samples
 `r paste0(subset(ftir_metadata, !is.na(ftir_metadata$comb))$sample_id)`
-had to be combined to
-provide enough material for analysis. Only samples collected on the same day
-were combined with each other (`r paste(unique(subset(ftir_metadata, !is.na(ftir_metadata$comb))$comb))`). Samples from days 7 and 12 did
+had to be combined to provide enough material for analysis. Only samples collected
+on the same day were combined with each other
+(`r paste(unique(subset(ftir_metadata, !is.na(ftir_metadata$comb))$comb))`). Samples from days 7 and 12 did
 not produce enough material for a grind curve. They were largely composed of
 organics and proteins, i.e. would not be able to produce a splitting factor, anyway.
 
@@ -190,13 +191,13 @@ int_plot_7 <- ftir_data %>%
 plotly::ggplotly(int_plot_7)
 ```
 
-Day 7 spectra have large O--H absorbance bands in stretching mode around 3400 cm$^{-1}$,
+Day 7 spectra have large O--H and amide A absorbance bands in stretching mode around 3400 cm$^{-1}$,
 as well as three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
 2920, and 2850 cm$^{-1}$. There is a clear amide I peak at 1650 and a less
 pronounced amide II peak at 1545 cm$^{-1}$. 
 In the 'fingerprint' region, C--O$_3^{2-}$ at 1400 absorbance band corresponding to the v~3~ stretching vibrations, P--O~4~ absorbance band
 corresponding to the v~3~ antisymmetric stretching vibrations
-at 1080, and minor phosphate absorption bands around 500 cm$^{-1}$ in
+at 1080 cm$^{-1}$, and minor phosphate absorption bands around 500 cm$^{-1}$ in
 sample F7.1A6, but absent in sample F7.2D1. The absorption bands at 1080
 cm$^{-1}$ could also be a C--N stretching mode from aliphatic amines.
 The relative absorbance of O--H and Amide I and II bands are higher than the
@@ -268,71 +269,13 @@ ftir_data %>%
 ggplotly()
 ```
 
-Day 24, 
+Day 24, large O--H and amide A absorbance bands in stretching mode around 3400 cm$^{-1}$,
+as well as three minor CH~3~ and CH$_2$ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$.
+Main peak of spectra is PO~4~ v~3~ at 1040
+cm$^{-1}$, well-defined PO~4~ doublet at 600-550 cm$^{-1}$. Amide I band,
+with small amide II and III bands. Carbonate peaks also present.
 Very little variation between all of the spectra.
-
-the mineral phase continues to dominate. The main peak
-is the hydroxyapatite peak at around 1039 with a well-defined doublet at 604 and
-565. Reduction in lipids and microorganisms. (Jain et al. and Rohanizadeh et al.)
-
-
-```{r}
-#| label: day-16-spectra
-#| fig-cap: "Spectra from biofilm sampled on day 16 of the experiment."
-ftir_data %>%
-  filter(
-    day == 16,
-    is.na(grind),
-    sample != "F16.2D2",
-    sample != "F16.1D6",
-    sample != "F16.1B2"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_continuous(
-      n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    ) +
-    scale_x_reverse()
-```
-
-```{r message=FALSE, warning=FALSE}
-#| label: day-24-spectra
-#| fig-cap: "Two spectra from the final biofilm product sampled on day 24 of the experiment."
-ftir_data %>%
-  filter(
-    day == 24,
-    is.na(grind),
-    str_detect(sample, "[_]", negate = T),
-    sample != "F24.1B3",
-    sample != "F24.2C3",
-    sample != "F24.2D3",
-    sample != "F24.2A4",
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_continuous(
-      n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    ) +
-    scale_x_reverse()
-```
-
-
-```{r int-plot}
-int_plot <- ftir_data %>%
-  filter(sample == "F24.1D3"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_continuous(
-      n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    ) +
-    scale_x_reverse()
-plotly::ggplotly(int_plot)
-```
-
 
 ## Across sampling days
 
@@ -369,8 +312,6 @@ the phosphate doublet around 600 and 560 cm-1 between day 12
 and 16, an increase
 in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm-1,
 and a reduction of the C--H2 and C--H3 stretching vibrations.
-All samples were dried before analysis, so reduction in water content is likely
-due to the mineralisation process?
 
 High lipid and protein content consistent with the presence of extracellular
 polysaccharides and bacteria within a matrix. Microbial DNA and RNA may be
@@ -378,9 +319,14 @@ visible from peaks around 1200--800 cm$^{-1}$ on days 7 and 12, which are
 later obscured by the increasing phosphate peak at 1040 cm$^{-1}$
 [@jainIsolationCharacterization2013]. The presence of water indicated by
 the O--H stretch is also consistent with a biofilm, which is around 90%
-water [@bergerOralBiofilms2018].
+water [@bergerOralBiofilms2018]. As the samples mature, the ratio of proteins
+and lipids to phosphates shift from predominance of organic content to
+inorganic content.
 
-Collagen at around 1659 and 1552 [@rohanizadehUltrastructuralStudy2005]?
+Early spectra, days 7 and 12, are also similar to collagen spectra, with the
+OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
+1659, 1552, and 1240 cm$^{-1}$, respectively 
+[@rohanizadehUltrastructuralStudy2005; @martinezcortizasLinkingStructural2020].
 
 ## Reference samples
 
@@ -389,20 +335,18 @@ Collagen at around 1659 and 1552 [@rohanizadehUltrastructuralStudy2005]?
 #| fig-cap: "Two spectra from a single sample of archaeological calculus with different grinding levels (c and d)."
 ftir_data %>%
   filter(
-    str_detect(sample, "MB11_grind_[cd]")
+    sample == "ArchDC_MB11_grind_c" | str_detect(sample, "modern_ref1")
     ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
     theme_classic() +
-    scale_x_continuous(
-      n.breaks = length(as.character(seq(500, 4000, by = 500)))
-    ) +
     scale_x_reverse()
 ```
 
-The reference calculus is similar to the later biofilm samples. The main
-difference is the a lower protein component seen as a lower Amide I peak at
-around 1637 compared to the carbonate peak at around 1420.
+The archaeological and modern reference spectra are largely indistinguishable and
+consist of an O--H absorbance band (3400 cm$^{-1}$), CH~3~ bands (3000--2900 cm$^{-1}$),
+carbonate (1420, 1460, 870 cm$^{-1}$), amide I band (1650 cm$^{-1}$), and phosphates
+(1040, 604, 566 cm$^{-1}$).
 
 ```{r}
 #| label: compare-calc-spectra
@@ -421,24 +365,16 @@ ftir_data %>%
     # scale_x_continuous(
     #   n.breaks = length(as.character(seq(500, 4000, by = 500)))
     # ) +
-    scale_x_reverse()
+    scale_x_reverse() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
 ```
 
 
-The carbonate peak
-at 1421 is not as well-developed as the reference spectrum. Protein at 1654.
-
-The reference spectrum consists of carbonate (peaks around 1420, 1460, 870), hydroxyapatite
-(peaks 1036, 604, 566), and protein (1637, Amide I).
-Hydroxyapatite represented as phosphate absorption bands at
-~1040cm-1 (PO v3 stretch) and , and at 600 and 550.
-
-Collagen (proline??? proline is a secondary amine) likely represented as the carboxylic acid stretch at 3200-2600.
-Stretch probably also includes bacteria and amine/amide
-
-ZOOM IN ON REGION 1800-500 cm-1
 
 ```{r warning=FALSE}
+#| label: zoom-plot
+#| fig-cap: "Plot of archaeological calculus, modern reference calculus, and artificial calculus, zoomed in on region 1800-400 cm-1."
 ftir_data %>%
   filter(
     str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
@@ -453,21 +389,25 @@ ftir_data %>%
     # scale_x_continuous(
     #   n.breaks = length(as.character(seq(500, 4000, by = 500)))
     # ) +
-    scale_x_reverse()
+    scale_x_reverse() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
 ```
 
-The main difference in the region from 2000 to 500 cm-1 is the prominance of the
-amide I peak in the artificial sample, which is lacking in the archaeological and
-modern reference calculus samples.
+The biofilm samples from the end of the experiment are similar to both reference
+samples. The main
+difference is a lower organic component in reference samples seen as a reduced
+amide I peak at around 1637 compared to the carbonate peak at around 1420, and
+an absence of amide II and III. Also a reduction in CH~3~ bands at 3000-2900 cm$^{-1}$.
 
 #### Grind curves
 
 Splitting factors were calculated from the grinding measurements, and a
-grinding curve was created to explore crystallinity (crystal size) order, and
+grinding curve was created to explore crystallinity (crystal size) order and
 disorder. Disorder is a steep slope and large FWHM.
 
-Samples are similar to fresh bone and dentin. No appreciable differences between days 16, 20,
-and 24.
+Samples are similar to fresh bone and dentin. No appreciable differences between
+days 16, 20, and 24.
 
 ```{r message=FALSE, warning=FALSE}
 #| label: grind-plots
@@ -516,18 +456,23 @@ grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right 
 
 ## Discussion
 
-Hydroxyapatite already present by day 7, but relatively low compared
-to proteins and lipids. No signs of a brushite signature, meaning the
-shift from brushite to hydroxyapatite will have started prior to day 7.
+Experimental samples are indicative of biofilm growth and maturation, including
+mineralisation, represented by a reduction in proteins and lipids and the increasing
+intensity of peaks related to hydroxyapatite (1040 and 600-550 cm$^{-1}$) and
+carbonate (1420, 1460, 870 cm$^{-1}$) over the course of the experiment.
 
-The presence of collagen in dental calculus is still not clear. It may be result
-of external contamination [@mackiePreservationMetaproteome2017] or end-products
+The presence of collagen in dental calculus (and saliva) is still not clear. It
+may be a result of external contamination [@mackiePreservationMetaproteome2017]
+or end-products
 of collagen degradation (e.g. carboxyterminal telopeptide of type I collagen, ICTP)
-[@gursoySalivaryCollagen2013].
+which may or may not be related to periodontitis
+[@gursoySalivaryCollagen2013]. It is more likely that the proline-rich proteins
+(secondary amine) present in the samples are attributed to the biofilm
+matrix.
 
-The artificial samples from day 24 resemble both the modern reference samples and the
-archaeological sample in mineral composition and crystallinity. 
+The artificial samples from day 24 resemble both the modern reference samples and
+the archaeological sample in mineral composition and crystallinity. 
 Overall, the spectra of the artificial calculus show an increase in the
-inorganic component and a decrease in the organic protein component over time.
+inorganic component and a decrease in the organic component over time.
 The grinding curves for days 16, 20, and 24 were very similar, suggesting
 that the CPMU solution (introduced on day 16) may not have much of an effect.
