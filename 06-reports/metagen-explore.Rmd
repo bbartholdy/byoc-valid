@@ -1,0 +1,391 @@
+---
+title: "Exploratory microbiome analysis"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+#species_abundance_long <- readr::read_tsv(here("05-results/species-abundance_long.tsv"))
+#genus_abundance_long <- readr::read_tsv(here("05-results/genus-abundance_long.tsv"))
+metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
+experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv"))
+analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
+bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
+otu_table_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv")) 
+
+# object to order plots by sampling day
+day_order <- experiment_metadata %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
+  #filter(str_detect(`#SampleID`, "SYN")) %>% # only include samples from this study
+  arrange(desc(day)) %>% # order by sampling day (ascending)
+  .$`#SampleID` # isolate sample names
+
+# top_species_names <- species_abundance_long %>% 
+#   group_by(sample) %>% 
+#   arrange(desc(rel_abund)) %>% 
+#   slice_head(n = 4) %>% 
+#   .$species %>% 
+#   unique()
+
+top_species_names <- species_abundance_long %>% 
+  filter(rel_abund > 0.1) %>% 
+  .$species %>% 
+  unique()
+
+top_abundance_species <- species_abundance_long %>% 
+  mutate(
+    top_species = case_when(
+      rel_abund > 0.1 ~ species,
+      TRUE ~ "other"
+    ),
+    # top_species = case_when(
+    #  species %in% top_species_names ~ species,
+    #   TRUE ~ "other"), # label all species below top 10 as 'other' so the rel_abund still sums to 1
+    top_species = as_factor(top_species)) #%>% 
+  # mutate(
+  #   top_species = factor(
+  #     top_species, 
+  #     levels = c(levels(top_species)[-63], "other")
+  #     ) # rearrange level 'other' to back
+  #   ) 
+
+top_genus_experiment <- genus_abundance_long %>% 
+  filter(str_detect(sample, "SYN")) %>% 
+  #group_by(sample) %>% 
+  arrange(desc(rel_abund)) %>% 
+  slice_head(n = 20) %>% 
+  .$genus %>% 
+  unique()
+
+top_genus_names <- genus_abundance_long %>% 
+  #filter(str_detect(sample, "SYN")) %>% 
+  group_by(sample) %>% 
+  arrange(desc(rel_abund)) %>% 
+  slice_head(n = 4) %>% 
+  .$genus %>% 
+  unique()
+
+
+top_abundance_genus <- genus_abundance_long %>% 
+  mutate(
+    top_genus = case_when(
+      genus %in% top_genus_names ~ genus,
+      TRUE ~ "other"), # label all species below top 10 as 'other' so the rel_abund still sums to 1
+    top_genus = as_factor(top_genus),
+    top_genus = factor(top_genus, levels = c(levels(top_genus)[-2], "other")) # rearrange level 'other' to back
+    ) 
+
+my_pallette2 <- c(viridisLite::magma(n = length(top_genus_names)), "grey") 
+names(my_pallette2) <- levels(top_abundance_genus$top_genus)
+my_scale2 <- scale_fill_manual(name = "top_genus", values = my_pallette2)
+
+treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
+env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
+
+experiment_colours <- experiment_metadata %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
+  mutate(Env = as_factor(Env),
+         treat_col = case_when(
+           treatment == "potato" ~ treatment_colours[1],
+           treatment == "wheat" ~ treatment_colours[2],
+           treatment == "mix" ~ treatment_colours[3],
+           treatment == "control" ~ treatment_colours[4],
+           is.na(treatment) ~ "grey"))
+analysis_colours <- analysis_metadata %>%
+  mutate(env_col = case_when(
+           Env == "calculus" ~ env_colours[1],
+           Env == "subgingival_plaque" ~ env_colours[2],
+           Env == "supragingival_plaque" ~ env_colours[3],
+           Env == "modern_calculus" ~ env_colours[4]
+         ))
+```
+
+# Data preparation
+
+Convert to long format and create a column for genus names.
+
+```{r}
+# convert decontaminated taxatable to long format
+otu_table_long <- otu_table_decontam %>%
+  pivot_longer(
+    cols = where(is.numeric),
+    names_to = "sample",
+    values_to = "count"
+    ) %>%
+  rename(species = `#OTU ID`) %>%
+  mutate(genus = str_extract(species, "\\w+"))
+```
+
+Convert counts to relative abundance per sample.
+
+```{r}
+species_abund_long <- otu_table_long %>%
+  group_by(sample) %>%
+  mutate(rel_abund = count / sum(count))
+```
+
+Combine with bacterial properties.
+
+```{r}
+species_properties <- bac_properties %>%
+  right_join(species_abund_long, by = "species") %>%
+  mutate(abs = if_else(is.na(abs), FALSE, abs))
+```
+
+
+# Within the experiment
+
+Plotting relative species abundances across the experiment.
+
+## Genus composition
+
+```{r}
+genus_abundance_long %>%
+  filter(str_detect(sample, "SYN")) %>%
+  mutate(
+    top_genus = case_when(
+      genus %in% top_genus_experiment ~ genus,
+      TRUE ~ "other")
+    ) %>%
+  ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
+    geom_col() +
+    theme_void() +
+    scale_y_discrete(limits = day_order) +
+    my_scale2 +
+    theme(axis.text = element_text())
+
+genus_abundance_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  mutate(top_genus = case_when(rel_abund > 0.05 ~ genus,
+                               TRUE ~ NA_character_)) %>% 
+  ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
+    geom_col() +
+    theme_void() +
+    scale_y_discrete(limits = day_order) +
+    #my_scale2 +
+    theme(axis.text = element_text())
+```
+
+
+
+## Species composition
+
+Only including the name of the top 10 species (relative abundance) within each
+sample. Remaining species are designated as 'other'.
+
+
+```{r}
+ # label all species below top 10 as 'other' so the rel_abund still sums to 1 for plotting
+
+
+# Plot colours
+# my_pallette <- c(viridisLite::plasma(n = length(top_species_names)), "grey") 
+# names(my_pallette) <- levels(top_abundance_species$top_species)
+# my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
+# 
+# # Plot colours
+# species_colours_sample <- top_abundance_species %>% 
+#   filter(str_detect(sample, "SYN")) %>%
+#   mutate(top_species = as.character(top_species)) %>% 
+#   .$top_species %>%
+#   unique()
+# my_pallette <- c(viridisLite::plasma(n = length(species_colours_sample) - 1), "grey") 
+# names(my_pallette) <- c(species_colours_sample[which(species_colours_sample != "other")], "other")
+# my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
+# 
+# top_abundance_species %>%
+#   filter(str_detect(sample, "SYN")) %>%
+#   #arrange(day) %>%
+#   ggplot(aes(x = rel_abund, y = sample, fill = top_species)) +
+#     geom_col() +
+#     theme_void() +
+#     scale_y_discrete(limits = day_order) +
+#     my_scale +
+#     theme(axis.text = element_text())
+
+species_abund_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  mutate(top_species = case_when(rel_abund > 0.05 ~ species,
+                               TRUE ~ NA_character_)) %>% 
+  ggplot(aes(x = rel_abund, y = sample, fill = top_species)) +
+    geom_col() +
+    theme_void() +
+    scale_y_discrete(limits = day_order) +
+    #my_scale2 +
+    theme(axis.text = element_text())
+```
+
+### Mean proportions
+
+The proportions of species across sample type (i.e. calculus, medium, saliva)
+were calculated by taking the sum of species counts per sample
+type and dividing it by the sum of all species-counts within each sample type.
+
+The plot displays the top species across all sample types. There is little overlap
+of species between sample types.
+
+```{r}
+## NOT THE WAY TO DO THIS ##
+mean_proportions <- species_abundance_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  rename(`#SampleID` = sample) %>%
+  left_join(analysis_metadata, by = "#SampleID") %>% 
+  #mutate(species = as_factor(species)) %>% 
+  #rowwise(species, Env) %>%
+  mutate(count = replace_na(count, 0)) %>% 
+  group_by(Env, species) %>%
+  summarise(sum_count = sum(count)) %>%
+  group_by(Env,.add = F) %>%
+  mutate(mean_prop = sum_count / sum(sum_count)) %>% 
+  na.omit() %>% 
+  dplyr::select(!sum_count) %>% 
+  arrange(desc(mean_prop)) %>%
+  slice_head(n = 6)
+
+mean_proportions %>% 
+  ggplot(aes(x = mean_prop, y = species, fill = Env)) +
+    geom_col(position = "dodge", width = 0.7)
+```
+
+### Oxygen tolerance
+
+```{r}
+no_match <- unique(filter(species_properties, is.na(`Oxygen tolerance`))$species) # which species had no match?
+```
+
+Proportional distribution of oxygen tolerances across experimental samples.
+Data on oxygen tolerance obtained from [BacDive](https://bacdive.dsmz.de/).
+A total of **`r length(no_match)`** out of
+**`r length(unique(species_abund_long$species))`**
+(`r scales::percent(length(no_match) / length(unique(species_abund_long$species)), accuracy = 0.1)`)
+species did not have a match on BacDive.
+
+```{r}
+species_properties %>% 
+  filter(str_detect(sample, "SYN")) %>% 
+  ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
+    geom_col() +
+    theme_minimal() +
+    #theme(axis.text.x = element_text(angle = 90)) +
+    scale_y_discrete(limits = day_order) +
+    scale_fill_manual(
+      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))))
+```
+
+Generally an increase of anaerobes over the course of the experiment, at the
+expense of facultative anaerobes. Low proportion of aerobes throughout the
+experiment.
+
+### Amylase-binding species
+
+Relative abundance of ABS per sample. Different treatments indicated by text colour.
+
+```{r}
+species_properties %>% 
+  filter(str_detect(sample, "SYN")) %>%#,
+         #str_detect(sample, "SYN00[1-3]", negate = T)) %>% 
+  ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
+    geom_col() +
+    theme_minimal() +
+    #theme(axis.text.x = element_text(angle = 90)) +
+    scale_y_discrete(limits = day_order) +
+    scale_fill_manual(
+      values = viridisLite::cividis(n = 2)) +
+    theme(
+      axis.text.y = element_text(
+        colour = experiment_colours %>%
+          arrange(desc(day)) %>%
+          .$treat_col))
+```
+
+```{r}
+analysis_metadata %>%
+  filter(str_detect(`#SampleID`, "SYN")) %>% 
+  dplyr::select(`#SampleID`, treatment)
+```
+
+The presence of ABS was unrelated to the presence of starch. The overall proportion
+of ABS decreases over the course of the experiment. The absence of amylase in
+the model may reduce the need for species capable of starch hydrolysis, especially
+when sucrose was available in all samples.
+
+# Comparative samples
+
+Looking at relative abundances at species and genus level. Artificial calculus samples only
+(i.e. day 24 of experiment) were compared with reference plaque and calculus samples.
+
+## Genus composition
+
+Top 4 most abundant genera in each sample are selected to provide a manageable
+overview of sample composition.
+
+Top 10 most abundant species are selected to provide a manageable overview.
+Species outside of the top 10 are labeled 'other'.
+
+## Species composition
+
+
+<!--
+### Mean proportions
+
+The proportions of species across sample type (i.e. calculus, modern calculus,
+plaque, etc.) were calculated by taking the sum of species counts per sample
+type and dividing it by the sum of all species-counts within each sample type.
+
+The plot displays the top species across all sample types. There is little overlap
+of species between sample types.
+
+```{r}
+## NOT WORKING PROPERLY ##
+mean_proportions <- species_abundance_long %>%
+  rename(`#SampleID` = sample) %>%
+  left_join(analysis_metadata, by = "#SampleID") %>% 
+  #mutate(species = as_factor(species)) %>% 
+  #rowwise(species, Env) %>%
+  mutate(count = replace_na(count, 0)) %>% 
+  group_by(Env, species) %>%
+  summarise(sum_count = sum(count)) %>%
+  group_by(Env,.add = F) %>%
+  mutate(mean_prop = sum_count / sum(sum_count)) %>% 
+  na.omit() %>% 
+  select(!sum_count) %>% 
+  arrange(desc(mean_prop)) %>%
+  slice_head(n = 5)
+
+mean_proportions %>% 
+  ggplot(aes(x = mean_prop, y = species, fill = Env)) +
+    geom_col(position = "dodge", width = 0.7)
+```
+
+-->
+
+### Oxygen tolerance
+
+Proportional distribution of oxygen tolerance across artificial calculus and
+comparative samples.
+
+```{r}
+species_properties %>% 
+  filter(str_detect(sample, "SYN[0-9]*.[A-H]", negate = T)) %>% 
+  ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
+    geom_col() +
+    scale_fill_viridis_d() +
+    theme_minimal()
+    #theme(axis.text.x = element_text(angle = 90)) +
+```
+### Amylase-binding species
+
+```{r}
+species_properties %>% 
+  filter(str_detect(sample, "SYN[0-9]*.[A-H]", negate = T)) %>% 
+  ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
+    geom_col() +
+    theme_minimal() +
+    scale_fill_viridis_d()
+    #theme(axis.text.x = element_text(angle = 90)) +
+```
+
+Amylase-binding species are seemingly underrepresented in the artificial calculus
+samples compared to the comparative samples.
+
