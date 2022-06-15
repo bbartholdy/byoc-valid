@@ -10,18 +10,29 @@ library(here)
 
 # upload data
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
-lib_conc <- readr::read_tsv("01-documentation/SYN_library_quant.tsv") # library concentrations
+lib_sample <- readr::read_tsv("05-results/lib_sample.tsv") %>%
+  rename("#OTU ID" = species)
+lib_conc <- readr::read_tsv("01-documentation/SYN_DNA_concentrations.tsv") # library concentrations
+#otu_table <- readr::read_tsv("04-analysis/pre-decontam_sample_taxatable.tsv")
 otu_filtered_table <- readr::read_tsv("04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv", skip = 1)
 #comp_taxatable <- readr::read_tsv("04-analysis/pre-decontam_comparative_taxatable.tsv")
 sourcetracker2 <- readr::read_tsv("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt")
 sourcetracker2_stdevs <- readr::read_tsv("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")
-sourcetracker2.2 <- readr::read_tsv("04-analysis/sourcetracker/sourcetracker2_output2/mixing_proportions.txt")
-sourcetracker2.2_stdevs <- readr::read_tsv("04-analysis/sourcetracker/sourcetracker2_output2/mixing_proportions_stds.txt")
-env_controls <- readr::read_csv("03-data/environmental-controls.csv")
 
 file_names <- list.files(here("04-analysis/kraken/"), "_report")
 sample_names <- gsub(".unmapped.*", "", file_names)
 
+
+# Data prep ---------------------------------------------------------------
+
+# combine library sample with the filtered table
+otu_comb_long <- otu_filtered_table %>% 
+  pivot_longer(
+    cols = where(is.numeric), 
+    names_to = "sample", 
+    values_to = "count"
+    ) %>%
+  bind_rows(lib_sample)
 
 # SourceTracker -----------------------------------------------------------
 
@@ -38,37 +49,37 @@ remove_samples <- sourcetracker2_long %>%
   .$SampleID
 
 analysis_metadata <- metadata %>%
-  filter(!`#SampleID` %in% remove_samples)
+  filter(!`#SampleID` %in% remove_samples) %>%
+  select(!c(Project, download_link))
+
+otu_removed_table <- otu_filtered_table %>%
+  select(which(!colnames(.) %in% remove_samples))
+
+otu_removed_long <- otu_comb_long %>%
+  filter(!sample %in% remove_samples)
 
 write_tsv(analysis_metadata, "01-documentation/analysis-metadata.tsv")
 
-# cuperdec ----------------------------------------------------------------
-
-# taxa_table <- load_taxa_table(sample_taxatable)
-iso_database <- load_database(cuperdec_database_ex, target = "oral")
-# metadata_table <- load_map(metadata,
-#                            sample_col = "#SampleID",
-#                            source_col = "Env"
-#                            )
-# 
-# curves <- calculate_curve(taxa_table, iso_database)
-# filter_result <- simple_filter(curves, 60)
-# plot_cuperdec(curves, metadata_table, filter_result)
-
-
 # decontam ----------------------------------------------------------------
 
-lib_conc_select <- filter(lib_conc, `Full Library Id` %in% rownames(otu_filtered_matrix))
-
-#kraken_seqtab[is.na(kraken_seqtab)] <- 0 # convert NAs to 0
-otu_filtered_matrix <- otu_filtered_table %>%
+otu_prev_matrix <- otu_removed_table %>%
   column_to_rownames(var = "#OTU ID") %>%
   select(which(colnames(.) %in% analysis_metadata$`#SampleID`)) %>%
   t()
 
+otu_freq_matrix <- otu_removed_long %>% 
+  filter(str_detect(sample, "SYN")) %>%
+  bind_rows(lib_sample) %>%
+  pivot_wider(names_from = "#OTU ID", values_from = "count") %>%
+  column_to_rownames(var = "sample") %>% 
+  mutate(across(everything(), replace_na, 0)) %>% 
+  as.matrix()
+
+lib_conc_select <- filter(lib_conc, Library_Id %in% rownames(otu_freq_matrix))
+
 # negative controls
 neg_controls <- analysis_metadata %>%
-  filter(`#SampleID` %in% rownames(otu_filtered_matrix)) %>% # need to filter this out in dataprep or kraken script
+  filter(`#SampleID` %in% rownames(otu_prev_matrix)) %>% # need to filter this out in dataprep or kraken script
   mutate(neg = case_when(
     Env %in% c("sediment", "skin", "indoor_air") ~ TRUE,
     TRUE ~ FALSE)) %>%
@@ -78,37 +89,34 @@ neg_controls <- analysis_metadata %>%
 # Need to order neg_controls according to otu_filtered_matrix
 
 analysis_metadata %>%
-  filter(!`#SampleID` %in% rownames(otu_filtered_matrix)) # these samples are missing in otu_filtered_matrix
+  filter(!`#SampleID` %in% colnames(otu_filtered_table)) # these samples are missing in otu_filtered_matrix
 
 decontam_neg <- neg_controls %>%
-  arrange(rownames(otu_filtered_matrix)) %>%
+  arrange(rownames(otu_prev_matrix)) %>%
   .$neg
-# comp_matrix <- comp_taxatable %>%
-#   column_to_rownames(var = "sample") #%>%
-#   as.matrix()
 
-# combine with samples in same order as env_controls$neg
-
-# filtered_seqtab <- sample_taxatable %>%
-#   column_to_rownames(var = "species") %>%
-#   as.matrix() %>%
-#   t()
-# 
-# select_seqtab <- otu_select_samples %>%
-#   column_to_rownames(var = "species") %>%
-#   as.matrix() %>%
-#   t()
-
-# test for contaminants using prevalence method with environmental samples
-
-# test for contaminants
-which_contaminants <- isContaminant(
-  otu_filtered_matrix,
-  #conc = lib_conc$`Quantification post-Indexing total`,
-  neg = decontam_neg,
-  #threshold = 0.1
+  # frequency method with library concentrations
+which_contaminants_freq <- isContaminant(
+  otu_freq_matrix,
+  conc = lib_conc_select$`Quantification_post-Indexing_total`,
+  #neg = decontam_neg,
+  threshold = 0.95
   )
+  # prevalence method with environmental samples
+which_notcontaminants_prev  <- isNotContaminant(
+  otu_prev_matrix,
+  #conc = lib_conc_select$`Quantification_post-Indexing_total`,
+  neg = decontam_neg,
+  detailed=TRUE,
+  threshold = 0.05
+)
 
+which_contaminants_prev  <- isContaminant(
+  otu_prev_matrix,
+  #conc = lib_conc_select$`Quantification_post-Indexing_total`,
+  neg = decontam_neg,
+  threshold = 0.95
+)
 # which_contaminants <- isContaminant(
 #   otu_filtered_matrix, 
 #   #conc = lib_conc_select$`Quantification post-Indexing total`,
@@ -116,38 +124,57 @@ which_contaminants <- isContaminant(
 #   method = "prevalence"
 #   )
 
-contaminants <- filter(which_contaminants, contaminant == TRUE)
+freq_contaminants <- filter(which_contaminants_freq, contaminant == TRUE)
+prev_contaminants <- filter(which_contaminants_prev, contaminant == TRUE)
+prev_notcontaminants <- filter(which_notcontaminants_prev, not.contaminant == FALSE)
+
+contaminants <- prev_notcontaminants %>%
+  mutate(contaminant = if_else(not.contaminant == TRUE, FALSE, TRUE)) %>%
+  select(!not.contaminant) %>%
+  bind_rows(
+    prev_contaminants,
+    freq_contaminants
+  )
 
 # number of contaminants identified
-sum(contaminants$contaminant)
+sum(which_contaminants_freq$contaminant)
+sum(which_contaminants_prev$contaminant)
+sum(which_notcontaminants_prev$not.contaminant) # number of non-contaminants
 
 # filter out contaminant species
+contaminant_species <- unique(
+  c(
+    row.names(prev_notcontaminants),
+    row.names(prev_contaminants), 
+    row.names(freq_contaminants)
+    )
+  )
   # make sure no oral taxa are on the list
-contaminant_species <- row.names(contaminants)
-
+    # import list of oral taxa from cuperdec
+iso_database <- load_database(cuperdec_database_ex, target = "oral")
 oral_taxa <- iso_database
-true_contaminants <- contaminants %>%
-  filter(!contaminant_species %in% oral_taxa$Taxon)
-list_contaminants <- filter(true_contaminants, contaminant == TRUE)
+true_contaminants <- contaminant_species[!contaminant_species %in% oral_taxa$Taxon]
 
 # filter out putative contaminants from OTU table
-otu_decontam <- otu_filtered_table %>%
-  filter(!`#OTU ID` %in% rownames(list_contaminants))
+otu_decontam <- otu_removed_table %>%
+  filter(!(`#OTU ID` %in% true_contaminants))
 
 # how many contaminants per sample?
-otu_decontam %>%
-  dplyr::select(!c(SYN001.A0101, SYN002.A0101, SYN003.A0101)) %>%
-  pivot_longer(
-    cols = where(is.numeric), 
-    names_to = "SampleID", 
-    values_to = "count") %>%
-  filter(species %in% contaminant_species) %>%
-  #mutate(SampleID = fct_reorder(SampleID, day_order)) %>%
-  group_by(SampleID) %>%
-  summarise(contam = sum(count)) %>%
-  ggplot(aes(x = SampleID, y = contam)) +
+species_table_long <- otu_decontam %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
+
+
+# remaining species in each sample
+species_table_long %>% 
+  filter(str_detect(sample, "SYN"),
+         sample %in% analysis_metadata$`#SampleID`,
+         count > 0) %>%
+  group_by(sample) %>%
+  count(`#OTU ID`) %>% 
+  ggplot(aes(x = sample, y = n)) +
     geom_col() +
     theme(axis.text.x = element_text(angle = 90))
 
+
 write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv"))
-write_tsv(list_contaminants, here("04-analysis/decontam/list-of-contaminants.tsv"))
+write_tsv(as_tibble(true_contaminants), here("05-results/list-of-contaminants.txt"), col_names = F)

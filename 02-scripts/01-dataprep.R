@@ -4,12 +4,19 @@ library(tidyverse)
 # Data upload -------------------------------------------------------------
 
 kraken_otu_long <- readr::read_csv("03-data/kraken-OTU_long.csv")
+metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+
+# isolate library
+
+lib_sample <- kraken_otu_long %>%
+  filter(sample == "LIB030.A0117")
 
 # Filter OTU table --------------------------------------------------------
 
 # filter species by relative abundance
   # species with lower than 0.001% relative abundance removed
 kraken_otu_filtered <- kraken_otu_long %>%
+  filter(sample != "LIB030.A0117") %>% 
   mutate(count = replace_na(count, 0)) %>%
   group_by(sample) %>%
   mutate(rel_abund = count / sum(count),
@@ -17,13 +24,12 @@ kraken_otu_filtered <- kraken_otu_long %>%
   filter(rel_abund >= 0.00001) 
 
 # Species in the rows and samples in the column
-
 kraken_otufilter_table <- kraken_otu_filtered %>%
   select(!c(rel_abund, sum_abund)) %>%
   pivot_wider(names_from = sample, values_from = count) %>%
   mutate(across(where(is.numeric), replace_na, 0)) #%>%
 
-# names of BYOC samples and modern calculus and plaque
+# names of BYOC samples
 which_samples <- metadata %>%
   filter(SourceSink == "sink") %>%
   .$`#SampleID`
@@ -37,17 +43,26 @@ sample_taxatable <- kraken_otu_filtered %>%
 
 # Comparative tables
 
-comp_env <- c("modern_calculus", "supragingival_plaque", "subgingival_plaque")
+comp_env <- c("saliva", "modern_calculus", "supragingival_plaque", "subgingival_plaque")
 comp_samples <- metadata %>%
-  filter(Env %in% comp_env) %>%
+  filter(
+    SourceSink == "source",
+    Env %in% comp_env) %>%
   .$`#SampleID`
 
-comp_taxatable <- kraken_otu_filtered %>%
+comp_taxatable_long <- kraken_otu_filtered %>%
   filter(sample %in% comp_samples) %>%
-  select(!sum_abund)
+  dplyr::select(!sum_abund)
 
-write_tsv(comp_taxatable, here("04-analysis/comparative_taxatable.tsv"))
-write_tsv(sample_taxatable, here("04-analysis/pre-decontam_sample_taxatable.tsv"))
+comp_taxatable <- comp_taxatable_long %>%
+  dplyr::select(!rel_abund) %>%
+  pivot_wider(names_from = species, values_from = count) %>%
+  mutate(across(where(is.numeric), replace_na, 0))
+
+write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
+#write_tsv(comp_taxatable_long, here("04-analysis/comparative_taxatable.tsv"))
+#write_tsv(sample_taxatable, here("04-analysis/pre-decontam_sample_taxatable.tsv"))
+#write_tsv(comp_taxatable, "04-analysis/pre-decontam_comparative_taxatable.tsv")
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
 
 # mapping for SourceTracker
