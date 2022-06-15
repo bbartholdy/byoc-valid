@@ -1,127 +1,127 @@
-#SampleID	Env	SourceSink	Project	day	plate	row	treatment
-LIB030.A0117	library control	sink	NA	NA	NA	NA	NA
-SYN001.A0101	saliva	sink	NA	0	NA	NA	NA
-SYN002.A0101	saliva	sink	NA	3	NA	NA	NA
-SYN003.A0101	saliva	sink	NA	5	NA	NA	NA
-SYN014.A0101	medium	sink	NA	5	1	D	control
-SYN014.C0101	medium	sink	NA	9	1	D	control
-SYN015.B0101	medium	sink	NA	7	1	D	control
-SYN015.D0101	medium	sink	NA	12	1	D	control
-SYN015.E0101	medium	sink	NA	15	1	D	control
-SYN015.F0101	medium	sink	NA	18	1	D	control
-SYN015.G0101	medium	sink	NA	21	1	D	control
-SYN015.H0101	medium	sink	NA	24	1	D	control
-SYN017.A0101	medium	sink	NA	5	2	A	control
-SYN017.B0101	medium	sink	NA	7	2	A	control
-SYN017.D0101	medium	sink	NA	12	2	A	control
-SYN017.E0101	medium	sink	NA	15	2	A	control
-SYN017.F0101	medium	sink	NA	18	2	A	control
-SYN017.G0101	medium	sink	NA	21	2	A	control
-SYN018.C0101	medium	sink	NA	9	2	A	control
-SYN018.H0101	medium	sink	NA	24	2	A	control
-SYN005.I0101	calculus	sink	NA	24	1	A	potato
-SYN006.I0101	calculus	sink	NA	24	1	A	potato
-SYN008.I0101	calculus	sink	NA	24	1	B	wheat
-SYN009.I0101	calculus	sink	NA	24	1	B	wheat
-SYN012.I0101	calculus	sink	NA	24	1	C	mix
-SYN013.I0101	calculus	sink	NA	24	1	C	mix
-SYN015.I0101	calculus	sink	NA	24	1	D	control
-SYN016.I0101	calculus	sink	NA	24	1	D	control
-SYN018.I0101	calculus	sink	NA	24	2	A	control
-SYN019.I0101	calculus	sink	NA	24	2	A	control
-SYN021.I0101	calculus	sink	NA	24	2	B	mix
-SYN022.I0101	calculus	sink	NA	24	2	B	mix
-SYN023.I0101	calculus	sink	NA	24	2	C	wheat
-SYN025.I0101	calculus	sink	NA	24	2	C	wheat
-SYN026.I0101	calculus	sink	NA	24	2	D	potato
-SYN028.I0101	calculus	sink	NA	24	2	D	potato
-SRS014477	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS063215	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS019129	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS019120	saliva	source	NA	NA	NA	NA	NA
-SRS014468	saliva	source	NA	NA	NA	NA	NA
-SRS015055	saliva	source	NA	NA	NA	NA	NA
-SRS013950	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS014692	saliva	source	NA	NA	NA	NA	NA
-SRS015064	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS019029	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS014107	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS013942	saliva	source	NA	NA	NA	NA	NA
-SRS014691	subgingival_plaque	source	NA	NA	NA	NA	NA
-SRS021960	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS045313	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS047265	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS051378	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS015755	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS015378	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS022149	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS064493	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS052604	supragingival_plaque	source	NA	NA	NA	NA	NA
-SRS019333	supragingival_plaque	source	NA	NA	NA	NA	NA
-ERR1883419	sediment	source	NA	NA	NA	NA	NA
-ERR1883420	sediment	source	NA	NA	NA	NA	NA
-ERR1883421	sediment	source	NA	NA	NA	NA	NA
-ERR1883422	sediment	source	NA	NA	NA	NA	NA
-ERR1883423	sediment	source	NA	NA	NA	NA	NA
-ERR1883424	sediment	source	NA	NA	NA	NA	NA
-ERR1883430	sediment	source	NA	NA	NA	NA	NA
-ERR1883436	sediment	source	NA	NA	NA	NA	NA
-ERR1883438	sediment	source	NA	NA	NA	NA	NA
-SRR1631060	skin	source	NA	NA	NA	NA	NA
-SRR1631061	skin	source	NA	NA	NA	NA	NA
-SRR1631063	skin	source	NA	NA	NA	NA	NA
-SRR1631064	skin	source	NA	NA	NA	NA	NA
-SRR1633008	skin	source	NA	NA	NA	NA	NA
-SRR3184100	skin	source	NA	NA	NA	NA	NA
-SRR3184876	skin	source	NA	NA	NA	NA	NA
-SRR3189411	skin	source	NA	NA	NA	NA	NA
-SRR3189416	skin	source	NA	NA	NA	NA	NA
-SRR3189418	skin	source	NA	NA	NA	NA	NA
-SRR059389	stool	source	NA	NA	NA	NA	NA
-SRR059425	stool	source	NA	NA	NA	NA	NA
-SRR059455	stool	source	NA	NA	NA	NA	NA
-SRR059917	stool	source	NA	NA	NA	NA	NA
-SRR060358	stool	source	NA	NA	NA	NA	NA
-SRR1761677	stool	source	NA	NA	NA	NA	NA
-SRR1761682	stool	source	NA	NA	NA	NA	NA
-SRR1761688	stool	source	NA	NA	NA	NA	NA
-SRR1761692	stool	source	NA	NA	NA	NA	NA
-SRR1761697	stool	source	NA	NA	NA	NA	NA
-SRR1761698	stool	source	NA	NA	NA	NA	NA
-SRR1761705	stool	source	NA	NA	NA	NA	NA
-SRR1761710	stool	source	NA	NA	NA	NA	NA
-SRR1761718	stool	source	NA	NA	NA	NA	NA
-SRR1761721	stool	source	NA	NA	NA	NA	NA
-SRR1929408	stool	source	NA	NA	NA	NA	NA
-SRR1930121	stool	source	NA	NA	NA	NA	NA
-SRR1930123	stool	source	NA	NA	NA	NA	NA
-SRR1930141	stool	source	NA	NA	NA	NA	NA
-SRR1930145	stool	source	NA	NA	NA	NA	NA
-JAE006.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE007.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE008.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE009.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE010.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE012.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE013.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE014.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE015.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-JAE016.A0101	modern_calculus	source	PRJEB31185	NA	NA	NA	NA
-SRS052668	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS015040	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS056892	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS065133	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS016349	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS016503	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS024017	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS043803	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS043239	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRS043646	buccal_mucosa	source	NA	NA	NA	NA	NA
-SRR6129806	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR6129807	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR6129808	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR6129810	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR6129809	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR5420280	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR5420282	indoor_air	source	PRJNA422794	NA	NA	NA	NA
-SRR6129811	indoor_air	source	PRJNA422794	NA	NA	NA	NA
+#SampleID	Env	SourceSink	Project	download_link
+LIB030.A0117	library control	sink	this_study	NA
+SYN001.A0101	saliva	sink	this_study	NA
+SYN002.A0101	saliva	sink	this_study	NA
+SYN003.A0101	saliva	sink	this_study	NA
+SYN014.A0101	medium	sink	this_study	NA
+SYN014.C0101	medium	sink	this_study	NA
+SYN015.B0101	medium	sink	this_study	NA
+SYN015.D0101	medium	sink	this_study	NA
+SYN015.E0101	medium	sink	this_study	NA
+SYN015.F0101	medium	sink	this_study	NA
+SYN015.G0101	medium	sink	this_study	NA
+SYN015.H0101	medium	sink	this_study	NA
+SYN017.A0101	medium	sink	this_study	NA
+SYN017.B0101	medium	sink	this_study	NA
+SYN017.D0101	medium	sink	this_study	NA
+SYN017.E0101	medium	sink	this_study	NA
+SYN017.F0101	medium	sink	this_study	NA
+SYN017.G0101	medium	sink	this_study	NA
+SYN018.C0101	medium	sink	this_study	NA
+SYN018.H0101	medium	sink	this_study	NA
+SYN005.I0101	calculus	sink	this_study	NA
+SYN006.I0101	calculus	sink	this_study	NA
+SYN008.I0101	calculus	sink	this_study	NA
+SYN009.I0101	calculus	sink	this_study	NA
+SYN012.I0101	calculus	sink	this_study	NA
+SYN013.I0101	calculus	sink	this_study	NA
+SYN015.I0101	calculus	sink	this_study	NA
+SYN016.I0101	calculus	sink	this_study	NA
+SYN018.I0101	calculus	sink	this_study	NA
+SYN019.I0101	calculus	sink	this_study	NA
+SYN021.I0101	calculus	sink	this_study	NA
+SYN022.I0101	calculus	sink	this_study	NA
+SYN023.I0101	calculus	sink	this_study	NA
+SYN025.I0101	calculus	sink	this_study	NA
+SYN026.I0101	calculus	sink	this_study	NA
+SYN028.I0101	calculus	sink	this_study	NA
+SRS014477	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014477.tar.bz2
+SRS063215	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS063215.tar.bz2
+SRS019129	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS019129.tar.bz2
+SRS019120	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS019120.tar.bz2
+SRS014468	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS014468.tar.bz2
+SRS015055	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS015055.tar.bz2
+SRS013950	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS013950.tar.bz2
+SRS014692	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS014692.tar.bz2
+SRS015064	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS015064.tar.bz2
+SRS019029	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS019029.tar.bz2
+SRS014107	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014107.tar.bz2
+SRS013942	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS013942.tar.bz2
+SRS014691	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014691.tar.bz2
+SRS021960	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS021960.tar.bz2
+SRS045313	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS045313.tar.bz2
+SRS047265	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS047265.tar.bz2
+SRS051378	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS051378.tar.bz2
+SRS015755	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS015755.tar.bz2
+SRS015378	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS015378.tar.bz2
+SRS022149	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS022149.tar.bz2
+SRS064493	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS064493.tar.bz2
+SRS052604	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS052604.tar.bz2
+SRS019333	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS019333.tar.bz2
+ERR1883419	sediment	source	NA	NA
+ERR1883420	sediment	source	NA	NA
+ERR1883421	sediment	source	NA	NA
+ERR1883422	sediment	source	NA	NA
+ERR1883423	sediment	source	NA	NA
+ERR1883424	sediment	source	NA	NA
+ERR1883430	sediment	source	NA	NA
+ERR1883436	sediment	source	NA	NA
+ERR1883438	sediment	source	NA	NA
+SRR1631060	skin	source	NA	NA
+SRR1631061	skin	source	NA	NA
+SRR1631063	skin	source	NA	NA
+SRR1631064	skin	source	NA	NA
+SRR1633008	skin	source	NA	NA
+SRR3184100	skin	source	NA	NA
+SRR3184876	skin	source	NA	NA
+SRR3189411	skin	source	NA	NA
+SRR3189416	skin	source	NA	NA
+SRR3189418	skin	source	NA	NA
+SRR059389	stool	source	NA	NA
+SRR059425	stool	source	NA	NA
+SRR059455	stool	source	NA	NA
+SRR059917	stool	source	NA	NA
+SRR060358	stool	source	NA	NA
+SRR1761677	stool	source	NA	NA
+SRR1761682	stool	source	NA	NA
+SRR1761688	stool	source	NA	NA
+SRR1761692	stool	source	NA	NA
+SRR1761697	stool	source	NA	NA
+SRR1761698	stool	source	NA	NA
+SRR1761705	stool	source	NA	NA
+SRR1761710	stool	source	NA	NA
+SRR1761718	stool	source	NA	NA
+SRR1761721	stool	source	NA	NA
+SRR1929408	stool	source	NA	NA
+SRR1930121	stool	source	NA	NA
+SRR1930123	stool	source	NA	NA
+SRR1930141	stool	source	NA	NA
+SRR1930145	stool	source	NA	NA
+JAE006.A0101	modern_calculus	source	PRJEB31185	NA
+JAE007.A0101	modern_calculus	source	PRJEB31185	NA
+JAE008.A0101	modern_calculus	source	PRJEB31185	NA
+JAE009.A0101	modern_calculus	source	PRJEB31185	NA
+JAE010.A0101	modern_calculus	source	PRJEB31185	NA
+JAE012.A0101	modern_calculus	source	PRJEB31185	NA
+JAE013.A0101	modern_calculus	source	PRJEB31185	NA
+JAE014.A0101	modern_calculus	source	PRJEB31185	NA
+JAE015.A0101	modern_calculus	source	PRJEB31185	NA
+JAE016.A0101	modern_calculus	source	PRJEB31185	NA
+SRS052668	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS052668.tar.bz2
+SRS015040	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS015040.tar.bz2
+SRS056892	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS056892.tar.bz2
+SRS065133	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS065133.tar.bz2
+SRS016349	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS016349.tar.bz2
+SRS016503	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS016503.tar.bz2
+SRS024017	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS024017.tar.bz2
+SRS043803	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS043803.tar.bz2
+SRS043239	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS043239.tar.bz2
+SRS043646	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS043646.tar.bz2
+SRR5420280	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/000/SRR5420280/SRR5420280_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/000/SRR5420280/SRR5420280_2.fastq.gz
+SRR5420282	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/002/SRR5420282/SRR5420282_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/002/SRR5420282/SRR5420282_2.fastq.gz
+SRR6129806	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/006/SRR6129806/SRR6129806_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/006/SRR6129806/SRR6129806_2.fastq.gz
+SRR6129807	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/007/SRR6129807/SRR6129807_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/007/SRR6129807/SRR6129807_2.fastq.gz
+SRR6129808	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/008/SRR6129808/SRR6129808_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/008/SRR6129808/SRR6129808_2.fastq.gz
+SRR6129809	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/009/SRR6129809/SRR6129809_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/009/SRR6129809/SRR6129809_2.fastq.gz
+SRR6129810	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/000/SRR6129810/SRR6129810_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/000/SRR6129810/SRR6129810_2.fastq.gz
+SRR6129811	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/001/SRR6129811/SRR6129811_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/001/SRR6129811/SRR6129811_2.fastq.gz
