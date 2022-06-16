@@ -60,9 +60,6 @@ comp_taxatable <- comp_taxatable_long %>%
   mutate(across(where(is.numeric), replace_na, 0))
 
 write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
-#write_tsv(comp_taxatable_long, here("04-analysis/comparative_taxatable.tsv"))
-#write_tsv(sample_taxatable, here("04-analysis/pre-decontam_sample_taxatable.tsv"))
-#write_tsv(comp_taxatable, "04-analysis/pre-decontam_comparative_taxatable.tsv")
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
 
 # mapping for SourceTracker
