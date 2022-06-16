@@ -1,3 +1,6 @@
+project:
+  type: default
+  output-dir: 07-publications/_output
 title: TBD
 author: |
   B.P. Bartholdy, I. Velsko, S. Gur-Arieh, Z. Fagernäs, S. Seng, A.G. Henry

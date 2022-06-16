@@ -6,9 +6,17 @@ knitr::opts_chunk$set(
   message = FALSE,
   fig.path = "figures/",
   fig.align = "center")
-#library(here)
+library(tidyverse)
+library(here)
+library(patchwork)
 #source(here("02-scripts/authentication.R"))
-#metadata <- readr::read_csv(here("03-data/sample_metadata.csv"))
+# upload data
+dna_metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
+ftir_metadata <- readr::read_tsv(here("01-documentation/ftir-metadata.tsv"))
+ftir_data <- readr::read_csv(here("05-results/ftir-data_long.csv"))
+ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+# ggplot theme options
+options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
 ## Compile refs.bib using rbbt package ##
 # cite_keys <- rbbt::bbt_detect_citations(here("analysis/paper/paper.Rmd")) 
 # cite_keys <- unlist(cite_keys, use.names = FALSE)
@@ -19,13 +27,13 @@ knitr::opts_chunk$set(
 # wd_count <- wordcountaddin::word_count()
 ```
 
-```{r}
-#| incude: false
-#| child: "intro.qmd"
-```
+# Introduction
 
-```{r}
-#| incude: false
-#| child: "matmet.qmd"
-```
+{{< include intro.qmd >}}
 
+
+{{< include matmet.qmd >}}
+
+# Results
+
+{{< include results.qmd >}}

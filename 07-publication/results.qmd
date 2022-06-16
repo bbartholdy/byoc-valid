@@ -1,10 +1,221 @@
-# Results
-
-<!-- FTIR -->
-
+## Metagenomic classification
 
 <!-- metagenomic analysis -->
 
 <!-- SourceTracker -->
 
 <!-- species diversity -->
+
+## FTIR
+
+```{r}
+#| label: results-setup
+#| include: false
+grind_sample_order <- c( # make sure the grind samples are ordered correctly in plots
+  "Archaeological calculus",
+  "Artificial calculus day 16",
+  "Artificial calculus day 20",
+  "Artificial calculus day 24",
+  "Archaeological bone",
+  "Bone-Dentine",
+  "Bone-Dentine_2",
+  "Enamel",
+  "Enamel_2",
+  "Enamel_3")
+
+# Preparation of grind curve plots
+grind_all_plot <- ftir_grind_data %>%
+  mutate(
+    Sample_day = factor(Sample_day, levels = grind_sample_order)) %>% # reorder sampling day levels
+  group_by(day, Sample) %>%
+    ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = F) +
+    theme_minimal() +
+    labs(col = "Sample", shape = "Sample",
+         x = "FWHM of the 1035 peak",
+         y = "Splitting factor")
+```
+
+```{r}
+#| label: fig-experiment-spectra
+#| fig-cap: "Select spectra from all experiment sampling days."
+#| layout-ncol: 2
+#| fig-subcap:
+#|  - "A"
+#|  - "B"
+#|  - "C"
+#|  - "D"
+# day 7
+ftir_data %>%
+  filter(
+    day == 7,
+    sample != "F7",
+    sample != "F7.1A6_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 12
+ftir_data %>%
+  filter(
+    day == 12
+    #sample != "F7",
+    #sample != "F7.1A6_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 16
+ftir_data %>%
+  filter(
+    day == 16,
+    is.na(grind),
+    sample != "F16.2D2",
+    sample != "F16.1D6",
+    sample != "F16.1B2"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 24 (final product)
+ftir_data %>%
+  filter(
+    day == 24,
+    is.na(grind),
+    str_detect(sample, "[_]", negate = T),
+    sample != "F24.1B3",
+    sample != "F24.2C3",
+    sample != "F24.2D3",
+    sample != "F24.2A4",
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+```
+
+Day 7 spectra (#fig-experiment-spectra) have large O--H and amide A absorbance
+bands in stretching mode around 3400 cm$^{-1}$,
+as well as three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$. There is a clear amide I peak at 1650 and a less
+pronounced amide II peak at 1545 cm$^{-1}$. 
+In the 'fingerprint' region, C--O$_3^{2-}$ at 1400 absorbance band corresponding
+to the v~3~ stretching vibrations, P--O~4~ absorbance band
+corresponding to the v~3~ antisymmetric stretching vibrations
+at 1080 cm$^{-1}$, and minor phosphate absorption bands around 500 cm$^{-1}$ in
+sample F7.1A6, but absent in sample F7.2D1. The absorption bands at 1080
+cm$^{-1}$ could also be a C--N stretching mode from aliphatic amines.
+The relative absorbance of O--H and Amide I and II bands are higher than the
+phosphate bands, representing a relatively higher content of lipids and proteins
+than inorganic content. Large variation between spectra.
+
+Day 12, amide I and II continue to be the dominant peaks, and a higher ratio
+of both amide and O--H to PO~4~ v~3~ absorbance bands.
+Three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$. Reduced variation between two of the three spectra.
+
+Day 16, the ratio of O--H and amides to PO~4~ has shifted, with
+the main peak shifting to the PO~4~ v~3~ absorbance band at 1040
+(except in sample F16.1A2). A well-defined PO~4~ doublet at 600 and 560 is
+present. Small CO$_3^{2-}$ stretching vibrations at 870 cm$^{-1}.
+Decreased variability between the spectra, with most spectra exhibiting a
+higher phosphate-to-protein/lipid ratio.
+
+Day 24, large O--H and amide A absorbance bands in stretching mode around 3400 cm$^{-1}$,
+as well as three minor CH~3~ and CH$_2$ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$.
+Main peak of spectra is PO~4~ v~3~ at 1040
+cm$^{-1}$, well-defined PO~4~ doublet at 600-550 cm$^{-1}$. Amide I band,
+with small amide II and III bands. Carbonate peaks also present.
+Very little variation between all of the spectra.
+
+The main difference in the samples across the experiment, with
+increasing age, is an
+increase in the main peak at around 1040 cm-1, appearance of
+the phosphate doublet around 600 and 560 cm-1 between day 12
+and 16, an increase
+in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm-1,
+and a reduction of the C--H2 and C--H3 stretching vibrations.
+
+<!--move to discussion? -->
+High lipid and protein content consistent with the presence of extracellular
+polysaccharides and bacteria within a matrix. Microbial DNA and RNA may be
+visible from peaks around 1200--800 cm$^{-1}$ on days 7 and 12, which are
+later obscured by the increasing phosphate peak at 1040 cm$^{-1}$
+[@jainIsolationCharacterization2013]. The presence of water indicated by
+the O--H stretch is also consistent with a biofilm, which is around 90%
+water [@bergerOralBiofilms2018]. As the samples mature, the ratio of proteins
+and lipids to phosphates shift from predominance of organic content to
+inorganic content.
+
+Early spectra, days 7 and 12, are also similar to collagen spectra, with the
+OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
+1659, 1552, and 1240 cm$^{-1}$, respectively 
+[@rohanizadehUltrastructuralStudy2005; @martinezcortizasLinkingStructural2020].
+
+The biofilm samples from the end of the experiment are similar to both reference
+samples. The main
+difference is a lower organic component in reference samples seen as a reduced
+amide I peak at around 1637 compared to the carbonate peak at around 1420, and
+an absence of amide II and III. Also a reduction in CH~3~ bands at 3000-2900 cm$^{-1}$.
+<!-- FTIR spectra over course of experiment -->
+
+<!-- grind curves -->
+
+### Grind curves
+
+```{r message=FALSE, warning=FALSE}
+#| label: fig-grind-curve-inset
+#| fig-cap: "(A) Grinding curves of multiple materials; and (B) calculus-only materials, including biofilm samples from three days, and an archaeological calclulus sample."
+# produce plot with grind curve for all samples
+grind_all_plot <- ftir_grind_data %>%
+  mutate(
+    Sample_day = factor(Sample_day, levels = grind_sample_order)) %>%
+  group_by(day, Sample) %>%
+    ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = F) +
+    theme_minimal() +
+    labs(col = "Sample", shape = "Sample",
+         x = "FWHM of the 1035 peak",
+         y = "Splitting factor")
+
+# isolate calculus samples to see diffs between days and the 'real deal'
+grind_calc_plot <- ftir_grind_data %>%
+  filter(Sample == "Artificial calculus" | Sample == "Archaeological calculus") %>%
+  ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = F) +
+    labs(col = "Sample", shape = "Sample",
+         x = "FWHM of the 1035 peak",
+         y = "Splitting factor") +
+    theme_minimal() +
+    theme(
+      axis.text = element_blank(),
+      axis.title = element_blank(),
+      axis.ticks = element_blank(),
+      legend.position = "none",
+      panel.border = element_rect(
+        colour = "grey", 
+        fill = "transparent", size = 1),
+      panel.background = element_rect(fill = "white")
+      ) +
+    scale_colour_viridis_d(end = 0.4)
+
+grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right = 1, top = 1) + 
+  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+```
+
+Splitting factors were calculated from the grinding measurements, and a
+grinding curve was created to explore crystallinity (crystal size) order and
+disorder. Disorder is a steep slope and large FWHM.
+Samples are similar to fresh bone and dentin. No appreciable differences between
+days 16, 20, and 24.
+<!-- FTIR spectra comparison of artificial and reference dental calculus -->
