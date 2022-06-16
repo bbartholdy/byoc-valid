@@ -7,7 +7,7 @@ library(tidyverse)
 # Upload data -------------------------------------------------------------
 
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
-species_abundance_long <- readr::read_tsv("05-results/species-abundance_long.tsv")
+taxatable <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
 bacdive_oxytol <- readr::read_csv(
   "03-data/2022-05-27_bacdive_oxytol-search.csv",
   skip = 2
@@ -18,16 +18,23 @@ bacdive_oxytol <- readr::read_csv(
 
 
 
-
+# Bacterial properties ----------------------------------------------------
 
 # access_credentials <- Sys.getenv(c("BACDIVE_USER", "BACDIVE_PW"))
 # bacdive_token <- open_bacdive(access_credentials[[1]], access_credentials[[2]])
 
 # get list of bacterial species from all samples
 
-all_species_names <- unique(species_abundance_long$species) %>%
-  as_tibble()
-write_tsv(all_species_names, "species-list-for-bacdive.txt", col_names = F)
+all_species_names <- taxatable %>% 
+  mutate(`#OTU ID` = str_remove(`#OTU ID`, "\\]"),
+         `#OTU ID` = str_remove(`#OTU ID`, "\\[")) %>%
+    .$`#OTU ID`
+all_species_names[which(str_detect(all_species_names, coll("]")))]
+length(all_species_names)
+
+write_tsv(as_tibble(all_species_names), "species-list-for-bacdive.txt", col_names = F)
+
+
 
 # filter species that are included in this study and the comparative samples
 sample_oxytol <- bacdive_oxytol %>%
@@ -42,11 +49,9 @@ sample_oxytol <- bacdive_oxytol %>%
       `Oxygen tolerance` == "obligate anaerobe" ~ "anaerobe")) %>% 
   filter(
     #str_match(species, all_species_names$species),
-    species %in% all_species_names$value, # create less strict matching criterion to incorporate strains
+    species %in% all_species_names, # create less strict matching criterion to incorporate strains
     is_type_strain_header == 1) %>%
-  select(species, `Oxygen tolerance`) #%>%
-#mutate(species = str_remove(species, "\\[")) %>%
-#mutate(species = str_remove(species, "\\]"))
+  select(species, `Oxygen tolerance`)
 
 # add abs species column
 

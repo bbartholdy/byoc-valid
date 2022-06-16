@@ -6,11 +6,10 @@ output: html_notebook
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(here)
-#species_abundance_long <- readr::read_tsv(here("05-results/species-abundance_long.tsv"))
-#genus_abundance_long <- readr::read_tsv(here("05-results/genus-abundance_long.tsv"))
 metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
-experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv"))
 analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
+experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
 otu_table_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv")) 
 
@@ -21,83 +20,33 @@ day_order <- experiment_metadata %>%
   arrange(desc(day)) %>% # order by sampling day (ascending)
   .$`#SampleID` # isolate sample names
 
-# top_species_names <- species_abundance_long %>% 
-#   group_by(sample) %>% 
-#   arrange(desc(rel_abund)) %>% 
-#   slice_head(n = 4) %>% 
-#   .$species %>% 
-#   unique()
-
-top_species_names <- species_abundance_long %>% 
-  filter(rel_abund > 0.1) %>% 
-  .$species %>% 
-  unique()
-
-top_abundance_species <- species_abundance_long %>% 
-  mutate(
-    top_species = case_when(
-      rel_abund > 0.1 ~ species,
-      TRUE ~ "other"
-    ),
-    # top_species = case_when(
-    #  species %in% top_species_names ~ species,
-    #   TRUE ~ "other"), # label all species below top 10 as 'other' so the rel_abund still sums to 1
-    top_species = as_factor(top_species)) #%>% 
-  # mutate(
-  #   top_species = factor(
-  #     top_species, 
-  #     levels = c(levels(top_species)[-63], "other")
-  #     ) # rearrange level 'other' to back
-  #   ) 
-
-top_genus_experiment <- genus_abundance_long %>% 
-  filter(str_detect(sample, "SYN")) %>% 
-  #group_by(sample) %>% 
-  arrange(desc(rel_abund)) %>% 
-  slice_head(n = 20) %>% 
-  .$genus %>% 
-  unique()
-
-top_genus_names <- genus_abundance_long %>% 
-  #filter(str_detect(sample, "SYN")) %>% 
-  group_by(sample) %>% 
-  arrange(desc(rel_abund)) %>% 
-  slice_head(n = 4) %>% 
-  .$genus %>% 
-  unique()
-
-
-top_abundance_genus <- genus_abundance_long %>% 
-  mutate(
-    top_genus = case_when(
-      genus %in% top_genus_names ~ genus,
-      TRUE ~ "other"), # label all species below top 10 as 'other' so the rel_abund still sums to 1
-    top_genus = as_factor(top_genus),
-    top_genus = factor(top_genus, levels = c(levels(top_genus)[-2], "other")) # rearrange level 'other' to back
-    ) 
-
-my_pallette2 <- c(viridisLite::magma(n = length(top_genus_names)), "grey") 
-names(my_pallette2) <- levels(top_abundance_genus$top_genus)
-my_scale2 <- scale_fill_manual(name = "top_genus", values = my_pallette2)
+# my_pallette2 <- c(viridisLite::magma(n = length(top_genus_names)), "grey") 
+# names(my_pallette2) <- levels(top_abundance_genus$top_genus)
+# my_scale2 <- scale_fill_manual(name = "top_genus", values = my_pallette2)
 
 treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
 env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
 
 experiment_colours <- experiment_metadata %>%
-  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
-  mutate(Env = as_factor(Env),
-         treat_col = case_when(
+  arrange(desc(day)) %>% 
+  mutate(treat_col = case_when(
            treatment == "potato" ~ treatment_colours[1],
            treatment == "wheat" ~ treatment_colours[2],
            treatment == "mix" ~ treatment_colours[3],
            treatment == "control" ~ treatment_colours[4],
-           is.na(treatment) ~ "grey"))
+           is.na(treatment) ~ "grey"),
+         env_col = case_when(
+           Env == "saliva" ~ env_colours[5],
+           Env == "byoc_calculus" ~ env_colours[1],
+           Env == "medium" ~ env_colours[8]
+         ))
 analysis_colours <- analysis_metadata %>%
   mutate(env_col = case_when(
-           Env == "calculus" ~ env_colours[1],
-           Env == "subgingival_plaque" ~ env_colours[2],
-           Env == "supragingival_plaque" ~ env_colours[3],
-           Env == "modern_calculus" ~ env_colours[4]
+    Env == "saliva" ~ env_colours[5],
+    Env == "byoc_calculus" ~ env_colours[1],
+    Env == "subgingival_plaque" ~ env_colours[2],
+    Env == "supragingival_plaque" ~ env_colours[3],
+    Env == "modern_calculus" ~ env_colours[4]
          ))
 ```
 
@@ -117,12 +66,28 @@ otu_table_long <- otu_table_decontam %>%
   mutate(genus = str_extract(species, "\\w+"))
 ```
 
-Convert counts to relative abundance per sample.
+Convert counts to relative abundance per sample. Separate species and genus levels.
 
 ```{r}
 species_abund_long <- otu_table_long %>%
   group_by(sample) %>%
   mutate(rel_abund = count / sum(count))
+
+genus_abund_long <- species_abund_long %>%
+  group_by(sample, genus) %>%
+  summarise(
+    count = sum(count),
+    rel_abund = sum(rel_abund)
+    )
+
+# top 20 common genera in experiment
+top_20_genus <- genus_abund_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  ungroup() %>%
+  arrange(desc(rel_abund)) %>%
+  distinct(genus) %>%
+  slice_head(n = 20) %>%
+  left_join(genus_abund_long, by = "genus")
 ```
 
 Combine with bacterial properties.
@@ -134,6 +99,31 @@ species_properties <- bac_properties %>%
 ```
 
 
+## Colour legends
+
+Env groups.
+
+```{r}
+col_seq <- 1:length(levels(as.factor(analysis_colours$env_col)))
+qplot(y= col_seq, x = 1, fill=factor(col_seq), geom="tile") +
+  scale_fill_manual(values = na.omit(unique(analysis_colours$env_col))) +
+  geom_label(aes(label = unique(analysis_colours$Env)[c(3,4,6,5, 2)]), col = "white") +
+  theme_void() +
+  theme(legend.position="none")
+```
+
+Treatment groups.
+
+```{r}
+col_seq <- 1:length(levels(as.factor(experiment_colours$treat_col)))
+qplot(y= col_seq, x = 1, fill=factor(col_seq), geom="tile") +
+  scale_fill_manual(values = na.omit(unique(experiment_colours$treat_col))) +
+  geom_label(aes(label = unique(experiment_colours$treatment)), col = "white") +
+  theme_void() +
+  theme(legend.position="none")
+```
+
+
 # Within the experiment
 
 Plotting relative species abundances across the experiment.
@@ -141,30 +131,36 @@ Plotting relative species abundances across the experiment.
 ## Genus composition
 
 ```{r}
-genus_abundance_long %>%
+#genus_abund_long
+top_20_genus %>% 
   filter(str_detect(sample, "SYN")) %>%
-  mutate(
-    top_genus = case_when(
-      genus %in% top_genus_experiment ~ genus,
-      TRUE ~ "other")
-    ) %>%
-  ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
-    geom_col() +
+  ggplot(aes(x = sample, y = genus, fill = log(rel_abund))) +
+    geom_tile() +
     theme_void() +
-    scale_y_discrete(limits = day_order) +
-    my_scale2 +
-    theme(axis.text = element_text())
+    scale_x_discrete(limits = rev(day_order)) + # reverse day_order vector
+    #my_scale2 +
+    theme(
+      axis.text = element_text(),
+      axis.text.x = element_text(
+        angle = 45,
+        hjust = 1,
+        vjust = 1,
+        colour = rev(experiment_colours$env_col)
+        )) +
+    scale_fill_viridis_c(option = "B")
 
-genus_abundance_long %>%
+genus_abund_long %>%
   filter(str_detect(sample, "SYN")) %>% 
-  mutate(top_genus = case_when(rel_abund > 0.05 ~ genus,
+  mutate(top_genus = case_when(rel_abund > 0.01 ~ genus,
                                TRUE ~ NA_character_)) %>% 
   ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
     geom_col() +
     theme_void() +
     scale_y_discrete(limits = day_order) +
     #my_scale2 +
-    theme(axis.text = element_text())
+    theme(
+      axis.text.y = element_text(colour = experiment_colours$env_col)) +
+    scale_fill_viridis_d(option = "D")
 ```
 
 
@@ -214,38 +210,6 @@ species_abund_long %>%
     scale_y_discrete(limits = day_order) +
     #my_scale2 +
     theme(axis.text = element_text())
-```
-
-### Mean proportions
-
-The proportions of species across sample type (i.e. calculus, medium, saliva)
-were calculated by taking the sum of species counts per sample
-type and dividing it by the sum of all species-counts within each sample type.
-
-The plot displays the top species across all sample types. There is little overlap
-of species between sample types.
-
-```{r}
-## NOT THE WAY TO DO THIS ##
-mean_proportions <- species_abundance_long %>%
-  filter(str_detect(sample, "SYN")) %>% 
-  rename(`#SampleID` = sample) %>%
-  left_join(analysis_metadata, by = "#SampleID") %>% 
-  #mutate(species = as_factor(species)) %>% 
-  #rowwise(species, Env) %>%
-  mutate(count = replace_na(count, 0)) %>% 
-  group_by(Env, species) %>%
-  summarise(sum_count = sum(count)) %>%
-  group_by(Env,.add = F) %>%
-  mutate(mean_prop = sum_count / sum(sum_count)) %>% 
-  na.omit() %>% 
-  dplyr::select(!sum_count) %>% 
-  arrange(desc(mean_prop)) %>%
-  slice_head(n = 6)
-
-mean_proportions %>% 
-  ggplot(aes(x = mean_prop, y = species, fill = Env)) +
-    geom_col(position = "dodge", width = 0.7)
 ```
 
 ### Oxygen tolerance
@@ -325,40 +289,6 @@ Species outside of the top 10 are labeled 'other'.
 
 ## Species composition
 
-
-<!--
-### Mean proportions
-
-The proportions of species across sample type (i.e. calculus, modern calculus,
-plaque, etc.) were calculated by taking the sum of species counts per sample
-type and dividing it by the sum of all species-counts within each sample type.
-
-The plot displays the top species across all sample types. There is little overlap
-of species between sample types.
-
-```{r}
-## NOT WORKING PROPERLY ##
-mean_proportions <- species_abundance_long %>%
-  rename(`#SampleID` = sample) %>%
-  left_join(analysis_metadata, by = "#SampleID") %>% 
-  #mutate(species = as_factor(species)) %>% 
-  #rowwise(species, Env) %>%
-  mutate(count = replace_na(count, 0)) %>% 
-  group_by(Env, species) %>%
-  summarise(sum_count = sum(count)) %>%
-  group_by(Env,.add = F) %>%
-  mutate(mean_prop = sum_count / sum(sum_count)) %>% 
-  na.omit() %>% 
-  select(!sum_count) %>% 
-  arrange(desc(mean_prop)) %>%
-  slice_head(n = 5)
-
-mean_proportions %>% 
-  ggplot(aes(x = mean_prop, y = species, fill = Env)) +
-    geom_col(position = "dodge", width = 0.7)
-```
-
--->
 
 ### Oxygen tolerance
 

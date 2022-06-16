@@ -6,52 +6,100 @@ output: html_notebook
 ```{r}
 #| label: setup
 #| include: false
+library(here)
 library(tidyverse)
 library(phyloseq)
 library(microbiome)
 library(ANCOMBC)
-taxatable <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
-analysis_metadata <- readr::read_tsv("01-documentation/analysis-metadata.tsv")
-experiment_metadata <- readr::read_tsv("01-documentation/experiment-metadata.tsv")
+taxatable <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
+experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 ```
 
 Data are converted to `phyloseq` format.
 
 ```{r}
-# otu_table_long <- taxatable %>%
-#   pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
-
-# taxatable %>%
-#   column_to_rownames(var = "#OTU ID") %>% 
-#   otu_table(taxa_are_rows = T)
-
-calculus_matrix <- taxatable %>%
+calculus_otu <- taxatable %>%
   column_to_rownames(var = "#OTU ID") %>% 
   select(which(
     colnames(.) %in% filter(
       analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`
-  ))
+  )) %>%
+  otu_table(taxa_are_rows = T)
 
 experiment_otu <- taxatable %>%
   column_to_rownames(var = "#OTU ID") %>% 
-  select(which(
-    colnames(.) %in% experiment_metadata$`#SampleID` & 
-      colnames(.) %in% analysis_metadata$`#SampleID`)) %>%
+  select(which(colnames(.) %in% experiment_metadata$`#SampleID`)) %>%
   otu_table(taxa_are_rows = T)
 
-experiment_meta <- experiment_metadata %>%
+experiment_sample <- experiment_metadata %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
   column_to_rownames(var = "#SampleID") %>% 
   sample_data()
 
-experiment_phyloseq <- phyloseq(experiment_otu, experiment_meta)
+experiment_phyloseq <- phyloseq(experiment_otu, experiment_sample)
+
+calculus_sample <- analysis_metadata %>%
+  filter(str_detect(Env, "calculus")) %>%
+  column_to_rownames(var = "#SampleID") %>%
+  sample_data()
+
+calculus_phyloseq <- phyloseq(calculus_otu, calculus_sample)
+```
+
+## ANCOM-BC
+
+```{r}
+exp_da <- ANCOMBC::ancombc(
+  experiment_phyloseq, 
+  formula = "Env",
+  group = "Env",
+  global = T,
+  p_adj_method = "fdr")
 ```
 
 ```{r}
-# phyloseq object for experiment samples
-metadata %>%
-  filter(SourceSink == "sink")
+# from vignette("ANCOMBC")
+samp_frac <- exp_da$samp_frac
+# Replace NA with 0
+samp_frac[is.na(samp_frac)] = 0 
+# add 1 to counts for log-transformation
+log_exp_otu <- log(microbiome::abundances(experiment_otu) + 1)
 
-# phyloseq object to compare calculus samples
+# Adjust the log observed abundances
+# Bias-corrected (log) observed abundances
+log_exp_otu_adj <- exp(t(t(log_exp_otu) - samp_frac)) %>%
+  as_tibble(rownames = "species")
+
+logf_changes <- as_tibble(exp_da$res$lfc, rownames = "species") %>%
+    #select(species, Envmedium) %>%
+    inner_join(as_tibble(exp_da$res$se, rownames = "species"), by = "species") %>%
+    select(!c(Envsaliva.x, Envsaliva.y)) %>%
+  inner_join(as_tibble(exp_da$res$q_val, rownames = "species"), by = "species") %>%
+    select(!Envsaliva) %>%
+    rename(diff = Envmedium.x,
+           se = Envmedium.y,
+           q_value = Envmedium) %>%
+    mutate(lower = diff - se,
+           upper = diff + se)
+
+log_exp_otu_adj %>%
+  as_tibble(rownames = "species") %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "log_obs") %>%
+  left_join(experiment_metadata, by = c("sample" = "#SampleID")) %>% 
+  filter(log_obs > 10) %>% 
+  ggplot(aes(x = log_obs, y = species, fill = Env)) +
+    geom_col()
+
+logf_changes %>%
+  arrange(desc(abs(diff))) %>%
+  slice_head(n = 30) %>% 
+  mutate(diff_sign = case_when(sign(diff) == 1 ~ "calculus",
+                               sign(diff) == -1 ~ "medium")) %>%
+  ggplot(aes(x = diff, y = species, col = diff_sign)) +
+    geom_point() +
+    geom_pointrange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed")
 ```
 

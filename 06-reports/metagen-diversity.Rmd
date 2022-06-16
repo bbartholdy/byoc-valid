@@ -8,8 +8,6 @@ library(vegan)
 library(mixOmics)
 library(tidyverse)
 library(here)
-#species_abundance_long <- read_tsv(here("05-results/species-abundance_long.tsv"))
-#genus_abundance_long <- read_tsv(here("05-results/genus-abundance_long.tsv"))
 otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 metadata <- read_tsv(here("01-documentation/metadata.tsv"))
 ```
