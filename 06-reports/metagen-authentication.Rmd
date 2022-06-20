@@ -23,17 +23,14 @@ Upload the data and metadata.
 ```{r message=FALSE}
 #| label: data-upload
 # upload data
-lib_conc <- readr::read_tsv(here("01-documentation/SYN_library_quant.tsv")) # library concentrations
+lib_conc <- readr::read_tsv(here("01-documentation/SYN_DNA_concentrations.tsv")) # library concentrations
+metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
+experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv"))
 kraken_taxatab <- readr::read_csv(here("04-analysis/OTUfilter_table.tsv"))
 sourcetracker2 <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
 sourcetracker2_stdevs <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")) 
-metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
-
-sourcetracker2_long <- sourcetracker2 %>%
-  pivot_longer(cols = where(is.numeric), 
-               values_to = "proportion", 
-               names_to = "SampleID") %>%
-  rename(source = ...1)
+otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
 ```
 
 ## SourceTracker
@@ -87,7 +84,7 @@ Convert to TSV for use with the **decontam** package.
 biom convert -i 04-analysis/sourcetracker/OTUs1000filter_table.biom -o 04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv --to-tsv
 ```
 
-Run SourceTracker 2 on the filtered OTU table with rarefaction depth of 10000
+Run SourceTracker2 on the filtered OTU table with rarefaction depth of 10000
 for both source and samples. Samples and sources were mapped in the
 [ST_comb-plaque-map.txt](../04-analysis/sourcetracker/ST_comb-plaque-map.txt).
 The plaque source is a combination of supragingival and subgingival plaque.
@@ -96,142 +93,62 @@ The plaque source is a combination of supragingival and subgingival plaque.
 conda activate qiime2-2022.2
 ```
 
-```sh
-sourcetracker2 \
-  -i 04-analysis/sourcetracker/OTUs1000filter_table.biom \     
-  -m 04-analysis/sourcetracker/ST_comb-plaque-map.txt \     
-  --source_sink_column SourceSink \
-  --source_column_value source \
-  --source_rarefaction_depth 10000 \
-  --sink_rarefaction_depth 10000 \
-  --sink_column_value sink \
-  --source_category_column Env \
-  -o 04-analysis/sourcetracker/sourcetracker2_output \
-  --jobs 2 \
-  --per_sink_feature_assignments
-```
-
-The full results can be found in [04-analysis/sourcetracker/sourcetracker2_output](../04-analysis/sourcetracker/sourcetracker2_output/)
-
 Another run with indoor_air sources included and sediment removed
 
 ```sh
 sourcetracker2 \
     -i 04-analysis/sourcetracker/OTUs1000filter_table.biom \
-    -m 04-analysis/sourcetracker/ST_no-sedi.txt \
+    -m 04-analysis/sourcetracker/ST_comb-plaque-map.txt \
     --source_sink_column SourceSink  \
     --source_column_value source \
     --source_rarefaction_depth 1000 \
     --sink_rarefaction_depth 1000 \
     --sink_column_value sink \
     --source_category_column Env \
-    -o 04-analysis/sourcetracker/sourcetracker2_output2 \
+    -o 04-analysis/sourcetracker/sourcetracker2_output \
     --jobs 2 \
     --per_sink_feature_assignments
 ```
 
-The full results can be found in [04-analysis/sourcetracker/sourcetracker2_output](../04-analysis/sourcetracker/sourcetracker2_output2/)
+The full results can be found in [04-analysis/sourcetracker/sourcetracker2_output](../04-analysis/sourcetracker/sourcetracker2_output/)
 
 ```{r}
-# sourcetracker with plaque source samples included
-
+# convert to long format
 sourcetracker2_long <- sourcetracker2 %>%
   pivot_longer(cols = where(is.numeric), 
                values_to = "proportion", 
                names_to = "SampleID") %>%
   rename(source = ...1)
-
-sourcetracker2.2_long <- sourcetracker2.2 %>%
-  pivot_longer(cols = where(is.numeric), 
-               values_to = "proportion", 
-               names_to = "SampleID") %>%
-  rename(source = ...1)
-
-
-# Arrange samples by age
-day_order <- metadata %>%
-  filter(SourceSink == "sink") %>%
-  arrange(day) %>%
-  filter(`#SampleID` %in% colnames(sourcetracker2.2)) %>%
-  .$`#SampleID`
-
-# sourcetracker with plaque source samples removed
-
-
-# contributions in problematic samples
-
-problem_samples <- sourcetracker2.2_long %>%
-  filter(source == "Unknown",
-         proportion > 0.2) %>%
-  .$SampleID
-
-#file_names_problems <- paste0("04-analysis/sourcetracker/sourcetracker2_output/", problem_samples, ".feature_table.txt")
-file_names_problems <- paste0("04-analysis/sourcetracker/sourcetracker2_output/", problem_samples, ".feature_table.txt")
-
-file_names_all <- paste0(
-  "04-analysis/sourcetracker/sourcetracker2_output/", 
-  unique(sourcetracker2_long$SampleID), 
-  ".feature_table.txt")
-all_data <- lapply(as.list(file_names_all), read_tsv)
-
-names(all_data) <- unique(sourcetracker2_long$SampleID)
-
-all_list_long <- lapply(all_data, function(x) x %>% 
-                              pivot_longer(cols = where(is.numeric),
-                                           values_to = "count",
-                                           names_to = "taxon") %>%
-                              rename(source = ...1)
-)
-
-all_data_long <- all_list_long %>% 
-  map_df(~ as_tibble(.x), .id = "SampleID")
-
-
-# How many unknowns are actually oral taxa
-
-iso_database <- load_database(cuperdec_database_ex, target = "oral")
-oral_taxa <- iso_database %>%
-  filter(Isolation_Source == TRUE)
-
-#ggsave(here("unknowns_plot1.png"), width = 10, height = 7, units = "in")
-
-unknown_data_long %>% 
-  filter(count > 0) %>% 
-  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
-  #group_by(SampleID) %>%
-  #mutate(proportion = ) # proportion of taxon count in sample
-  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
-  geom_col(position = "fill") +
-  theme(axis.text.x = element_text(angle = 90))
-
-
-all_data_long %>% 
-  filter(count > 0) %>% 
-  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
-  #group_by(SampleID) %>%
-  #mutate(proportion = ) # proportion of taxon count in sample
-  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
-    geom_col(position = "fill") +
-    scale_fill_viridis_d() +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90)) +
-    scale_x_discrete(limits = day_order)
 ```
 
 
 ### Visualisation of sources
 
-To help visualise samples by the sequence in which they were sampling during the
-experiment, the samples were organised by day they were sampled.
+The samples were organised by day they were sampled,
 
 ```{r}
-day_order <- metadata %>%
-  filter(SourceSink == "sink") %>%
-  arrange(day) %>%
+day_order <- experiment_metadata %>%
+  mutate(Env = factor(
+    Env, 
+    levels = c("saliva", "medium", "calculus") # force level order so it doesn't order alphabetically
+    ) 
+  ) %>% 
+  group_by(Env) %>%
+  arrange(day, .by_group = T) %>%
   filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
-  .$`#SampleID`
+  mutate(rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
+         col = case_when(rm == T ~ "red",
+                         rm == F ~ "black"))
+
+removed_samples <- experiment_metadata %>%
+  mutate(rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
+         col = case_when(rm == T ~ "red",
+                         rm == F ~ "black")) %>% 
+  mutate(sample = `#SampleID`) %>%
+  arrange(day)
 ```
 
+then visualised.
 
 ```{r}
 #| label: st-plot
@@ -239,41 +156,46 @@ day_order <- metadata %>%
 sourcetracker2_long %>% 
   ggplot(aes(SampleID, proportion, fill = source)) +
     geom_col() +
-    scale_fill_viridis_d() +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90)) +
-    scale_x_discrete(limits = day_order) +
-    scale_fill_viridis_d()
+    scale_x_discrete(limits = day_order$`#SampleID`) +
+    scale_fill_viridis_d() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5, colour = day_order$col))
 ```
 
-Figure \@ref(fig:st-plot) shows that a lot of species were assigned to the
-'Unknown' category. To see whether this was the result of external contamination
-or the presence of oral taxa with an unknown origin (which could be due to the
-taxa matching multiple sources), the taxa from 'Unknown' were compared to the
-oral reference database from the **cuperdec** R package. Only samples with a
-large proportion of 'Unknowns' (>50%) were included.
+Figure \@ref(fig:st-plot) shows that many of the later medium samples were assigned
+to the 'Unknown' and 'indoor_air' categories. To see whether this was the result of external
+contamination or the presence of oral taxa with an unknown origin (which could be
+due to the taxa matching multiple sources), the taxa from 'Unknown' were compared
+to the oral reference database from the **cuperdec** R package. Only samples with
+a large proportion of oral taxa and a low proportion of indoor_air
+(`indoor_air + Unknown < oral` and `oral > 70%`) were included. Included sample
+names are indicated with black, and removed samples with red.
 
 ```{r}
 #| label: unknowns-plot
-#| fig-cap: "Plot with the origin of 'Unknown' taxa within problematic samples."
+#| fig-cap: "Plot of SourceTracker samples, whether are oral or other."
 all_data_long %>% 
   filter(count > 0) %>% 
   mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
   ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
     geom_col(position = "fill") +
-    scale_fill_viridis_d() +
+    scale_fill_viridis_d(option = "C") +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90)) +
-    scale_x_discrete(limits = day_order)
+    theme(axis.text.x = element_text(angle = 90, colour = day_order$col),
+          axis.title.x = element_blank()) +
+    scale_x_discrete(limits = day_order$`#SampleID`)
 ```
 
 Figure \@ref(fig:unknowns-plot) shows that a small proportion of the species
-assigned to 'Unknown' are known to be oral taxa. The samples do also seem to
-contain some external contamination.
+assigned to the various sources are known to be oral taxa. The samples do also
+seem to contain some external contamination.
 
-Based on the results from SourceTracker, samples ... were removed from the analysis.
+Based on the results from SourceTracker, samples
+`r paste(as.vector(filter(removed_samples, rm == T)[,1]), sep = ",")`
+were removed from the analysis.
 
-## Cuperdec
+## cuperdec
 
 ```{r}
 head(kraken_taxatab) %>%
@@ -302,3 +224,35 @@ filter_result <- simple_filter(curves, 60)
 ```{r}
 plot_cuperdec(curves, metadata_table, filter_result)
 ```
+
+## decontam
+
+```{r}
+species_table_long <- otu_decontam %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
+
+byoc_table_long <- species_table_long %>% 
+  filter(str_detect(sample, "SYN"),
+         sample %in% analysis_metadata$`#SampleID`,
+         count > 0)
+
+species_summ <- byoc_table_long %>%
+  group_by(sample) %>%
+  count(`#OTU ID`) %>%
+  summarise(count = sum(n))
+  
+# remaining species count in each sample
+species_table_long %>% 
+  group_by(sample) %>%
+  count(`#OTU ID`) %>% 
+  ggplot(aes(x = sample, y = n)) +
+    geom_col() +
+    theme(axis.text.x = element_text(angle = 90),
+          axis.title.x = element_blank()) 
+```
+
+After running the **decontam** package, the samples contained between
+`r paste(range(species_summ$count), collapse = " and ")`
+species with a mean of
+`r paste(round(mean(species_summ$count), 2))`.
+

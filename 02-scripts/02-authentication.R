@@ -42,11 +42,85 @@ sourcetracker2_long <- sourcetracker2 %>%
                names_to = "SampleID") %>%
   rename(source = ...1)
 
+
+# contributions in problematic samples
+
+problem_samples <- sourcetracker2_long %>%
+  filter(source == "indoor_air",
+         proportion > 0.2) %>%
+  .$SampleID
+
+# pivot_wider(names_from = "source", values_from = "proportion")
+
+file_names_problems <- paste0("04-analysis/sourcetracker/sourcetracker2_output/", problem_samples, ".feature_table.txt")
+
+file_names_all <- paste0(
+  "04-analysis/sourcetracker/sourcetracker2_output/", 
+  unique(sourcetracker2_long$SampleID), 
+  ".feature_table.txt")
+all_data <- lapply(as.list(file_names_all), read_tsv)
+
+names(all_data) <- unique(sourcetracker2_long$SampleID)
+
+all_list_long <- lapply(all_data, function(x) x %>% 
+                          pivot_longer(cols = where(is.numeric),
+                                       values_to = "count",
+                                       names_to = "taxon") %>%
+                          rename(source = ...1)
+)
+
+all_data_long <- all_list_long %>% 
+  map_df(~ as_tibble(.x), .id = "SampleID") %>%
+  filter(count > 0)
+
+# How many unknowns are actually oral taxa
+
+iso_database <- load_database(cuperdec_database_ex, target = "oral")
+oral_taxa <- iso_database %>%
+  filter(Isolation_Source == TRUE)
+
+#ggsave(here("unknowns_plot1.png"), width = 10, height = 7, units = "in")
+
+unknown_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
+  #group_by(SampleID) %>%
+  #mutate(proportion = ) # proportion of taxon count in sample
+  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
+  geom_col(position = "fill") +
+  theme(axis.text.x = element_text(angle = 90))
+
+
+all_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
+  #group_by(SampleID) %>%
+  #mutate(proportion = ) # proportion of taxon count in sample
+  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
+  geom_col(position = "fill") +
+  scale_fill_viridis_d() +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_discrete(limits = day_order)
+
+
 # filter out samples where the proportion of indoor_air exceeds oral source
-remove_samples <- sourcetracker2_long %>% 
+remove_samples1 <- sourcetracker2_long %>% 
   pivot_wider(names_from = "source", values_from = "proportion") %>% 
   filter(indoor_air / (`modern calculus`+ plaque + saliva) > 1) %>%
   .$SampleID
+
+remove_samples2 <- all_data_long %>%
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
+  group_by(SampleID, oral_source) %>%
+  summarise(count = sum(count)) %>% 
+  mutate(prop = count / sum(count)) %>% 
+  filter(oral_source == "oral" & prop < 0.7) %>% 
+  .$SampleID
+
+# remove samples present in both remove_samples1 and remove_samples2
+remove_samples <- remove_samples1[remove_samples1 %in% remove_samples2]
 
 analysis_metadata <- metadata %>%
   filter(!`#SampleID` %in% remove_samples) %>%
@@ -54,10 +128,11 @@ analysis_metadata <- metadata %>%
 
 otu_removed_table <- otu_filtered_table %>%
   select(which(!colnames(.) %in% remove_samples))
-
+ 
 otu_removed_long <- otu_comb_long %>%
   filter(!sample %in% remove_samples)
 
+write_tsv(all_data_long, "04-analysis/sourcetracker/source-comb_long.tsv")
 write_tsv(analysis_metadata, "01-documentation/analysis-metadata.tsv")
 
 # decontam ----------------------------------------------------------------
@@ -158,23 +233,6 @@ true_contaminants <- contaminant_species[!contaminant_species %in% oral_taxa$Tax
 # filter out putative contaminants from OTU table
 otu_decontam <- otu_removed_table %>%
   filter(!(`#OTU ID` %in% true_contaminants))
-
-# how many contaminants per sample?
-species_table_long <- otu_decontam %>%
-  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
-
-
-# remaining species in each sample
-species_table_long %>% 
-  filter(str_detect(sample, "SYN"),
-         sample %in% analysis_metadata$`#SampleID`,
-         count > 0) %>%
-  group_by(sample) %>%
-  count(`#OTU ID`) %>% 
-  ggplot(aes(x = sample, y = n)) +
-    geom_col() +
-    theme(axis.text.x = element_text(angle = 90))
-
 
 write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv"))
 write_tsv(as_tibble(true_contaminants), here("05-results/list-of-contaminants.txt"), col_names = F)
