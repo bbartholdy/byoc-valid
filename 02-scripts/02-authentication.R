@@ -81,27 +81,14 @@ oral_taxa <- iso_database %>%
 
 #ggsave(here("unknowns_plot1.png"), width = 10, height = 7, units = "in")
 
-unknown_data_long %>% 
-  filter(count > 0) %>% 
-  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
-  #group_by(SampleID) %>%
-  #mutate(proportion = ) # proportion of taxon count in sample
-  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
-  geom_col(position = "fill") +
-  theme(axis.text.x = element_text(angle = 90))
-
-
-all_data_long %>% 
-  filter(count > 0) %>% 
-  mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
-  #group_by(SampleID) %>%
-  #mutate(proportion = ) # proportion of taxon count in sample
-  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
-  geom_col(position = "fill") +
-  scale_fill_viridis_d() +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90)) +
-  scale_x_discrete(limits = day_order)
+# unknown_data_long %>% 
+#   filter(count > 0) %>% 
+#   mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
+#   #group_by(SampleID) %>%
+#   #mutate(proportion = ) # proportion of taxon count in sample
+#   ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
+#   geom_col(position = "fill") +
+#   theme(axis.text.x = element_text(angle = 90))
 
 
 # filter out samples where the proportion of indoor_air exceeds oral source

@@ -15,7 +15,7 @@ otu_table_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.t
 
 # object to order plots by sampling day
 day_order <- experiment_metadata %>%
-  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
+  #filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
   #filter(str_detect(`#SampleID`, "SYN")) %>% # only include samples from this study
   arrange(desc(day)) %>% # order by sampling day (ascending)
   .$`#SampleID` # isolate sample names
@@ -126,15 +126,15 @@ qplot(y= col_seq, x = 1, fill=factor(col_seq), geom="tile") +
 
 # Within the experiment
 
-Plotting relative species abundances across the experiment.
+Plotting relative species and genus abundances across the experiment.
 
 ## Genus composition
 
 ```{r}
 #genus_abund_long
 top_20_genus %>% 
-  filter(str_detect(sample, "SYN")) %>%
-  ggplot(aes(x = sample, y = genus, fill = log(rel_abund))) +
+  filter(sample %in% experiment_metadata$`#SampleID`) %>%
+  ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.001))) +
     geom_tile() +
     theme_void() +
     scale_x_discrete(limits = rev(day_order)) + # reverse day_order vector
@@ -150,7 +150,7 @@ top_20_genus %>%
     scale_fill_viridis_c(option = "B")
 
 genus_abund_long %>%
-  filter(str_detect(sample, "SYN")) %>% 
+  filter(sample %in% experiment_metadata$`#SampleID`) %>% 
   mutate(top_genus = case_when(rel_abund > 0.01 ~ genus,
                                TRUE ~ NA_character_)) %>% 
   ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
@@ -209,7 +209,8 @@ species_abund_long %>%
     theme_void() +
     scale_y_discrete(limits = day_order) +
     #my_scale2 +
-    theme(axis.text = element_text())
+    theme(axis.text = element_text()) +
+    scale_fill_viridis_d(option = "C")
 ```
 
 ### Oxygen tolerance
@@ -227,7 +228,7 @@ species did not have a match on BacDive.
 
 ```{r}
 species_properties %>% 
-  filter(str_detect(sample, "SYN")) %>% 
+  filter(sample %in% experiment_metadata$`#SampleID`) %>% 
   ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
     geom_col() +
     theme_minimal() +
@@ -254,8 +255,7 @@ species_properties %>%
     theme_minimal() +
     #theme(axis.text.x = element_text(angle = 90)) +
     scale_y_discrete(limits = day_order) +
-    scale_fill_manual(
-      values = viridisLite::cividis(n = 2)) +
+    scale_fill_viridis_d(option = "E") +
     theme(
       axis.text.y = element_text(
         colour = experiment_colours %>%
@@ -264,8 +264,7 @@ species_properties %>%
 ```
 
 ```{r}
-analysis_metadata %>%
-  filter(str_detect(`#SampleID`, "SYN")) %>% 
+experiment_metadata %>%
   dplyr::select(`#SampleID`, treatment)
 ```
 
@@ -297,25 +296,38 @@ comparative samples.
 
 ```{r}
 species_properties %>% 
-  filter(str_detect(sample, "SYN[0-9]*.[A-H]", negate = T)) %>% 
+  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  #mutate(`Oxygen tolerance` = forcats::fct_explicit_na(`Oxygen tolerance`)) %>%
   ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
     geom_col() +
-    scale_fill_viridis_d() +
-    theme_minimal()
-    #theme(axis.text.x = element_text(angle = 90)) +
+    theme_minimal() +
+    #scale_fill_viridis_d(option = "H") +
+    scale_fill_manual(
+      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`))))) +
+  theme(
+    axis.text.y = element_text(
+        colour = analysis_colours %>%
+          filter(str_detect(Env, "calculus|plaque")) %>%
+          #arrange(desc(day)) %>%
+          .$env_col)
+  )
 ```
+
+Most notable difference is the absence of aerobic species in the artificial
+calculus samples.
+
 ### Amylase-binding species
 
 ```{r}
 species_properties %>% 
-  filter(str_detect(sample, "SYN[0-9]*.[A-H]", negate = T)) %>% 
+  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
   ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
     geom_col() +
     theme_minimal() +
-    scale_fill_viridis_d()
+    scale_fill_viridis_d(option = "E")
     #theme(axis.text.x = element_text(angle = 90)) +
 ```
 
 Amylase-binding species are seemingly underrepresented in the artificial calculus
-samples compared to the comparative samples.
+samples compared to the modern calculus and plaque samples.
 

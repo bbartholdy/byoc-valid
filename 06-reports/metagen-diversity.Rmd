@@ -10,6 +10,9 @@ library(tidyverse)
 library(here)
 otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 metadata <- read_tsv(here("01-documentation/metadata.tsv"))
+analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 ```
 
 # Data preparation
@@ -23,32 +26,36 @@ sample per row, and one column per taxon
 ```{r convert-table}
 species_otu_table <- otu_table %>%
   column_to_rownames(var = "#OTU ID") %>%
-  t()
+  t() %>%
+  as_tibble(rownames = "sample")
 
-species_otu_table <- species_abundance_long %>%
-  dplyr::select(!rel_abund) %>% 
-  pivot_wider(
-    names_from = "species",
-    values_from = "count"
-    ) %>%
-  mutate(across(where(is.numeric), replace_na, 0))
-
-genus_otu_table <- genus_abundance_long %>%
-  dplyr::select(!rel_abund) %>% 
-  pivot_wider(
-    names_from = "genus",
-    values_from = "count"
-    ) %>%
-  mutate(across(where(is.numeric), replace_na, 0))
+# species_otu_table <- species_abundance_long %>%
+#   dplyr::select(!rel_abund) %>% 
+#   pivot_wider(
+#     names_from = "species",
+#     values_from = "count"
+#     ) %>%
+#   mutate(across(where(is.numeric), replace_na, 0))
+# 
+# genus_otu_table <- genus_abundance_long %>%
+#   dplyr::select(!rel_abund) %>% 
+#   pivot_wider(
+#     names_from = "genus",
+#     values_from = "count"
+#     ) %>%
+#   mutate(across(where(is.numeric), replace_na, 0))
 ```
 
 Metadata for the included samples are prepared,
 
 ```{r metadata}
-analysis_metadata <- species_otu_table %>%
-  #dplyr::select(sample) %>%
-  #rename(`#SampleID` = sample) %>%
-  left_join(metadata) # include only samples in comb_otu_table
+comp_metadata <- analysis_metadata %>%
+  filter(
+    Env != "sediment", 
+    Env != "skin",  
+    Env != "stool", 
+    Env != "indoor_air"
+  )
 ```
 
 and for samples from this study only.
@@ -65,11 +72,19 @@ Data are converted to a matrix for further analysis with the
 R packages.
 
 ```{r}
-species_otu_matrix <- species_otu_table
-
-genus_otu_matrix <- genus_otu_table %>%
+species_otu_matrix <- species_otu_table %>%
   column_to_rownames(var = "sample") %>%
   as.matrix()
+
+byoc_otu_matrix <- species_otu_matrix %>%
+ subset(rownames(species_otu_matrix) %in% experiment_metadata$`#SampleID`)
+
+comp_otu_matrix <- species_otu_matrix %>%
+  subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
+
+# genus_otu_matrix <- genus_otu_table %>%
+#   column_to_rownames(var = "sample") %>%
+#   as.matrix()
 ```
 
 # Diversity
@@ -96,8 +111,7 @@ alpha_div %>%
     geom_boxplot() +
     geom_jitter(width = 0.2) +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.4),
-          legend.position = "none",
+    theme(legend.position = "none",
           panel.grid.major.x = element_blank())
 ```
 
@@ -105,14 +119,14 @@ Not really enough samples to make any relevant interpretations.
 
 Days were grouped for increased sample sizes.
 
-- inoc = days 0,3,5,7
-- treatment = days 9,7,12,15,18,21
+- inoc = days 0,3,5
+- treatment = days 7,9,12,15,18,21
 - final = day 24
 
 ```{r}
 experiment_metadata_ext <- experiment_metadata %>%
-  mutate(day_group = case_when(day < 8 ~ "inoc",
-                               day > 8 & day < 24 ~ "treatm",
+  mutate(day_group = case_when(day < 6 ~ "inoc",
+                               day > 6 & day < 24 ~ "treatm",
                                day == 24 ~ "final")
          )
 
@@ -126,12 +140,11 @@ alpha_div %>%
     geom_boxplot() +
     geom_jitter(width = 0.2) +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.4),
-          legend.position = "none",
+    theme(legend.position = "none",
           panel.grid.major.x = element_blank())
 ```
 
-Slight decrease in Shannon diversity ove the course of the experiment.
+Slight decrease in Shannon diversity over the course of the experiment.
 
 ### Sample types
 
@@ -153,12 +166,15 @@ alpha_div %>%
     theme_minimal() +
     theme(axis.text.x = element_text(hjust = 1, angle = 45),
           legend.position = "none",
-          panel.grid.major.x = element_blank())
+          panel.grid.major.x = element_blank()) +
+    scale_colour_viridis_d(option = "C")
 ```
 
 Higher overall alpha diversity in the comparative samples than the artificial
-samples, both medium and final calculus product.
-
+samples, both medium and final calculus product. Saliva samples from this study
+(`r mean(alpha_div[c("SYN001.A0101","SYN002.A0101", "SYN003.A0101")])`)
+had a lower mean diversity than saliva samples from other studies
+(`r mean(alpha_div[c("SRS019120", "SRS014468", "SRS015055", "SRS014692", "SRS013942")])`).
 
 ## Beta
 
@@ -169,23 +185,23 @@ Centered log-ratio (CLR) transformation with 1 offset.
 ### Experiment samples only
 
 ```{r}
-clr_sample <- logratio.transfo(sample_otu_matrix, "CLR", 1)
+clr_byoc <- logratio.transfo(byoc_otu_matrix, "CLR", 1)
 ```
 
 ```{r}
-spca_sample <- spca(clr_sample, ncomp = 10, scale = F)
-sample_explain_var <- spca_sample$prop_expl_var$X
+spca_byoc <- spca(clr_byoc, ncomp = 10, scale = F)
+byoc_explain_var <- spca_byoc$prop_expl_var$X
 ```
 
 ```{r}
-plot(spca_sample, type = "l")
+plot(spca_byoc, type = "l")
 ```
 
 
 ```{r}
-sample_princomp <- spca_sample$x %>%
+byoc_princomp <- spca_byoc$x %>%
   as_tibble(rownames = "sample")
-sample_princomp %>%
+byoc_princomp %>%
   ggplot(
     aes(
       x = PC1, y = PC2, 
@@ -197,43 +213,38 @@ sample_princomp %>%
     labs(
       x = paste(
         "PC1", 
-        scales::percent(sample_explain_var[[1]], accuracy = 0.1)),
+        scales::percent(byoc_explain_var[[1]], accuracy = 0.1)),
       y = paste(
         "PC2", 
-        scales::percent(sample_explain_var[[2]], accuracy = 0.1)),
+        scales::percent(byoc_explain_var[[2]], accuracy = 0.1)),
       col = "Sampling day",
       shape = "Sample type"
       ) +
     theme_bw() +
-    scale_shape_discrete(solid = F)
+    scale_shape_discrete(solid = F) +
     scale_colour_viridis_d()
 ```
 
 PC1 discriminates the saliva samples from the medium and calculus samples,
-while PC2 mainly discriminates calculus from medium.
+while PC2 mainly discriminates calculus from medium. Medium and final product
+are distinct from the saliva samples used for inoculation.
 
 ### Artificial calculus and comparative oral sources
 
 ```{r}
-comp_otu_matrix <- species_otu_matrix %>%
-  as_tibble(rownames = "sample") %>%
-  filter(sample %in% analysis_metadata$`#SampleID`) %>%
-  column_to_rownames(var = "sample")
+# comp_otu_matrix <- species_otu_matrix %>%
+#   as_tibble(rownames = "sample") %>%
+#   filter(sample %in% analysis_metadata$`#SampleID`) %>%
+#   column_to_rownames(var = "sample")
 
 clr_species <- logratio.transfo(comp_otu_matrix, "CLR", 1)
-clr_genus <- logratio.transfo(genus_otu_matrix, "CLR", 1)
 ```
 
 Scree plot of components.
 
 ```{r}
 spca_species <- spca(clr_species, ncomp = 10, scale = F)
-
-spca_genus <- spca(clr_genus, ncomp = 10, scale = F)
-
-plot(spca_species)
-
-plot(spca_genus)
+plot(spca_species, type = "l")
 ```
 
 sPCA plot
@@ -246,8 +257,12 @@ compar_explain_var <- spca_species$prop_expl_var$X
 spca_compar %>%
   ggplot(aes(x = PC1, y = PC2, col = analysis_metadata %>%
                filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
+               .$Env, shape = analysis_metadata %>%
+               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
                .$Env)) +
-    geom_point(size = 2) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
     theme_bw() +
     labs(x = paste(
       "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
@@ -257,38 +272,72 @@ spca_compar %>%
       )
     ) +
   scale_colour_viridis_d() +
-  labs(col = "Env")
+  scale_shape_manual(values = 1:11) +
+  labs(col = "Env", shape = "Env")
 ```
 
-The artificial calculus clusters with the medium, while the modern
-reference calculus clusters with plaque and saliva.
+PC1 separates buccal mucosa and modern calculus samples from the rest, while
+PC2 separates most of the medium samples. The artificial calculus groups together
+with plaque and saliva samples.
 
-Main drivers of discrimination. (include loading vectors)
-
-Top loading vectors for PC1 and PC2.
+Main drivers of discrimination. Top loading vectors for PC1 and PC2.
 
 ```{r}
-spca_species$rotation %>%
+pca_loadings <- spca_species$rotation %>%
   as_tibble(rownames = "species") %>% 
+  dplyr::select(species, PC1, PC2, PC3) %>%
   arrange(desc(PC1))
+
+pca_loadings
+
+pca_loadings %>%
+  arrange(desc(PC2))
 ```
+
+```{r}
+plotLoadings(spca_species, ndisplay = 20)
+plotLoadings(spca_species, 2, ndisplay = 20)
+```
+
 
 ```{r}
 plotVar(spca_species, cutoff = 0.92)
 ```
 
 ```{r}
-biplot(spca_species, comp = 1:2, cutoff = 0.92, group = analysis_metadata$Env, ind.names = F)
+
+spca_compar %>%
+  ggplot(aes(x = PC1, y = PC2, col = analysis_metadata %>%
+               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
+               .$Env, shape = analysis_metadata %>%
+               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
+               .$Env)) +
+    geom_point(size = 3) +
+    geom_segment(data = pca_loadings[1:3,], aes(x = 0, y = 0, xend = (PC1*100),
+     yend = (PC2*100)), arrow = arrow(length = unit(1/2, "picas")),
+     color = "black", inherit.aes = F) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    theme_bw() +
+    labs(x = paste(
+      "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
+      )
+    ) +
+  scale_colour_viridis_d() +
+  scale_shape_manual(values = 1:8) +
+  labs(col = "Env", shape = "Env")
 ```
 
 
 ```{r}
-plotVar(spca_genus, cutoff = 0.9)
+env_group <- comp_metadata$Env[comp_metadata$`#SampleID` %in% rownames(comp_otu_matrix)]
+biplot(
+  spca_species,
+  comp = 1:2,
+  cutoff = 0.92,
+  ind.names = F)
 ```
-
-
-```{r}
-biplot(spca_genus, comp = 1:2, cutoff = 0.92, group = analysis_metadata$Env, ind.names = F)
-```
-
 
