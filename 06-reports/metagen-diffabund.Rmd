@@ -15,14 +15,19 @@ taxatable <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
 experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
+pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
+exp_pca_loadings <- readr::read_tsv(here("05-results/experiment-pca-loadings.tsv"))
+bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
 ```
 
-Data are converted to `phyloseq` format.
+Data are converted to `phyloseq` format. Experiment samples are first run on
+their own, and then artificial calculus samples are run together with calculus
+and plaque reference samples.
 
 ```{r}
 calculus_otu <- taxatable %>%
   column_to_rownames(var = "#OTU ID") %>% 
-  select(which(
+  dplyr::select(which(
     colnames(.) %in% filter(
       analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`
   )) %>%
@@ -30,7 +35,7 @@ calculus_otu <- taxatable %>%
 
 experiment_otu <- taxatable %>%
   column_to_rownames(var = "#OTU ID") %>% 
-  select(which(colnames(.) %in% experiment_metadata$`#SampleID`)) %>%
+  dplyr::select(which(colnames(.) %in% experiment_metadata$`#SampleID`)) %>%
   otu_table(taxa_are_rows = T)
 
 experiment_sample <- experiment_metadata %>%
@@ -41,7 +46,7 @@ experiment_sample <- experiment_metadata %>%
 experiment_phyloseq <- phyloseq(experiment_otu, experiment_sample)
 
 calculus_sample <- analysis_metadata %>%
-  filter(str_detect(Env, "calculus")) %>%
+  filter(str_detect(Env, "calculus|plaque")) %>%
   column_to_rownames(var = "#SampleID") %>%
   sample_data()
 
@@ -49,6 +54,11 @@ calculus_phyloseq <- phyloseq(calculus_otu, calculus_sample)
 ```
 
 ## ANCOM-BC
+
+Differential abundance is calculated using the ANCOM-BC method from the `ANCOMBC`
+R package.
+
+### Across experiment
 
 ```{r}
 exp_da <- ANCOMBC::ancombc(
@@ -72,34 +82,214 @@ log_exp_otu <- log(microbiome::abundances(experiment_otu) + 1)
 log_exp_otu_adj <- exp(t(t(log_exp_otu) - samp_frac)) %>%
   as_tibble(rownames = "species")
 
-logf_changes <- as_tibble(exp_da$res$lfc, rownames = "species") %>%
-    #select(species, Envmedium) %>%
-    inner_join(as_tibble(exp_da$res$se, rownames = "species"), by = "species") %>%
-    select(!c(Envsaliva.x, Envsaliva.y)) %>%
-  inner_join(as_tibble(exp_da$res$q_val, rownames = "species"), by = "species") %>%
-    select(!Envsaliva) %>%
-    rename(diff = Envmedium.x,
-           se = Envmedium.y,
-           q_value = Envmedium) %>%
-    mutate(lower = diff - se,
-           upper = diff + se)
+exp_logf_full <- as_tibble(exp_da$res$lfc, rownames = "species") %>%
+  pivot_longer(-species, values_to = "lfc") %>%
+  full_join(
+    as_tibble(exp_da$res$se, rownames = "species") %>%
+      pivot_longer(-species, values_to = "se"),
+    by = c("species", "name")
+  ) %>%
+  full_join(
+    as_tibble(exp_da$res$q, rownames = "species") %>%
+      pivot_longer(-species, values_to = "q_value"),
+    by = c("species", "name")
+  ) %>%
+  mutate(upper = lfc + se,
+         lower = lfc - se,
+         name = str_remove(name, "^Env"),
+         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
+         TRUE ~ name)) %>%
+  rename(env = name) %>%
+  left_join(bac_properties, by = "species")
 
-log_exp_otu_adj %>%
-  as_tibble(rownames = "species") %>%
-  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "log_obs") %>%
-  left_join(experiment_metadata, by = c("sample" = "#SampleID")) %>% 
-  filter(log_obs > 10) %>% 
-  ggplot(aes(x = log_obs, y = species, fill = Env)) +
-    geom_col()
+exp_logf_full %>%
+  arrange(desc(abs(lfc))) %>%
+  slice_head(n = 20) %>%
+  dplyr::select(species, lfc, `Oxygen tolerance`, abs)
 
-logf_changes %>%
-  arrange(desc(abs(diff))) %>%
-  slice_head(n = 30) %>% 
-  mutate(diff_sign = case_when(sign(diff) == 1 ~ "calculus",
-                               sign(diff) == -1 ~ "medium")) %>%
-  ggplot(aes(x = diff, y = species, col = diff_sign)) +
+# highest absolute log-fold changes
+exp_logf_full %>% 
+  group_by(env) %>% 
+  arrange(desc(abs(lfc))) %>%
+  slice_head(n = 20) %>% # causes loss of some env values
+  ungroup() %>%
+  arrange(desc(abs(lfc))) %>%
+  slice_head(n = 20) %>% # extract top 20 lfc from modern_calculus
+  bind_rows(filter( # recombine with other env values so all are included in plot
+    exp_logf_full, 
+    env != "saliva",
+    species %in% .$species
+    )
+  ) %>%
+  ggplot(aes(x = lfc, y = species, col = abn)) +
     geom_point() +
-    geom_pointrange(aes(xmin = lower, xmax = upper)) +
-    geom_vline(xintercept = 0, linetype = "dashed")
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env)
+
+# top 30 species from PC1
+exp_logf_full %>%
+  filter(species %in% exp_pca_loadings$species[1:20]) %>% 
+  slice_head(n = 60) %>% 
+  ggplot(aes(x = lfc, y = species, col = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +  
+    theme_bw()
+
+# top 30 species from PC2
+exp_logf_full %>%
+  filter(species %in% exp_pca_loadings$species[1:20]) %>% 
+  slice_head(n = 60) %>% 
+  ggplot(aes(x = lfc, y = species, col = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    theme_bw() +
+    facet_wrap(~ env)
+
+### PROVIDE OXYGEN TOLERANCE OF SPECIES ###
 ```
 
+### Artificial vs. modern calculus
+
+```{r}
+calculus_da <- ANCOMBC::ancombc(
+  calculus_phyloseq, 
+  formula = "Env",
+  group = "Env",
+  global = T,
+  p_adj_method = "fdr")
+
+# table with log-fold change statistics between artificial calculus and others
+  # negative lfc means higher abundance in artificial calculus
+  # positive lfc means lower abundance in art calculus
+calc_logf_change <- as_tibble(calculus_da$res$lfc, rownames = "species") #%>%
+    #select(species, Envmedium) %>%
+calc_logf_se <- as_tibble(calculus_da$res$se, rownames = "species") #%>%
+    #select(!c(Envsaliva.x, Envsaliva.y)) %>%
+calc_logf_q <- as_tibble(calculus_da$res$q_val, rownames = "species")
+
+calc_logf_full <- calc_logf_change %>%
+  pivot_longer(-species, values_to = "lfc") %>%
+  full_join(
+    calc_logf_se %>%
+      pivot_longer(-species, values_to = "se"),
+    by = c("species", "name")
+  ) %>%
+  full_join(
+    calc_logf_q %>%
+      pivot_longer(-species, values_to = "q_value"),
+    by = c("species", "name")
+  ) %>%
+  mutate(lower = lfc - se,
+         upper = lfc + se,
+         name = str_remove(name, "^Env"),
+         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
+         TRUE ~ name)) %>%
+  rename(env = name)
+
+head(calc_logf_full)
+```
+
+Plots of log-fold change between samples
+
+```{r}
+# Plot of largest absolute log-fold changes
+calc_logf_full %>%
+  group_by(env) %>% 
+  arrange(desc(abs(lfc))) %>%
+    slice_head(n = 20) %>% # causes loss of some env values
+    ungroup() %>%
+  slice_head(n = 20) %>% # extract top 20 lfc from modern_calculus
+  bind_rows(filter( # recombine with other env values so all are included in plot
+    calc_logf_full, 
+    env != "modern_calculus",
+    species %in% .$species
+    )
+  ) %>% 
+   ggplot(aes(x = lfc, y = species, col = abn)) +
+    geom_point(size = 2) +
+    geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +
+    theme_bw() +
+    theme(
+      legend.position = "none",
+      axis.title.y = element_blank()
+          )
+
+# Top 30 loadings from PC1
+
+calc_logf_full %>%
+  filter(species %in% pca_loadings$species[1:20]) %>% 
+  slice_head(n = 60) %>% # pca_loadings already arranged by PC1
+  ggplot(aes(x = lfc, y = species, col = abn)) +
+    geom_point(size = 2) +
+    geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +
+    theme_bw() +
+    theme(
+      legend.position = "none",
+      axis.title.y = element_blank()
+          )
+
+calc_logf_full %>%
+  filter(species %in% arrange(pca_loadings, desc(abs(PC2)))$species[1:30]) %>%
+  slice_head(n = 30) #%>% # pca_loadings already arranged by PC1
+
+# Top 30 loadings from PC2
+calc_logf_full %>%
+  filter(species %in% arrange(pca_loadings, desc(abs(PC2)))$species[1:20]) %>%
+  slice_head(n = 60) %>% # pca_loadings already arranged by PC1
+  ggplot(aes(x = lfc, y = species, col = abn)) +
+    geom_point(size = 2) +
+    geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +
+    theme_bw() +
+    theme(
+      legend.position = "none",
+      axis.title.y = element_blank()
+          )
+```
+
+### Bias-corrected log observed abundances
+
+Bias-corrected log observed abundances were calculated by following the example
+in `vignette("ANCOMBC")`.
+
+```{r}
+# FIRST NEED TO COMBINE SAMPLES BY TYPE (i.e. modern all artificial)
+  # mean?
+# calc_log_abn %>%
+#   pivot_longer(-species, names_to = "sample", values_to = "log_abn") %>%
+#   left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>%
+# 
+#     filter(species %in% pca_loadings$species[1:30]) %>%
+#   ggplot(aes(x = log_abn, y = species, fill = Env)) +
+#     geom_col(position = "dodge")
+
+# from vignette("ANCOMBC")
+calc_samp_frac <- calculus_da$samp_frac
+# Replace NA with 0
+calc_samp_frac[is.na(calc_samp_frac)] = 0 
+# add 1 to counts for log-transformation
+calc_log_exp_otu <- log(microbiome::abundances(calculus_otu) + 1)
+
+# Adjust the log observed abundances
+# Bias-corrected (log) observed abundances
+calc_log_abn <- t(t(calc_log_exp_otu) - calc_samp_frac) %>%
+  as_tibble(rownames = "species")
+
+```
+
+# Discussion
+
+*Enterococcus faecalis* has the highest log-fold change, with a higher abundance
+in the artificial calculus samples compared to the reference samples and
+may represent one of the main differences between artificial calculus and other
+reference samples, especially modern calculus, consistent with the results of the
+sPCA analysis.

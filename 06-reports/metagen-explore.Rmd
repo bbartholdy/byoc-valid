@@ -44,6 +44,8 @@ analysis_colours <- analysis_metadata %>%
   mutate(env_col = case_when(
     Env == "saliva" ~ env_colours[5],
     Env == "byoc_calculus" ~ env_colours[1],
+    Env == "medium" ~ env_colours[8],
+    Env == "buccal_mucosa" ~ env_colours[6],
     Env == "subgingival_plaque" ~ env_colours[2],
     Env == "supragingival_plaque" ~ env_colours[3],
     Env == "modern_calculus" ~ env_colours[4]
@@ -52,7 +54,8 @@ analysis_colours <- analysis_metadata %>%
 
 # Data preparation
 
-Convert to long format and create a column for genus names.
+The otu table with contaminants removed is convert to long format and a column for
+genus names is created by extracting the first word of the species designation.
 
 ```{r}
 # convert decontaminated taxatable to long format
@@ -66,7 +69,8 @@ otu_table_long <- otu_table_decontam %>%
   mutate(genus = str_extract(species, "\\w+"))
 ```
 
-Convert counts to relative abundance per sample. Separate species and genus levels.
+Counts are converted to relative abundance per sample. Separate data frames are
+generated for species and genus levels.
 
 ```{r}
 species_abund_long <- otu_table_long %>%
@@ -88,9 +92,25 @@ top_20_genus <- genus_abund_long %>%
   distinct(genus) %>%
   slice_head(n = 20) %>%
   left_join(genus_abund_long, by = "genus")
+
+# top 20 species in experiment
+top_20_species <- species_abund_long %>%
+  filter(str_detect(sample, "SYN")) %>% 
+  ungroup() %>%
+  arrange(desc(rel_abund)) %>%
+  distinct(species) %>%
+  slice_head(n = 20) %>%
+  left_join(species_abund_long, by = "species")
 ```
 
-Combine with bacterial properties.
+Information on the oxygen tolerance of bacterial species was downloaded from 
+[BacDive](https://bacdive.dsmz.de) on
+`r str_extract(list.files("../03-data/", pattern = "bacdive"), "\\d{4}-\\d{2}-\\d{2}")`.
+A list of amylase-binding streptococci (ABS) was created based on Nikitkova et al.
+2013.
+
+The data frame of bacterial properties was combined with the list of species
+from the analysis.
 
 ```{r}
 species_properties <- bac_properties %>%
@@ -98,21 +118,50 @@ species_properties <- bac_properties %>%
   mutate(abs = if_else(is.na(abs), FALSE, abs))
 ```
 
+Distribution of oxygen tolerance across all experimental and reference samples
+based on information from BacDive.
+
+```{r}
+species_properties %>%
+  distinct(species, .keep_all = T) %>% 
+  count(`Oxygen tolerance`) %>%
+  mutate(`Oxygen tolerance` = replace_na(`Oxygen tolerance`, "unknown")) %>%
+  ggplot(aes(x = "", y = n, fill = `Oxygen tolerance`)) +
+    geom_col(colour = "white") + 
+    coord_polar(theta = "y") +
+    theme_void() +
+    scale_fill_manual(
+      values = c(viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))), "darkgrey"))
+```
+
 
 ## Colour legends
 
-Env groups.
+Legend for text-colour based on sample type.
 
 ```{r}
 col_seq <- 1:length(levels(as.factor(analysis_colours$env_col)))
+env_col <- na.omit(unique(analysis_colours$env_col))
+env_label <- filter(
+  analysis_colours,
+  Env == "saliva" |
+  Env == "byoc_calculus" |
+  Env == "medium" |
+  Env == "buccal_mucosa" |
+  Env == "subgingival_plaque" |
+  Env == "supragingival_plaque" |
+  Env == "modern_calculus"
+  ) %>%
+  .$Env %>%
+  unique()
 qplot(y= col_seq, x = 1, fill=factor(col_seq), geom="tile") +
-  scale_fill_manual(values = na.omit(unique(analysis_colours$env_col))) +
-  geom_label(aes(label = unique(analysis_colours$Env)[c(3,4,6,5, 2)]), col = "white") +
+  scale_fill_manual(values = env_col) +
+  geom_label(aes(label = env_label), col = "white") +
   theme_void() +
   theme(legend.position="none")
 ```
 
-Treatment groups.
+Legend for text-colour based on treatment groups from the experiment.
 
 ```{r}
 col_seq <- 1:length(levels(as.factor(experiment_colours$treat_col)))
@@ -126,7 +175,8 @@ qplot(y= col_seq, x = 1, fill=factor(col_seq), geom="tile") +
 
 # Within the experiment
 
-Plotting relative species and genus abundances across the experiment.
+Plotting relative species and genus abundances across experimental samples only.
+Samples are ordered from left to right by sampling day.
 
 ## Genus composition
 
@@ -140,13 +190,15 @@ top_20_genus %>%
     scale_x_discrete(limits = rev(day_order)) + # reverse day_order vector
     #my_scale2 +
     theme(
+      legend.position = "top",
       axis.text = element_text(),
       axis.text.x = element_text(
-        angle = 45,
+        angle = 60,
         hjust = 1,
         vjust = 1,
         colour = rev(experiment_colours$env_col)
-        )) +
+        )
+      ) +
     scale_fill_viridis_c(option = "B")
 
 genus_abund_long %>%
@@ -211,6 +263,25 @@ species_abund_long %>%
     #my_scale2 +
     theme(axis.text = element_text()) +
     scale_fill_viridis_d(option = "C")
+
+top_20_species %>% 
+  filter(sample %in% experiment_metadata$`#SampleID`) %>%
+  ggplot(aes(x = sample, y = species, fill = log(rel_abund + 0.001))) +
+    geom_tile() +
+    theme_void() +
+    scale_x_discrete(limits = rev(day_order)) + # reverse day_order vector
+    #my_scale2 +
+    theme(
+      legend.position = "top",
+      axis.text = element_text(),
+      axis.text.x = element_text(
+        angle = 60,
+        hjust = 1,
+        vjust = 1,
+        colour = rev(experiment_colours$env_col)
+        )
+      ) +
+    scale_fill_viridis_c(option = "B")
 ```
 
 ### Oxygen tolerance
@@ -268,7 +339,7 @@ experiment_metadata %>%
   dplyr::select(`#SampleID`, treatment)
 ```
 
-The presence of ABS was unrelated to the presence of starch. The overall proportion
+The presence of ABS is unrelated to the presence of starch. The overall proportion
 of ABS decreases over the course of the experiment. The absence of amylase in
 the model may reduce the need for species capable of starch hydrolysis, especially
 when sucrose was available in all samples.
@@ -314,7 +385,8 @@ species_properties %>%
 ```
 
 Most notable difference is the absence of aerobic species in the artificial
-calculus samples.
+calculus samples. Modern calculus contains a large proportion of species where
+oxygen tolerance is unknown (`NA`).
 
 ### Amylase-binding species
 
@@ -330,4 +402,15 @@ species_properties %>%
 
 Amylase-binding species are seemingly underrepresented in the artificial calculus
 samples compared to the modern calculus and plaque samples.
+
+# Discussion
+
+No aerobes made it into the model. Apart from the donated saliva, no aerobes
+were detected in any of the experimental samples. ABS are also underrepresented
+in the experimental samples compared to the modern calculus and plaque reference
+samples. The high relative abundance of *E. faecalis* may represent contamination
+despite it being commonly found in the oral cavity. There was a relatively low
+frequency of ABS in the artificial samples compared to the reference samples,
+which may be attributed to the presence of sucrose in the treatment solutions,
+potentially eliminating the need for ABS.
 

@@ -5,7 +5,6 @@ output: html_notebook
 
 ```{r setup, include=FALSE}
 knitr::opts_knit$set(message = FALSE)
-library(here)
 ```
 
 Load necessary packages.
@@ -85,7 +84,7 @@ Convert to TSV for use with the **decontam** package.
 biom convert -i 04-analysis/sourcetracker/OTUs1000filter_table.biom -o 04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv --to-tsv
 ```
 
-Run SourceTracker2 on the filtered OTU table with rarefaction depth of 10000
+Run SourceTracker2 on the filtered OTU table with rarefaction depth of 1000
 for both source and samples. Samples and sources were mapped in the
 [ST_comb-plaque-map.txt](../04-analysis/sourcetracker/ST_comb-plaque-map.txt).
 The plaque source is a combination of supragingival and subgingival plaque.
@@ -138,15 +137,15 @@ day_order <- experiment_metadata %>%
   arrange(day, .by_group = T) %>%
   filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
   mutate(rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
-         col = case_when(rm == T ~ "red",
+         col = case_when(rm == T ~ "red", # excluded samples coloured red
                          rm == F ~ "black"))
 
-removed_samples <- experiment_metadata %>%
-  mutate(rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
-         col = case_when(rm == T ~ "red",
-                         rm == F ~ "black")) %>% 
-  mutate(sample = `#SampleID`) %>%
-  arrange(day)
+# removed_samples <- experiment_metadata %>%
+#   mutate(rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
+#          col = case_when(rm == T ~ "red",
+#                          rm == F ~ "black")) %>% 
+#   mutate(sample = `#SampleID`) %>%
+#   arrange(day)
 ```
 
 then visualised.
@@ -155,17 +154,17 @@ then visualised.
 #| label: st-plot
 #| fig-cap: "Plot of estimated contributions of various sources to the artificial calculus and artificial saliva samples. Samples are arranged from left to right by how late in the experiment they were sampled, with left being the earliest samples."
 sourcetracker2_long %>% 
-  ggplot(aes(SampleID, proportion, fill = source)) +
+  ggplot(aes(y = SampleID, x= proportion, fill = source)) +
     geom_col() +
     theme_minimal() +
-    scale_x_discrete(limits = day_order$`#SampleID`) +
-    scale_fill_viridis_d() +
+    scale_y_discrete(limits = day_order$`#SampleID`) +
+    scale_fill_viridis_d(option = "C") +
     theme(axis.title = element_blank(),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5, colour = day_order$col))
+          axis.text.y = element_text(vjust = 0.5, hjust = 0.5, colour = day_order$col))
 ```
 
-Figure \@ref(fig:st-plot) shows that many of the later medium samples were assigned
-to the 'Unknown' and 'indoor_air' categories. To see whether this was the result of external
+Many of the later medium samples were assigned to the 'Unknown' and 'indoor_air'
+categories. To see whether this was the result of external
 contamination or the presence of oral taxa with an unknown origin (which could be
 due to the taxa matching multiple sources), the taxa from 'Unknown' were compared
 to the oral reference database from the **cuperdec** R package. Only samples with
@@ -181,36 +180,23 @@ oral_taxa <- cuperdec_database_ex %>%
 all_data_long %>% 
   filter(count > 0) %>% 
   mutate(oral_source = if_else(taxon %in% oral_taxa$species, "oral", "other")) %>%
-  ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
+  ggplot(aes(y = SampleID, x = count, fill = oral_source)) +
     geom_col(position = "fill") +
     scale_fill_viridis_d(option = "C") +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, colour = day_order$col),
-          axis.title.x = element_blank()) +
-    scale_x_discrete(limits = day_order$`#SampleID`)
+    theme(axis.text.y = element_text(colour = day_order$col),
+          axis.title.y = element_blank()) +
+    scale_y_discrete(limits = day_order$`#SampleID`)
 ```
 
-Figure \@ref(fig:unknowns-plot) shows that a large proportion of the species
-assigned to the various sources are known to be oral taxa. The samples do also
-seem to contain some external contamination.
+A large proportion of the species assigned to the various sources are known to
+be oral taxa. The samples do also seem to contain some external contamination.
 
 Based on the results from SourceTracker, samples
 `r paste(as.vector(filter(removed_samples, rm == T)[,1]), sep = ",")`
 were removed from the analysis.
 
 ## cuperdec
-
-```{r}
-head(kraken_taxatab) %>%
-  select(1:5) %>%
-  knitr::kable()
-```
-
-```{r}
-head(metadata) %>%
-  select(`#SampleID`, Env) %>%
-  knitr::kable()
-```
 
 ```{r}
 taxa_table <- load_taxa_table(kraken_taxatab)
@@ -243,19 +229,25 @@ species_summ <- byoc_table_long %>%
   group_by(sample) %>%
   count(`#OTU ID`) %>%
   summarise(count = sum(n))
-  
-# remaining species count in each sample
-byoc_table_long %>% 
-  group_by(sample) %>%
-  count(`#OTU ID`) %>% 
-  ggplot(aes(x = sample, y = n)) +
-    geom_col() +
-    theme(axis.text.x = element_text(angle = 90),
-          axis.title.x = element_blank()) 
 ```
 
 After running the **decontam** package, the samples contained between
 `r paste(range(species_summ$count), collapse = " and ")`
 species with a mean of
 `r paste(round(mean(species_summ$count), 2))`.
+
+```{r}
+# remaining species count in each sample
+byoc_table_long %>% 
+  group_by(sample) %>%
+  count(`#OTU ID`) %>% 
+  ggplot(aes(y = sample, x = n)) +
+    geom_col() +
+  theme_minimal() +
+    theme(
+      axis.line.x = element_line(),
+      axis.title.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.title.y = element_blank())
+```
 
