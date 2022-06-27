@@ -4,15 +4,48 @@ output: html_notebook
 ---
 
 ```{r setup, include=FALSE}
-library(vegan)
+#library(vegan)
 library(mixOmics)
 library(tidyverse)
 library(here)
-otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+
+load(here("05-results/spca_byoc.rda"))
+load(here("05-results/spca_species.rda"))
+
+alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
 metadata <- read_tsv(here("01-documentation/metadata.tsv"))
 analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
 experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
+bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
+
+treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
+env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
+
+experiment_colours <- experiment_metadata %>%
+  arrange(desc(day)) %>% 
+  mutate(treat_col = case_when(
+           treatment == "potato" ~ treatment_colours[1],
+           treatment == "wheat" ~ treatment_colours[2],
+           treatment == "mix" ~ treatment_colours[3],
+           treatment == "control" ~ treatment_colours[4],
+           is.na(treatment) ~ "grey"),
+         env_col = case_when(
+           Env == "saliva" ~ env_colours[5],
+           Env == "byoc_calculus" ~ env_colours[1],
+           Env == "medium" ~ env_colours[8]
+         ))
+analysis_colours <- analysis_metadata %>%
+  mutate(env_col = case_when(
+    Env == "saliva" ~ env_colours[5],
+    Env == "byoc_calculus" ~ env_colours[1],
+    Env == "medium" ~ env_colours[8],
+    Env == "buccal_mucosa" ~ env_colours[6],
+    Env == "subgingival_plaque" ~ env_colours[2],
+    Env == "supragingival_plaque" ~ env_colours[3],
+    Env == "modern_calculus" ~ env_colours[4]
+         ))
+
 ```
 
 # Data preparation
@@ -24,26 +57,10 @@ The data frame with species counts is converted to the appropriate format with o
 sample per row, and one column per taxon
 
 ```{r convert-table}
-species_otu_table <- otu_table %>%
-  column_to_rownames(var = "#OTU ID") %>%
-  t() %>%
-  as_tibble(rownames = "sample")
-
-# species_otu_table <- species_abundance_long %>%
-#   dplyr::select(!rel_abund) %>% 
-#   pivot_wider(
-#     names_from = "species",
-#     values_from = "count"
-#     ) %>%
-#   mutate(across(where(is.numeric), replace_na, 0))
-# 
-# genus_otu_table <- genus_abundance_long %>%
-#   dplyr::select(!rel_abund) %>% 
-#   pivot_wider(
-#     names_from = "genus",
-#     values_from = "count"
-#     ) %>%
-#   mutate(across(where(is.numeric), replace_na, 0))
+# species_otu_table <- otu_table %>%
+#   column_to_rownames(var = "#OTU ID") %>%
+#   t() %>%
+#   as_tibble(rownames = "sample")
 ```
 
 Metadata for the included samples are prepared,
@@ -51,6 +68,7 @@ Metadata for the included samples are prepared,
 ```{r metadata}
 comp_metadata <- analysis_metadata %>%
   filter(
+    Env != "medium",
     Env != "sediment", 
     Env != "skin",  
     Env != "stool", 
@@ -66,26 +84,12 @@ sample_metadata <- experiment_metadata %>%
 ```
 
 
-Data are converted to a matrix for further analysis with the
+Data are converted to a matrix in [*04-diversity.R*](../02-scripts/04-diversity.R)
+for further analysis with the
 [**mixOmics**](http://mixomics.org/) and
 [**vegan**](https://cran.r-project.org/web/packages/vegan/index.html)
 R packages.
 
-```{r}
-species_otu_matrix <- species_otu_table %>%
-  column_to_rownames(var = "sample") %>%
-  as.matrix()
-
-byoc_otu_matrix <- species_otu_matrix %>%
- subset(rownames(species_otu_matrix) %in% experiment_metadata$`#SampleID`)
-
-comp_otu_matrix <- species_otu_matrix %>%
-  subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
-
-# genus_otu_matrix <- genus_otu_table %>%
-#   column_to_rownames(var = "sample") %>%
-#   as.matrix()
-```
 
 # Diversity
 
@@ -98,17 +102,15 @@ Shannon index across the course of the experiment.
 <!-- need to combine days into larger groups -->
 
 ```{r}
-# Shannon index for all samples
-alpha_div <- diversity(species_otu_matrix)
-
+# plot shannon index across samples
 alpha_div %>% 
-  as_tibble(rownames = "sample") %>%
-  rename("#SampleID" = sample) %>% 
-  left_join(experiment_metadata, by = "#SampleID") %>% 
+  #as_tibble(rownames = "sample") %>%
+  #rename("#SampleID" = sample) %>% 
+  left_join(experiment_metadata, by = c("sample" = "#SampleID")) %>% 
   mutate(day = as_factor(day)) %>% 
   filter(!is.na(day)) %>% 
-  ggplot(aes(x = day, y = value, col = day)) +
-    geom_boxplot() +
+  ggplot(aes(x = day, y = shannon, col = day)) +
+    geom_boxplot(outlier.colour = NA) +
     geom_jitter(width = 0.2) +
     theme_minimal() +
     theme(legend.position = "none",
@@ -131,17 +133,21 @@ experiment_metadata_ext <- experiment_metadata %>%
          )
 
 alpha_div %>% 
-  as_tibble(rownames = "sample") %>%
-  rename("#SampleID" = sample) %>% 
-  left_join(experiment_metadata_ext, by = "#SampleID") %>% 
+  #as_tibble(rownames = "sample") %>%
+  #rename("#SampleID" = sample) %>% 
+  left_join(experiment_metadata_ext, by = c("sample" = "#SampleID")) %>% 
   mutate(day = as_factor(day)) %>% 
   filter(!is.na(day)) %>% 
-  ggplot(aes(x = day_group, y = value, col = day_group)) +
-    geom_boxplot() +
+  ggplot(aes(x = day_group, y = shannon, col = day_group)) +
+    geom_boxplot(outlier.colour = NA) +
     geom_jitter(width = 0.2) +
+    scale_colour_viridis_d(option = "D") +
     theme_minimal() +
     theme(legend.position = "none",
-          panel.grid.major.x = element_blank())
+          panel.grid.major.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          axis.title.x = element_blank()) +
+    scale_x_discrete(limits = c("inoc", "treatm", "final"))
 ```
 
 Slight decrease in Shannon diversity over the course of the experiment.
@@ -152,16 +158,16 @@ Shannon index compared between sample types.
 
 ```{r}
 alpha_div %>%
-  as_tibble(rownames = "sample") %>%
-  rename("#SampleID" = sample) %>% 
-  left_join(analysis_metadata, by = "#SampleID") %>% 
+  #as_tibble(rownames = "sample") %>%
+  #rename("#SampleID" = sample) %>% 
+  left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>% 
   filter(Env != "sediment", 
          Env != "skin",  
          Env != "stool", 
          Env != "indoor_air") %>%
   remove_missing() %>%
-  ggplot(aes(x = Env, y = value, col = Env)) +
-    geom_boxplot() +
+  ggplot(aes(x = Env, y = simp_unb, col = Env)) +
+    geom_boxplot(outlier.colour = NA) +
     geom_jitter(width = 0.2) +
     theme_minimal() +
     theme(axis.text.x = element_text(hjust = 1, angle = 45),
@@ -172,9 +178,9 @@ alpha_div %>%
 
 Higher overall alpha diversity in the comparative samples than the artificial
 samples, both medium and final calculus product. Saliva samples from this study
-(`r mean(alpha_div[c("SYN001.A0101","SYN002.A0101", "SYN003.A0101")])`)
-had a lower mean diversity than saliva samples from other studies
-(`r mean(alpha_div[c("SRS019120", "SRS014468", "SRS015055", "SRS014692", "SRS013942")])`).
+(`r mean(alpha_div$shannon[c("SYN001.A0101","SYN002.A0101", "SYN003.A0101")])`)
+had a lower mean Shannon index than saliva samples from other studies
+(`r mean(alpha_div$shannon[c("SRS019120", "SRS014468", "SRS015055", "SRS014692", "SRS013942")])`).
 
 ## Beta
 
@@ -185,11 +191,11 @@ Centered log-ratio (CLR) transformation with 1 offset.
 ### Experiment samples only
 
 ```{r}
-clr_byoc <- logratio.transfo(byoc_otu_matrix, "CLR", 1)
+#clr_byoc <- logratio.transfo(byoc_otu_matrix, "CLR", 1)
 ```
 
 ```{r}
-spca_byoc <- spca(clr_byoc, ncomp = 10, scale = F)
+#spca_byoc <- spca(clr_byoc, ncomp = 10, scale = F)
 byoc_explain_var <- spca_byoc$prop_expl_var$X
 ```
 
@@ -200,13 +206,14 @@ plot(spca_byoc, type = "l")
 
 ```{r}
 byoc_princomp <- spca_byoc$x %>%
-  as_tibble(rownames = "sample")
+  as_tibble(rownames = "sample") %>%
+  left_join(experiment_metadata, by = c("sample" = "#SampleID"))
 byoc_princomp %>%
   ggplot(
     aes(
       x = PC1, y = PC2, 
-      col = as.factor(sample_metadata$day),
-      shape = sample_metadata$Env
+      col = as_factor(day),
+      shape = Env
      )
     ) +
     geom_point(size = 4) +
@@ -229,21 +236,63 @@ PC1 discriminates the saliva samples from the medium and calculus samples,
 while PC2 mainly discriminates calculus from medium. Medium and final product
 are distinct from the saliva samples used for inoculation.
 
-### Artificial calculus and comparative oral sources
-
 ```{r}
-# comp_otu_matrix <- species_otu_matrix %>%
-#   as_tibble(rownames = "sample") %>%
-#   filter(sample %in% analysis_metadata$`#SampleID`) %>%
-#   column_to_rownames(var = "sample")
+exp_pca_loadings <- spca_byoc$loadings$X %>%
+  as_tibble(rownames = "species") %>%
+  left_join(bac_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1)))
+exp_pca_loadings
 
-clr_species <- logratio.transfo(comp_otu_matrix, "CLR", 1)
+loading_theme <-  theme_minimal() +
+    theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.ticks.x.bottom = element_line(size = 1),
+      axis.text.y = element_text(),
+      axis.text.x = element_text(vjust = -0.2),
+      axis.line.x = element_line(),
+      legend.position = "bottom"
+          )
+
+exp_pca_loadings %>%
+  mutate(species = fct_reorder(species, desc(abs(PC1)))) %>%
+  slice_head(n = 20) %>%
+  ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(-0.2,0.2)) +
+    scale_fill_manual(
+      values = viridisLite::turbo(n = length(levels(as.factor(bac_properties$`Oxygen tolerance`))))) +
+    labs(title = "component 1", x = "") +
+    loading_theme
+
+exp_pca_loadings %>%
+  arrange(desc(abs(PC2))) %>%
+  mutate(species = fct_reorder(species, desc(abs(PC2)))) %>%
+  slice_head(n = 15) %>%
+  ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(-0.15,0.15)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 2", x = "") +
+    loading_theme
+
+
+#plotLoadings(spca_byoc, ndisplay = 15)
+#plotLoadings(spca_byoc, 2, ndisplay = 15)
 ```
+
+
+### Artificial calculus and comparative oral sources
 
 Scree plot of components.
 
 ```{r}
-spca_species <- spca(clr_species, ncomp = 10, scale = F)
 plot(spca_species, type = "l")
 ```
 
@@ -251,15 +300,12 @@ sPCA plot
 
 ```{r}
 spca_compar <- spca_species$x %>%
-  as_tibble(rownames = "sample")
+  as_tibble(rownames = "sample") %>%
+  left_join(metadata, by = c("sample" = "#SampleID"))
 compar_explain_var <- spca_species$prop_expl_var$X
 
 spca_compar %>%
-  ggplot(aes(x = PC1, y = PC2, col = analysis_metadata %>%
-               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
-               .$Env, shape = analysis_metadata %>%
-               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
-               .$Env)) +
+  ggplot(aes(x = PC1, y = PC2, col = Env, shape = Env)) +
     geom_point(size = 3) +
     geom_vline(xintercept = 0, size = 0.2) +
     geom_hline(yintercept = 0, size = 0.2) +
@@ -271,73 +317,162 @@ spca_compar %>%
         "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
       )
     ) +
-  scale_colour_viridis_d() +
+  scale_colour_viridis_d(option = "C") +
+  scale_shape_manual(values = 1:11)
+
+spca_compar %>%
+  ggplot(aes(x = PC1, y = PC3, col = Env, shape = Env)) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    theme_bw() +
+    labs(x = paste(
+      "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC3", scales::percent(compar_explain_var[[3]], accuracy = 0.1)
+      )
+    ) +
+  scale_colour_viridis_d(option = "C") +
   scale_shape_manual(values = 1:11) +
   labs(col = "Env", shape = "Env")
 ```
 
-PC1 separates buccal mucosa and modern calculus samples from the rest, while
-PC2 separates most of the medium samples. The artificial calculus groups together
-with plaque and saliva samples.
+PC1 separates all artificial samples from the reference samples, while
+PC2 separates some modern calculus samples from other oral reference samples.
+PC3 separates most artificial calculus from medium samples.
 
 Main drivers of discrimination. Top loading vectors for PC1 and PC2.
 
 ```{r}
 pca_loadings <- spca_species$rotation %>%
-  as_tibble(rownames = "species") %>% 
-  dplyr::select(species, PC1, PC2, PC3) %>%
-  arrange(desc(PC1))
-
-pca_loadings
+  as_tibble(rownames = "species") %>%
+  left_join(bac_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1)))
 
 pca_loadings %>%
-  arrange(desc(PC2))
+  arrange(desc(abs(PC2)))
 ```
 
 ```{r}
-plotLoadings(spca_species, ndisplay = 20)
-plotLoadings(spca_species, 2, ndisplay = 20)
+pca_loadings %>%
+  mutate(species = fct_reorder(species, desc(abs(PC1)))) %>%
+  slice_head(n = 15) %>%
+  ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(-0.18,0.18)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 1", x = "") +
+    loading_theme
+
+pca_loadings %>%
+  arrange(desc(abs(PC2))) %>%
+  mutate(species = fct_reorder(species, desc(abs(PC2)))) %>%
+  slice_head(n = 15) %>%
+  ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(-0.12,0.12)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 2", x = "") +
+    loading_theme
+
+pca_loadings %>%
+  arrange(desc(abs(PC3))) %>%
+  mutate(species = fct_reorder(species, desc(abs(PC3)))) %>%
+  slice_head(n = 15) %>%
+  ggplot(aes(x = PC3, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(-0.21,0.21)) +
+    scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`))),
+        begin = 0.5
+        )
+      ) +
+    labs(title = "component 3", x = "") +
+    loading_theme
+
+# plotLoadings(spca_species, ndisplay = 15)
+# plotLoadings(spca_species, 2, ndisplay = 15)
+# plotLoadings(spca_species, 3, ndisplay = 15)
+```
+
+Component 1 loadings are a mix of species of all oxygen tolerance, and is the
+only component with high loadings from aerobes. All aerobes have a negative
+loading on component 1. Component 2 contains only
+anaerobes and facultative anaerobes, while component 3 contains only anaerobes
+in the top 15 loadings.
+
+```{r}
+plotVar(spca_species, cutoff = 0.90)
+```
+
+```{r}
+# spca_compar %>%
+#   ggplot(aes(x = PC1, y = PC2, col = analysis_metadata %>%
+#                filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
+#                .$Env, shape = analysis_metadata %>%
+#                filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
+#                .$Env)) +
+#     geom_point(size = 3) +
+#     geom_segment(data = pca_loadings[1:3,], aes(x = 0, y = 0, xend = (PC1*500),
+#      yend = (PC2*500)), arrow = arrow(length = unit(0.2, "cm")),
+#      color = "black", inherit.aes = F) +
+#     geom_vline(xintercept = 0, size = 0.2) +
+#     geom_hline(yintercept = 0, size = 0.2) +
+#     theme_bw() +
+#     labs(x = paste(
+#       "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
+#       ),
+#       y = paste(
+#         "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
+#       )
+#     ) +
+#   scale_colour_viridis_d() +
+#   scale_shape_manual(values = 1:8) +
+#   labs(col = "Env", shape = "Env")
 ```
 
 
 ```{r}
-plotVar(spca_species, cutoff = 0.92)
-```
-
-```{r}
-
-spca_compar %>%
-  ggplot(aes(x = PC1, y = PC2, col = analysis_metadata %>%
-               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
-               .$Env, shape = analysis_metadata %>%
-               filter(`#SampleID` %in% rownames(comp_otu_matrix)) %>%
-               .$Env)) +
-    geom_point(size = 3) +
-    geom_segment(data = pca_loadings[1:3,], aes(x = 0, y = 0, xend = (PC1*100),
-     yend = (PC2*100)), arrow = arrow(length = unit(1/2, "picas")),
-     color = "black", inherit.aes = F) +
-    geom_vline(xintercept = 0, size = 0.2) +
-    geom_hline(yintercept = 0, size = 0.2) +
-    theme_bw() +
-    labs(x = paste(
-      "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
-      ),
-      y = paste(
-        "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
-      )
-    ) +
-  scale_colour_viridis_d() +
-  scale_shape_manual(values = 1:8) +
-  labs(col = "Env", shape = "Env")
-```
-
-
-```{r}
-env_group <- comp_metadata$Env[comp_metadata$`#SampleID` %in% rownames(comp_otu_matrix)]
+#env_group <- comp_metadata$Env[comp_metadata$`#SampleID` %in% rownames(comp_otu_matrix)]
 biplot(
   spca_species,
   comp = 1:2,
-  cutoff = 0.92,
-  ind.names = F)
+  cutoff = 0.81,
+  ind.names = F, var.names.size = 3)
 ```
 
+```{r}
+row_side_colours <- analysis_colours %>%
+  filter(`#SampleID` %in% rownames(spca_species$X)) %>%
+  arrange(rownames(spca_species$x))
+cim(spca_species, cutoff = 0.5, row.sideColors = row_side_colours$env_col)
+```
+
+Time-lag plot of Bray-Curtis data
+
+```{r}
+comm_matrix <- byoc_otu_matrix %>%
+  as_tibble(rownames = "sample") %>%
+  left_join(dplyr::select(experiment_metadata, c(`#SampleID`, day)), by = c("sample" = "#SampleID"))
+```
+
+# Discussion
+
+Main takeaway is the loss of diversity across the experiment and compared to
+reference samples. The donated saliva for the experiment had a lower diversity
+than the reference saliva samples, and may have contributed to a lower diversity
+in experiment samples. Community profile of artificial calculus differs from
+the oral reference samples, while modern calculus mostly resembles oral reference
+samples. The main difference between artificial and reference samples seems to be
+a lack of aerobes in artificial samples and a dominance by *Enterococcus* spp.
