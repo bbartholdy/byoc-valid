@@ -213,9 +213,8 @@ contaminant_species <- unique(
   )
   # make sure no oral taxa are on the list
     # import list of oral taxa from cuperdec
-iso_database <- load_database(cuperdec_database_ex, target = "oral")
-oral_taxa <- iso_database
-true_contaminants <- contaminant_species[!contaminant_species %in% oral_taxa$Taxon]
+oral_taxa <- filter(cuperdec_database_ex, isolation_source == "oral")
+true_contaminants <- contaminant_species[!contaminant_species %in% oral_taxa$species]
 
 # filter out putative contaminants from OTU table
 otu_decontam <- otu_removed_table %>%
