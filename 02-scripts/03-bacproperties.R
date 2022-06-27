@@ -50,8 +50,11 @@ sample_oxytol <- bacdive_oxytol %>%
   filter(
     #str_match(species, all_species_names$species),
     species %in% all_species_names, # create less strict matching criterion to incorporate strains
-    is_type_strain_header == 1) %>%
-  select(species, `Oxygen tolerance`)
+    ) %>%
+  group_by(species) %>%
+  arrange(desc(is_type_strain_header), .by_group = T) %>%
+  select(species, `Oxygen tolerance`) %>%
+  distinct(species, .keep_all = T) # retains only first row of duplicates; preference to type strains (not ideal)
 
 # add abs species column
 
