@@ -182,11 +182,29 @@ samples, both medium and final calculus product. Saliva samples from this study
 had a lower mean Shannon index than saliva samples from other studies
 (`r mean(alpha_div$shannon[c("SRS019120", "SRS014468", "SRS015055", "SRS014692", "SRS013942")])`).
 
+Shannon and unbiased Simpson.
+
+```{r}
+alpha_div %>%
+  left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>% 
+  filter(Env != "sediment", 
+         Env != "skin",  
+         Env != "stool", 
+         Env != "indoor_air") %>%
+  remove_missing() %>%
+  ggplot(aes(x = shannon, y = simp_unb, col = Env)) +
+    geom_point() +
+    theme_minimal() +
+    scale_colour_viridis_d()
+```
+
 ## Beta
 
-sPCA using the **mixOmics** R package.
-
-Centered log-ratio (CLR) transformation with 1 offset.
+Sparse principal components analysis (sPCA) was conducted on the experimental
+samples only using the **mixOmics** R package, and a separate analysis was
+conducted on the experimental and oral reference samples. Prior to sPCA, the
+sample counts underwent a centered log-ratio (CLR) transformation with +1 offset
+to avoid taking the log of zero.
 
 ### Experiment samples only
 
@@ -232,9 +250,9 @@ byoc_princomp %>%
     scale_colour_viridis_d()
 ```
 
-PC1 discriminates the saliva samples from the medium and calculus samples,
-while PC2 mainly discriminates calculus from medium. Medium and final product
-are distinct from the saliva samples used for inoculation.
+PC1 discriminates the saliva samples and early medium samples from the later medium
+and calculus samples, while PC2 mainly discriminates calculus from medium.
+Medium and final product are distinct from the saliva samples used for inoculation.
 
 ```{r}
 exp_pca_loadings <- spca_byoc$loadings$X %>%
@@ -270,7 +288,7 @@ exp_pca_loadings %>%
 exp_pca_loadings %>%
   arrange(desc(abs(PC2))) %>%
   mutate(species = fct_reorder(species, desc(abs(PC2)))) %>%
-  slice_head(n = 15) %>%
+  slice_head(n = 20) %>%
   ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
     geom_bar(stat = "identity", width = 0.8) +
     scale_x_continuous(limits = c(-0.15,0.15)) +
@@ -287,6 +305,8 @@ exp_pca_loadings %>%
 #plotLoadings(spca_byoc, 2, ndisplay = 15)
 ```
 
+PC1 sees mostly negative loadings, especially aerobes and facultative anaerobes.
+PC2 is slightly more balanced.
 
 ### Artificial calculus and comparative oral sources
 
@@ -296,7 +316,7 @@ Scree plot of components.
 plot(spca_species, type = "l")
 ```
 
-sPCA plot
+sPCA plots of PC1 on PC2 and PC1 on PC3.
 
 ```{r}
 spca_compar <- spca_species$x %>%
@@ -394,8 +414,7 @@ pca_loadings %>%
     scale_x_continuous(limits = c(-0.21,0.21)) +
     scale_fill_manual(
       values = viridisLite::turbo(
-        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`))),
-        begin = 0.5
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
         )
       ) +
     labs(title = "component 3", x = "") +
@@ -462,9 +481,9 @@ cim(spca_species, cutoff = 0.5, row.sideColors = row_side_colours$env_col)
 Time-lag plot of Bray-Curtis data
 
 ```{r}
-comm_matrix <- byoc_otu_matrix %>%
-  as_tibble(rownames = "sample") %>%
-  left_join(dplyr::select(experiment_metadata, c(`#SampleID`, day)), by = c("sample" = "#SampleID"))
+# comm_matrix <- byoc_otu_matrix %>%
+#   as_tibble(rownames = "sample") %>%
+#   left_join(dplyr::select(experiment_metadata, c(`#SampleID`, day)), by = c("sample" = "#SampleID"))
 ```
 
 # Discussion

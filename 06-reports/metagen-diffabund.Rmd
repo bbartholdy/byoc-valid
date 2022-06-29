@@ -56,7 +56,11 @@ calculus_phyloseq <- phyloseq(calculus_otu, calculus_sample)
 ## ANCOM-BC
 
 Differential abundance is calculated using the ANCOM-BC method from the `ANCOMBC`
-R package.
+R package. P-values adjusted using the false discovery rate (FDR) method. Samples
+grouped by sample type (i.e. saliva, plaque, modern calculus, artificial calculus).
+
+First, differential abundance of experimental samples only, comparing abundance
+between donated saliva, medium, and the final calculus product.
 
 ### Across experiment
 
@@ -65,7 +69,7 @@ exp_da <- ANCOMBC::ancombc(
   experiment_phyloseq, 
   formula = "Env",
   group = "Env",
-  global = T,
+  global = F,
   p_adj_method = "fdr")
 ```
 
@@ -152,6 +156,12 @@ exp_logf_full %>%
 ### PROVIDE OXYGEN TOLERANCE OF SPECIES ###
 ```
 
+Species with the highest log-fold change mainly see a reduction from saliva to
+medium, and then a slight further reduction from medium to calculus. The largest
+reduction of species occurs in
+`r filter(exp_logf_full, lfc == max(lfc))$species`
+(LFC = `r filter(exp_logf_full, lfc == max(lfc))$lfc`).
+
 ### Artificial vs. modern calculus
 
 ```{r}
@@ -159,7 +169,7 @@ calculus_da <- ANCOMBC::ancombc(
   calculus_phyloseq, 
   formula = "Env",
   group = "Env",
-  global = T,
+  global = F,
   p_adj_method = "fdr")
 
 # table with log-fold change statistics between artificial calculus and others
@@ -262,16 +272,6 @@ Bias-corrected log observed abundances were calculated by following the example
 in `vignette("ANCOMBC")`.
 
 ```{r}
-# FIRST NEED TO COMBINE SAMPLES BY TYPE (i.e. modern all artificial)
-  # mean?
-# calc_log_abn %>%
-#   pivot_longer(-species, names_to = "sample", values_to = "log_abn") %>%
-#   left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>%
-# 
-#     filter(species %in% pca_loadings$species[1:30]) %>%
-#   ggplot(aes(x = log_abn, y = species, fill = Env)) +
-#     geom_col(position = "dodge")
-
 # from vignette("ANCOMBC")
 calc_samp_frac <- calculus_da$samp_frac
 # Replace NA with 0
@@ -284,6 +284,9 @@ calc_log_exp_otu <- log(microbiome::abundances(calculus_otu) + 1)
 calc_log_abn <- t(t(calc_log_exp_otu) - calc_samp_frac) %>%
   as_tibble(rownames = "species")
 
+# need to convert counts back to zero (counts that are = samp_frac)
+
+calc_log_abn
 ```
 
 # Discussion

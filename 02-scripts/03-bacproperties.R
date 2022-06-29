@@ -12,6 +12,10 @@ bacdive_oxytol <- readr::read_csv(
   "03-data/2022-05-27_bacdive_oxytol-search.csv",
   skip = 2
   )
+# bacdive_halotol <- readr::read_csv(
+#   "03-data/2022-06-29_bacdive_halotol-search.csv",
+#   skip = 2
+# ) 
 
 # Functions ---------------------------------------------------------------
 

@@ -85,21 +85,21 @@ genus_abund_long <- species_abund_long %>%
     )
 
 # top 20 common genera in experiment
-top_20_genus <- genus_abund_long %>%
+top_genus <- genus_abund_long %>%
   filter(str_detect(sample, "SYN")) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(genus) %>%
-  slice_head(n = 20) %>%
+  slice_head(n = 30) %>%
   left_join(genus_abund_long, by = "genus")
 
 # top 20 species in experiment
-top_20_species <- species_abund_long %>%
+top_species <- species_abund_long %>%
   filter(str_detect(sample, "SYN")) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(species) %>%
-  slice_head(n = 20) %>%
+  slice_head(n = 30) %>%
   left_join(species_abund_long, by = "species")
 ```
 
@@ -182,7 +182,7 @@ Samples are ordered from left to right by sampling day.
 
 ```{r}
 #genus_abund_long
-top_20_genus %>% 
+top_genus %>% 
   filter(sample %in% experiment_metadata$`#SampleID`) %>%
   ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.001))) +
     geom_tile() +
@@ -200,71 +200,18 @@ top_20_genus %>%
         )
       ) +
     scale_fill_viridis_c(option = "B")
-
-genus_abund_long %>%
-  filter(sample %in% experiment_metadata$`#SampleID`) %>% 
-  mutate(top_genus = case_when(rel_abund > 0.01 ~ genus,
-                               TRUE ~ NA_character_)) %>% 
-  ggplot(aes(x = rel_abund, y = sample, fill = top_genus)) +
-    geom_col() +
-    theme_void() +
-    scale_y_discrete(limits = day_order) +
-    #my_scale2 +
-    theme(
-      axis.text.y = element_text(colour = experiment_colours$env_col)) +
-    scale_fill_viridis_d(option = "D")
 ```
 
 
 
 ## Species composition
 
-Only including the name of the top 10 species (relative abundance) within each
-sample. Remaining species are designated as 'other'.
+Only including the name of the top 20 species (relative abundance) within each
+sample.
 
 
 ```{r}
- # label all species below top 10 as 'other' so the rel_abund still sums to 1 for plotting
-
-
-# Plot colours
-# my_pallette <- c(viridisLite::plasma(n = length(top_species_names)), "grey") 
-# names(my_pallette) <- levels(top_abundance_species$top_species)
-# my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
-# 
-# # Plot colours
-# species_colours_sample <- top_abundance_species %>% 
-#   filter(str_detect(sample, "SYN")) %>%
-#   mutate(top_species = as.character(top_species)) %>% 
-#   .$top_species %>%
-#   unique()
-# my_pallette <- c(viridisLite::plasma(n = length(species_colours_sample) - 1), "grey") 
-# names(my_pallette) <- c(species_colours_sample[which(species_colours_sample != "other")], "other")
-# my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
-# 
-# top_abundance_species %>%
-#   filter(str_detect(sample, "SYN")) %>%
-#   #arrange(day) %>%
-#   ggplot(aes(x = rel_abund, y = sample, fill = top_species)) +
-#     geom_col() +
-#     theme_void() +
-#     scale_y_discrete(limits = day_order) +
-#     my_scale +
-#     theme(axis.text = element_text())
-
-species_abund_long %>%
-  filter(str_detect(sample, "SYN")) %>% 
-  mutate(top_species = case_when(rel_abund > 0.05 ~ species,
-                               TRUE ~ NA_character_)) %>% 
-  ggplot(aes(x = rel_abund, y = sample, fill = top_species)) +
-    geom_col() +
-    theme_void() +
-    scale_y_discrete(limits = day_order) +
-    #my_scale2 +
-    theme(axis.text = element_text()) +
-    scale_fill_viridis_d(option = "C")
-
-top_20_species %>% 
+top_species %>% 
   filter(sample %in% experiment_metadata$`#SampleID`) %>%
   ggplot(aes(x = sample, y = species, fill = log(rel_abund + 0.001))) +
     geom_tile() +
@@ -306,7 +253,10 @@ species_properties %>%
     #theme(axis.text.x = element_text(angle = 90)) +
     scale_y_discrete(limits = day_order) +
     scale_fill_manual(
-      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))))
+      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`))))) +
+  theme(
+    axis.text.y = element_text(colour = experiment_colours$env_col)
+  )
 ```
 
 Generally an increase of anaerobes over the course of the experiment, at the
@@ -346,24 +296,78 @@ when sucrose was available in all samples.
 
 # Comparative samples
 
-Looking at relative abundances at species and genus level. Artificial calculus samples only
-(i.e. day 24 of experiment) were compared with reference plaque and calculus samples.
+Looking at relative abundances at species and genus levels of calculus and plaque
+samples. Top 30 taxa (relative abundance) were plotted.
 
 ## Genus composition
 
-Top 4 most abundant genera in each sample are selected to provide a manageable
-overview of sample composition.
+```{r}
+genus_abund_long %>%
+  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  ungroup() %>%
+  arrange(desc(rel_abund)) %>%
+  distinct(genus) %>%
+  slice_head(n = 30) %>% # top 30 species across all samples
+  left_join(species_abund_long, by = "genus") %>% # recombine with samples
+  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
+  ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.001))) +
+    geom_tile() +
+    theme_void() +
+    #my_scale2 +
+    theme(
+      legend.position = "top",
+      axis.text = element_text(),
+      axis.text.x = element_text(
+        angle = 60,
+        hjust = 1,
+        vjust = 1,
+        colour = filter(
+            analysis_colours, str_detect(Env, "calculus|plaque")
+            )$env_col %>%
+          rev()
+        )
+      ) +
+    scale_fill_viridis_c(option = "B")
 
-Top 10 most abundant species are selected to provide a manageable overview.
-Species outside of the top 10 are labeled 'other'.
+```
+
 
 ## Species composition
+
+```{r}
+species_abund_long %>%
+  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  ungroup() %>%
+  arrange(desc(rel_abund)) %>%
+  distinct(species) %>%
+  slice_head(n = 30) %>% # top 30 species across all samples
+  left_join(species_abund_long, by = "species") %>% # recombine with samples
+  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
+  ggplot(aes(x = sample, y = species, fill = log(rel_abund + 0.001))) +
+    geom_tile() +
+    theme_void() +
+    #my_scale2 +
+    theme(
+      legend.position = "top",
+      axis.text = element_text(),
+      axis.text.x = element_text(
+        angle = 60,
+        hjust = 1,
+        vjust = 1,
+        colour = filter(
+            analysis_colours, str_detect(Env, "calculus|plaque")
+            )$env_col %>%
+          rev()
+        )
+      ) +
+    scale_fill_viridis_c(option = "B")
+```
 
 
 ### Oxygen tolerance
 
 Proportional distribution of oxygen tolerance across artificial calculus and
-comparative samples.
+oral reference samples.
 
 ```{r}
 species_properties %>% 
@@ -380,11 +384,13 @@ species_properties %>%
         colour = analysis_colours %>%
           filter(str_detect(Env, "calculus|plaque")) %>%
           #arrange(desc(day)) %>%
-          .$env_col)
+          .$env_col %>%
+      rev()
+    )
   )
 ```
 
-Most notable difference is the absence of aerobic species in the artificial
+Most notable difference is the absence of aerobes in the artificial
 calculus samples. Modern calculus contains a large proportion of species where
 oxygen tolerance is unknown (`NA`).
 
@@ -406,7 +412,12 @@ samples compared to the modern calculus and plaque samples.
 # Discussion
 
 No aerobes made it into the model. Apart from the donated saliva, no aerobes
-were detected in any of the experimental samples. ABS are also underrepresented
+were detected in any of the experimental samples. *Rothia* spp. disappeared
+between saliva and medium samples. We may need to introduce more oxygen into
+the protocol, or increase the frequency of medium replacement (e.g. every two
+days instead of three).
+
+ABS are also underrepresented
 in the experimental samples compared to the modern calculus and plaque reference
 samples. The high relative abundance of *E. faecalis* may represent contamination
 despite it being commonly found in the oral cavity. There was a relatively low

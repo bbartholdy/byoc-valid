@@ -1,5 +1,5 @@
-library(vegan)
 library(mixOmics)
+library(vegan)
 library(tidyverse)
 library(here)
 
@@ -19,11 +19,12 @@ species_otu_table <- otu_table %>%
 
 comp_metadata <- analysis_metadata %>%
   filter(
-    #Env != "medium",
+    Env != "medium",
     Env != "sediment", 
     Env != "skin",  
     Env != "stool", 
-    Env != "indoor_air"
+    Env != "indoor_air",
+    #Env != "modern_calculus"
   )
 
 sample_metadata <- experiment_metadata %>%
@@ -43,8 +44,8 @@ comp_otu_matrix <- species_otu_matrix %>%
 # Alpha diversity ---------------------------------------------------------
 
 
-alpha_div_shan <- diversity(species_otu_matrix)
-alpha_div_inv <- diversity(species_otu_matrix, index = "invsimpson")
+alpha_div_shan <- vegan::diversity(species_otu_matrix)
+alpha_div_inv <- vegan::diversity(species_otu_matrix, index = "invsimpson")
 alpha_div_unb <- simpson.unb(species_otu_matrix,inverse = T)
 
 alpha_div <- 
