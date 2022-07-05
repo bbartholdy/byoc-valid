@@ -111,10 +111,10 @@ remove_samples <- remove_samples1[remove_samples1 %in% remove_samples2]
 
 analysis_metadata <- metadata %>%
   filter(!`#SampleID` %in% remove_samples) %>%
-  select(!c(Project, download_link))
+  dplyr::select(!c(Project, download_link))
 
 otu_removed_table <- otu_filtered_table %>%
-  select(which(!colnames(.) %in% remove_samples))
+  dplyr::select(which(!colnames(.) %in% remove_samples))
  
 otu_removed_long <- otu_comb_long %>%
   filter(!sample %in% remove_samples)

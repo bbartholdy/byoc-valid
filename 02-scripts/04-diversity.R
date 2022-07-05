@@ -73,6 +73,15 @@ write_tsv(alpha_div, here("05-results/alpha-diversity.tsv"))
 # Experiment samples
 clr_byoc <- logratio.transfo(byoc_otu_matrix, "CLR", 1)
 
+# convert from clr to data frame
+clr_byoc_copy <- clr_byoc
+class(clr_byoc_copy) <- "matrix"
+
+clr_byoc_datf <- clr_byoc_copy %>%
+  as_tibble(rownames = "sample")
+
+write_tsv(clr_byoc_datf, "05-results/clr-byoc.tsv")
+
 spca_byoc <- spca(clr_byoc, ncomp = 10, scale = F)
 byoc_explain_var <- spca_byoc$prop_expl_var$X
 
@@ -87,6 +96,15 @@ write_tsv(exp_pca_loadings, here("05-results/experiment-pca-loadings.tsv"))
 # Comparative samples
 
 clr_species <- logratio.transfo(comp_otu_matrix, "CLR", 1)
+
+# convert from clr to data frame
+clr_species_copy <- clr_species
+class(clr_species_copy) <- "matrix"
+
+clr_species_datf <- clr_species_copy %>%
+  as_tibble(rownames = "sample")
+
+write_tsv(clr_species_datf, "05-results/clr-compar.tsv")
 
 spca_species <- spca(clr_species, ncomp = 10, scale = F)
 
