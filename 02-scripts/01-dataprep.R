@@ -43,21 +43,21 @@ sample_taxatable <- kraken_otu_filtered %>%
 
 # Comparative tables
 
-comp_env <- c("saliva", "modern_calculus", "supragingival_plaque", "subgingival_plaque")
-comp_samples <- metadata %>%
-  filter(
-    SourceSink == "source",
-    Env %in% comp_env) %>%
-  .$`#SampleID`
-
-comp_taxatable_long <- kraken_otu_filtered %>%
-  filter(sample %in% comp_samples) %>%
-  dplyr::select(!sum_abund)
-
-comp_taxatable <- comp_taxatable_long %>%
-  dplyr::select(!rel_abund) %>%
-  pivot_wider(names_from = species, values_from = count) %>%
-  mutate(across(where(is.numeric), replace_na, 0))
+# comp_env <- c("saliva", "modern_calculus", "supragingival_plaque", "subgingival_plaque")
+# comp_samples <- metadata %>%
+#   filter(
+#     SourceSink == "source",
+#     Env %in% comp_env) %>%
+#   .$`#SampleID`
+# 
+# comp_taxatable_long <- kraken_otu_filtered %>%
+#   filter(sample %in% comp_samples) %>%
+#   dplyr::select(!sum_abund)
+# 
+# comp_taxatable <- comp_taxatable_long %>%
+#   dplyr::select(!rel_abund) %>%
+#   pivot_wider(names_from = species, values_from = count) %>%
+#   mutate(across(where(is.numeric), replace_na, 0))
 
 write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
@@ -72,7 +72,8 @@ st_map_plaque_comb <- metadata %>%
   select(`#SampleID`, Env, SourceSink) %>%
   mutate(Env = if_else(Env == "supragingival_plaque" | Env == "subgingival_plaque",
                         "plaque", Env)) %>%
-  filter(Env != "buccal_mucosa") %>% 
+  filter(Env != "buccal_mucosa",
+         Env != "vitro_biofilm") %>% 
   write_tsv(here("04-analysis/sourcetracker/ST_comb-plaque-map.txt"))
 
 # map with combined plaque sources and no sediments
