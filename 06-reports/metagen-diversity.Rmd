@@ -182,7 +182,8 @@ samples, both medium and final calculus product. Saliva samples from this study
 had a lower mean Shannon index than saliva samples from other studies
 (`r mean(alpha_div$shannon[c("SRS019120", "SRS014468", "SRS015055", "SRS014692", "SRS013942")])`).
 
-Shannon and unbiased Simpson.
+Shannon `vegan::diversity(species_otu_matrix)` and unbiased Simpson
+`simpson.unb(species_otu_matrix,inverse = T)`.
 
 ```{r}
 alpha_div %>%
@@ -338,7 +339,7 @@ spca_compar %>%
       )
     ) +
   scale_colour_viridis_d(option = "C") +
-  scale_shape_manual(values = 1:11)
+  scale_shape_manual(values = 1:length(levels(as.factor(spca_compar$Env))))
 
 spca_compar %>%
   ggplot(aes(x = PC1, y = PC3, col = Env, shape = Env)) +
@@ -354,7 +355,7 @@ spca_compar %>%
       )
     ) +
   scale_colour_viridis_d(option = "C") +
-  scale_shape_manual(values = 1:11) +
+  scale_shape_manual(values = 1:length(levels(as.factor(spca_compar$Env)))) +
   labs(col = "Env", shape = "Env")
 ```
 
@@ -370,6 +371,9 @@ pca_loadings <- spca_species$rotation %>%
   left_join(bac_properties, by = "species") %>% 
   dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
   arrange(desc(abs(PC1)))
+
+pca_loadings %>%
+  arrange(desc(PC1))
 
 pca_loadings %>%
   arrange(desc(abs(PC2)))
@@ -467,7 +471,7 @@ plotVar(spca_species, cutoff = 0.90)
 biplot(
   spca_species,
   comp = 1:2,
-  cutoff = 0.81,
+  cutoff = 0.90,
   ind.names = F, var.names.size = 3)
 ```
 

@@ -13,6 +13,12 @@ experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadat
 bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
 otu_table_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv")) 
 
+clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+
+clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+
 # object to order plots by sampling day
 day_order <- experiment_metadata %>%
   #filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
@@ -48,7 +54,8 @@ analysis_colours <- analysis_metadata %>%
     Env == "buccal_mucosa" ~ env_colours[6],
     Env == "subgingival_plaque" ~ env_colours[2],
     Env == "supragingival_plaque" ~ env_colours[3],
-    Env == "modern_calculus" ~ env_colours[4]
+    Env == "modern_calculus" ~ env_colours[4],
+    Env == "vitro_biofilm" ~ env_colours[7]
          ))
 ```
 
@@ -150,7 +157,8 @@ env_label <- filter(
   Env == "buccal_mucosa" |
   Env == "subgingival_plaque" |
   Env == "supragingival_plaque" |
-  Env == "modern_calculus"
+  Env == "modern_calculus" |
+    Env == "vitro_biofilm"
   ) %>%
   .$Env %>%
   unique()
@@ -209,7 +217,6 @@ top_genus %>%
 Only including the name of the top 20 species (relative abundance) within each
 sample.
 
-
 ```{r}
 top_species %>% 
   filter(sample %in% experiment_metadata$`#SampleID`) %>%
@@ -230,6 +237,7 @@ top_species %>%
       ) +
     scale_fill_viridis_c(option = "B")
 ```
+
 
 ### Oxygen tolerance
 
@@ -310,7 +318,7 @@ genus_abund_long %>%
   slice_head(n = 30) %>% # top 30 species across all samples
   left_join(species_abund_long, by = "genus") %>% # recombine with samples
   filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
-  ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.001))) +
+  ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.0001))) +
     geom_tile() +
     theme_void() +
     #my_scale2 +
@@ -328,13 +336,31 @@ genus_abund_long %>%
         )
       ) +
     scale_fill_viridis_c(option = "B")
-
 ```
 
 
 ## Species composition
 
 ```{r}
+# centered log-ratio transformed counts
+clr_compar_long %>%
+  filter(species %in% pca_loadings$species[1:50]) %>%
+  ggplot(aes(x = sample, y = species, fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(
+        angle = 90, size = 6, colour = analysis_colours %>%
+          #filter(str_detect(Env, "calculus|plaque")) %>%
+          arrange(Env) %>%
+          .$env_col %>%
+          na.omit() %>%
+          rev()
+      )
+      )
+
+# relative abundance
 species_abund_long %>%
   filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
   ungroup() %>%
@@ -356,11 +382,22 @@ species_abund_long %>%
         vjust = 1,
         colour = filter(
             analysis_colours, str_detect(Env, "calculus|plaque")
-            )$env_col %>%
-          rev()
+            )$env_col
         )
       ) +
     scale_fill_viridis_c(option = "B")
+```
+
+### Streptococci
+
+```{r}
+clr_compar_long %>%
+  filter(str_detect(species, "Streptococcus")) %>% 
+  ggplot(aes(x = sample, y = species, fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c(option = "C") +
+    theme(axis.text.x = element_text(angle = 90, size = 6))
+
 ```
 
 
@@ -411,8 +448,8 @@ samples compared to the modern calculus and plaque samples.
 
 # Discussion
 
-No aerobes made it into the model. Apart from the donated saliva, no aerobes
-were detected in any of the experimental samples. *Rothia* spp. disappeared
+Very few aerobes made it into the model. Apart from the donated saliva, very few
+aerobes were detected in any of the experimental samples. *Rothia* spp. disappeared
 between saliva and medium samples. We may need to introduce more oxygen into
 the protocol, or increase the frequency of medium replacement (e.g. every two
 days instead of three).
