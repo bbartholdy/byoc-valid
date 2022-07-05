@@ -125,7 +125,7 @@ exp_logf_full %>%
     species %in% .$species
     )
   ) %>%
-  ggplot(aes(x = lfc, y = species, col = abn)) +
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
     geom_point() +
     geom_linerange(aes(xmin = lower, xmax = upper)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
@@ -135,7 +135,7 @@ exp_logf_full %>%
 exp_logf_full %>%
   filter(species %in% exp_pca_loadings$species[1:20]) %>% 
   slice_head(n = 60) %>% 
-  ggplot(aes(x = lfc, y = species, col = abn)) +
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
     geom_point() +
     geom_linerange(aes(xmin = lower, xmax = upper)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
@@ -146,7 +146,7 @@ exp_logf_full %>%
 exp_logf_full %>%
   filter(species %in% exp_pca_loadings$species[1:20]) %>% 
   slice_head(n = 60) %>% 
-  ggplot(aes(x = lfc, y = species, col = abn)) +
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
     geom_point() +
     geom_linerange(aes(xmin = lower, xmax = upper)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
@@ -219,7 +219,7 @@ calc_logf_full %>%
     species %in% .$species
     )
   ) %>% 
-   ggplot(aes(x = lfc, y = species, col = abn)) +
+   ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
     geom_point(size = 2) +
     geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
     geom_vline(xintercept = 0, linetype = "dashed") +
@@ -235,7 +235,7 @@ calc_logf_full %>%
 calc_logf_full %>%
   filter(species %in% pca_loadings$species[1:20]) %>% 
   slice_head(n = 60) %>% # pca_loadings already arranged by PC1
-  ggplot(aes(x = lfc, y = species, col = abn)) +
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
     geom_point(size = 2) +
     geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
     geom_vline(xintercept = 0, linetype = "dashed") +
@@ -246,15 +246,11 @@ calc_logf_full %>%
       axis.title.y = element_blank()
           )
 
-calc_logf_full %>%
-  filter(species %in% arrange(pca_loadings, desc(abs(PC2)))$species[1:30]) %>%
-  slice_head(n = 30) #%>% # pca_loadings already arranged by PC1
-
 # Top 30 loadings from PC2
 calc_logf_full %>%
   filter(species %in% arrange(pca_loadings, desc(abs(PC2)))$species[1:20]) %>%
   slice_head(n = 60) %>% # pca_loadings already arranged by PC1
-  ggplot(aes(x = lfc, y = species, col = abn)) +
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
     geom_point(size = 2) +
     geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
     geom_vline(xintercept = 0, linetype = "dashed") +
