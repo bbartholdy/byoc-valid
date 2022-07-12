@@ -162,7 +162,7 @@ which_contaminants_freq <- isContaminant(
   otu_freq_matrix,
   conc = lib_conc_select$`Quantification_post-Indexing_total`,
   #neg = decontam_neg,
-  threshold = 0.95
+  threshold = 0.99
   )
   # prevalence method with environmental samples
 which_notcontaminants_prev  <- isNotContaminant(
@@ -170,14 +170,14 @@ which_notcontaminants_prev  <- isNotContaminant(
   #conc = lib_conc_select$`Quantification_post-Indexing_total`,
   neg = decontam_neg,
   detailed=TRUE,
-  threshold = 0.05
+  threshold = 0.01
 )
 
 which_contaminants_prev  <- isContaminant(
   otu_prev_matrix,
   #conc = lib_conc_select$`Quantification_post-Indexing_total`,
   neg = decontam_neg,
-  threshold = 0.95
+  threshold = 0.99
 )
 # which_contaminants <- isContaminant(
 #   otu_filtered_matrix, 

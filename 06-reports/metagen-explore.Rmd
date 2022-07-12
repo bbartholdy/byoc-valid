@@ -12,6 +12,8 @@ experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadat
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
 otu_table_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv")) 
+pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
+load(here("05-results/spca_species.rda"))
 
 clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
@@ -132,10 +134,12 @@ based on information from BacDive.
 species_properties %>%
   distinct(species, .keep_all = T) %>% 
   count(`Oxygen tolerance`) %>%
-  mutate(`Oxygen tolerance` = replace_na(`Oxygen tolerance`, "unknown")) %>%
+  mutate(`Oxygen tolerance` = replace_na(`Oxygen tolerance`, "unknown"),
+         perc = scales::percent(n / sum(n), accuracy = 0.1)) %>%
   ggplot(aes(x = "", y = n, fill = `Oxygen tolerance`)) +
     geom_col(colour = "white") + 
     coord_polar(theta = "y") +
+    geom_text(aes(label = perc), position = position_stack(vjust = 0.5), col = "white") +
     theme_void() +
     scale_fill_manual(
       values = c(viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))), "darkgrey"))
@@ -239,6 +243,52 @@ top_species %>%
 ```
 
 
+```{r}
+clr_byoc_long %>% 
+  filter(#sample %in% experiment_metadata$`#SampleID`,
+         str_detect(species, "Streptococcus|Actinomyces|Fusobacterium|Haemo")) %>% # early colonisers
+  ggplot(aes(x = sample, y = species, fill = clr_count)) +
+    geom_tile() +
+    theme_void() +
+    scale_x_discrete(limits = rev(day_order)) + # reverse day_order vector
+    #my_scale2 +
+    theme(
+      legend.position = "top",
+      axis.text = element_text(),
+      axis.text.x = element_text(
+        angle = 60,
+        hjust = 1,
+        vjust = 1,
+        colour = rev(experiment_colours$env_col)
+        )
+      ) +
+    scale_fill_viridis_c(option = "B")
+
+clr_byoc_long %>% 
+  filter(#sample %in% experiment_metadata$`#SampleID`,
+         str_detect(species, "Fusobacterium|Eubacterium|Treponema|Tannerella|Prevotella")) %>% # Late colonisers
+  ggplot(aes(x = sample, y = species, fill = clr_count)) +
+    geom_tile() +
+    theme_void() +
+    scale_x_discrete(limits = rev(day_order)) + # reverse day_order vector
+    #my_scale2 +
+    theme(
+      legend.position = "top",
+      axis.text = element_text(),
+      axis.text.x = element_text(
+        angle = 60,
+        hjust = 1,
+        vjust = 1,
+        colour = rev(experiment_colours$env_col)
+        )
+      ) +
+    scale_fill_viridis_c(option = "B")
+```
+
+Decrease in oral streptococci over the course of the experiment is expected in
+biofilm growth. *Actinomyces* spp. were more abundant in saliva and in the final
+calculus product than early biofilm samples.
+
 ### Oxygen tolerance
 
 ```{r}
@@ -341,25 +391,9 @@ genus_abund_long %>%
 
 ## Species composition
 
-```{r}
-# centered log-ratio transformed counts
-clr_compar_long %>%
-  filter(species %in% pca_loadings$species[1:50]) %>%
-  ggplot(aes(x = sample, y = species, fill = clr_count)) +
-    geom_tile() +
-    scale_fill_viridis_c() +
-    theme(
-      axis.title.x = element_blank(),
-      axis.text.x = element_text(
-        angle = 90, size = 6, colour = analysis_colours %>%
-          #filter(str_detect(Env, "calculus|plaque")) %>%
-          arrange(Env) %>%
-          .$env_col %>%
-          na.omit() %>%
-          rev()
-      )
-      )
+Relative abundance
 
+```{r}
 # relative abundance
 species_abund_long %>%
   filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
@@ -388,11 +422,81 @@ species_abund_long %>%
     scale_fill_viridis_c(option = "B")
 ```
 
-### Streptococci
+Centered ratio log-transform abundance ordered by PC1 loadings.
+
+```{r}
+# Top positive loadings on PC1
+clr_compar_long %>%
+  left_join(pca_loadings, by = "species") %>%
+  left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
+  left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% arrange(pca_loadings, desc(PC1))$species[1:200]) %>%
+  #arrange(sample, PC1.y) %>%
+  ggplot(aes(x = reorder(sample, PC1.y), y = reorder(species, PC1.x), fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c() +
+    theme(
+      axis.title.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(
+        angle = 90, size = 8, vjust = 0.5, hjust = 1,
+        colour = analysis_colours %>%
+          right_join(
+            as_tibble(spca_species$x, rownames = "#SampleID"), 
+            by = "#SampleID") %>%
+          arrange(PC1) %>% 
+          .$env_col
+      )
+      )
+
+# Top negative loadings on PC1
+clr_compar_long %>%
+  left_join(pca_loadings, by = "species") %>%
+  left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
+  #left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
+  #arrange(species, PC1.y) %>% # arrange by species loading (PC1.x)
+  filter(species %in% arrange(pca_loadings, PC1)$species[1:200]) %>%
+  arrange(sample, PC1.x) %>% # arrange by sample loading (PC1.y)
+  ggplot(aes(x = reorder(sample, PC1.y), y = reorder(species, PC1.x, decreasing = T), fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c() +
+    theme(
+      axis.title.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(
+        angle = 90, size = 8, vjust = 0.5, hjust = 1,
+        colour = analysis_colours %>%
+          right_join(
+            as_tibble(spca_species$x, rownames = "#SampleID"), 
+            by = "#SampleID") %>%
+          arrange(PC1) %>% 
+          .$env_col
+      )
+      )
+```
+
+*Enterococcus faecalis*, *Enterococcus casseliflavus*, and *Enterococcus durans*
+are more abundant in the *in vitro* biofilm samples than
+*in vivo* samples of plaque and calculus. Conversely, *Neisseria* spp. and
+*Actinomyces* spp. are deficient in the *in vitro* samples.
+
+### Early colonisers
 
 ```{r}
 clr_compar_long %>%
-  filter(str_detect(species, "Streptococcus")) %>% 
+  filter(str_detect(species, "Streptococcus|Actinomyces|Fusobacterium")) %>% 
+  ggplot(aes(x = sample, y = species, fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c(option = "C") +
+    theme(axis.text.x = element_text(angle = 90, size = 6))
+
+```
+
+### Late colonisers
+
+```{r}
+clr_compar_long %>%
+  filter(str_detect(species, "Fusobacterium|Eubacterium|Treponema|Tannerella|Prevotella")) %>% 
   ggplot(aes(x = sample, y = species, fill = clr_count)) +
     geom_tile() +
     scale_fill_viridis_c(option = "C") +

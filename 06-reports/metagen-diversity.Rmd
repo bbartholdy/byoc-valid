@@ -274,7 +274,9 @@ loading_theme <-  theme_minimal() +
       axis.line.x = element_line(),
       legend.position = "bottom"
           )
+```
 
+```{r}
 exp_pca_loadings %>%
   mutate(species = fct_reorder(species, desc(abs(PC1)))) %>%
   slice_head(n = 20) %>%
@@ -292,7 +294,7 @@ exp_pca_loadings %>%
   slice_head(n = 20) %>%
   ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
     geom_bar(stat = "identity", width = 0.8) +
-    scale_x_continuous(limits = c(-0.15,0.15)) +
+    scale_x_continuous(limits = c(-0.18,0.18)) +
   scale_fill_manual(
       values = viridisLite::turbo(
         n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
@@ -360,8 +362,10 @@ spca_compar %>%
 ```
 
 PC1 separates all artificial samples from the reference samples, while
-PC2 separates some modern calculus samples from other oral reference samples.
-PC3 separates most artificial calculus from medium samples.
+PC2 separates some modern calculus samples from other oral reference samples,
+as well as separating the artificial calculus from this study from the comparative
+*in vitro* biofilms. PC3 separates some modern calculus samples from other comparative
+oral samples.
 
 Main drivers of discrimination. Top loading vectors for PC1 and PC2.
 
@@ -400,7 +404,7 @@ pca_loadings %>%
   slice_head(n = 15) %>%
   ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
     geom_bar(stat = "identity", width = 0.8) +
-    scale_x_continuous(limits = c(-0.12,0.12)) +
+    scale_x_continuous(limits = c(-0.15,0.15)) +
   scale_fill_manual(
       values = viridisLite::turbo(
         n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
@@ -415,7 +419,7 @@ pca_loadings %>%
   slice_head(n = 15) %>%
   ggplot(aes(x = PC3, y = species, fill = `Oxygen tolerance`)) +
     geom_bar(stat = "identity", width = 0.8) +
-    scale_x_continuous(limits = c(-0.21,0.21)) +
+    scale_x_continuous(limits = c(-0.12,0.12)) +
     scale_fill_manual(
       values = viridisLite::turbo(
         n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))

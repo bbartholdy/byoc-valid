@@ -2,17 +2,12 @@ species	Oxygen tolerance	abs
 Abiotrophia defectiva	anaerobe	FALSE
 Acetivibrio clariflavus	anaerobe	FALSE
 Acetivibrio saccincola	anaerobe	FALSE
-Acetivibrio thermocellus	anaerobe	FALSE
-Acetoanaerobium sticklandii	anaerobe	FALSE
 Achromobacter denitrificans	aerobe	FALSE
-Achromobacter spanius	aerobe	FALSE
 Achromobacter xylosoxidans	aerobe	FALSE
 Acidihalobacter ferrooxydans	aerobe	FALSE
 Acidipropionibacterium acidipropionici	anaerobe	FALSE
-Acinetobacter bereziniae	aerobe	FALSE
 Acinetobacter lwoffii	aerobe	FALSE
 Actinobacillus delphinicola	facultative anaerobe	FALSE
-Actinobacillus succinogenes	aerobe	FALSE
 Actinobacillus suis	facultative anaerobe	FALSE
 Actinomyces gaoshouyii	facultative anaerobe	FALSE
 Actinomyces howellii	anaerobe	FALSE
@@ -23,58 +18,35 @@ Actinomyces oris	anaerobe	FALSE
 Actinomyces radicidentis	facultative anaerobe	FALSE
 Actinomyces viscosus	anaerobe	FALSE
 Actinomyces weissii	anaerobe	FALSE
-Actinoplanes friuliensis	aerobe	FALSE
 Actinoplanes missouriensis	aerobe	FALSE
 Actinoplanes teichomyceticus	aerobe	FALSE
-Advenella kashmirensis	aerobe	FALSE
-Advenella mimigardefordensis	aerobe	FALSE
-Aequorivita sublithincola	aerobe	FALSE
 Aeromicrobium choanae	aerobe	FALSE
-Agarivorans gilvus	aerobe	FALSE
 Aggregatibacter actinomycetemcomitans	facultative anaerobe	FALSE
 Aggregatibacter aphrophilus	facultative anaerobe	FALSE
 Aggregatibacter segnis	facultative anaerobe	FALSE
 Agromyces aureus	aerobe	FALSE
 Agromyces flavus	aerobe	FALSE
-Ahniella affigens	aerobe	FALSE
 Akkermansia glycaniphila	anaerobe	FALSE
 Akkermansia muciniphila	anaerobe	FALSE
 Alcaligenes faecalis	aerobe	FALSE
-Alcanivorax dieselolei	aerobe	FALSE
 Alicycliphilus denitrificans	aerobe	FALSE
 Alistipes finegoldii	anaerobe	FALSE
 Alistipes indistinctus	anaerobe	FALSE
 Alistipes onderdonkii	anaerobe	FALSE
 Alistipes shahii	anaerobe	FALSE
-Alkalilimnicola ehrlichii	facultative anaerobe	FALSE
 Alkalitalea saponilacus	anaerobe	FALSE
 Allokutzneria albata	aerobe	FALSE
-Allosphingosinicella indica	aerobe	FALSE
-Altererythrobacter epoxidivorans	aerobe	FALSE
 Alysiella filiformis	facultative anaerobe	FALSE
-Aminobacterium colombiense	anaerobe	FALSE
-Ammonifex degensii	anaerobe	FALSE
 Amycolatopsis albispora	aerobe	FALSE
 Anaerococcus prevotii	anaerobe	FALSE
 Anaerocolumna cellulosilytica	anaerobe	FALSE
 Anaerohalosphaera lusitana	anaerobe	FALSE
-Anaerostipes caccae	anaerobe	FALSE
-Anaerostipes rhamnosivorans	anaerobe	FALSE
-Antarcticibacterium flavum	aerobe	FALSE
-Aquiflexum balticum	aerobe	FALSE
 Arcanobacterium haemolyticum	anaerobe	FALSE
-Arcticibacterium luteifluviistationis	aerobe	FALSE
 Arthrobacter alpinus	aerobe	FALSE
-Arthrobacter sp.	aerobe	FALSE
-Aureimonas populi	aerobe	FALSE
 Avibacterium paragallinarum	facultative anaerobe	FALSE
 Avibacterium volantium	facultative anaerobe	FALSE
-Azospira oryzae	anaerobe	FALSE
-Azospirillum humicireducens	facultative anaerobe	FALSE
-Azospirillum ramasamyi	aerobe	FALSE
 Azospirillum thiophilum	aerobe	FALSE
 Bacillus infantis	aerobe	FALSE
-Bacillus sonorensis	facultative anaerobe	FALSE
 Bacteroides cellulosilyticus	anaerobe	FALSE
 Bacteroides coprosuis	anaerobe	FALSE
 Bacteroides eggerthii	anaerobe	FALSE
@@ -86,63 +58,38 @@ Bacteroides thetaiotaomicron	anaerobe	FALSE
 Bacteroides uniformis	anaerobe	FALSE
 Bacteroides xylanisolvens	anaerobe	FALSE
 Barnesiella viscericola	anaerobe	FALSE
-Belliella baltica	aerobe	FALSE
 Beutenbergia cavernae	aerobe	FALSE
 Bibersteinia trehalosi	facultative anaerobe	FALSE
 Bifidobacterium breve	anaerobe	FALSE
-Bifidobacterium catenulatum	anaerobe	FALSE
 Bifidobacterium choerinum	anaerobe	FALSE
 Bifidobacterium dentium	anaerobe	FALSE
 Bifidobacterium eulemuris	facultative anaerobe	FALSE
-Bifidobacterium imperatoris	anaerobe	FALSE
 Bifidobacterium lemurum	anaerobe	FALSE
 Bifidobacterium longum	anaerobe	FALSE
-Bifidobacterium pseudolongum	anaerobe	FALSE
 Bifidobacterium pullorum	anaerobe	FALSE
-Bifidobacterium saguini	anaerobe	FALSE
 Bifidobacterium scardovii	anaerobe	FALSE
 Bifidobacterium subtile	anaerobe	FALSE
-Biomaibacter acetigenes	anaerobe	FALSE
-Blastomonas fulva	aerobe	FALSE
 Blautia producta	anaerobe	FALSE
-Bordetella avium	aerobe	FALSE
 Bordetella bronchialis	aerobe	FALSE
-Bordetella bronchiseptica	aerobe	FALSE
-Bordetella holmesii	facultative anaerobe	FALSE
 Bordetella pertussis	aerobe	FALSE
 Bordetella petrii	aerobe	FALSE
 Bordetella trematum	facultative anaerobe	FALSE
 Brachybacterium ginsengisoli	aerobe	FALSE
 Brachybacterium saurashtrense	aerobe	FALSE
-Brachyspira hyodysenteriae	anaerobe	FALSE
-Brachyspira murdochii	anaerobe	FALSE
 Bradyrhizobium canariense	aerobe	FALSE
 Bradyrhizobium diazoefficiens	aerobe	FALSE
 Bradyrhizobium elkanii	aerobe	FALSE
 Bradyrhizobium japonicum	aerobe	FALSE
 Bradyrhizobium oligotrophicum	aerobe	FALSE
-Bradyrhizobium sp.	aerobe	FALSE
 Bradyrhizobium vignae	aerobe	FALSE
-Brevibacillus agri	aerobe	FALSE
-Brevibacillus brevis	aerobe	FALSE
-Brevibacillus choshinensis	facultative anaerobe	FALSE
-Brevibacillus laterosporus	aerobe	FALSE
-Brevibacterium casei	aerobe	FALSE
 Brevibacterium linens	aerobe	FALSE
 Brevibacterium luteolum	aerobe	FALSE
 Brevundimonas diminuta	aerobe	FALSE
 Brevundimonas subvibrioides	aerobe	FALSE
-Brevundimonas vesicularis	aerobe	FALSE
 Brucella anthropi	aerobe	FALSE
-Brucella pituitosa	aerobe	FALSE
-Burkholderia dolosa	aerobe	FALSE
 Burkholderia gladioli	aerobe	FALSE
-Burkholderia lata	aerobe	FALSE
 Butyricimonas faecalis	anaerobe	FALSE
-Butyrivibrio hungatei	anaerobe	FALSE
 Caballeronia insecticola	aerobe	FALSE
-Caenibius tardaugens	aerobe	FALSE
-Caldanaerobacter subterraneus	anaerobe	FALSE
 Caldithrix abyssi	anaerobe	FALSE
 Caloranaerobacter azorensis	anaerobe	FALSE
 Campylobacter coli	facultative anaerobe	FALSE
@@ -151,9 +98,7 @@ Campylobacter curvus	anaerobe	FALSE
 Campylobacter fetus	facultative anaerobe	FALSE
 Campylobacter gracilis	anaerobe	FALSE
 Campylobacter hominis	anaerobe	FALSE
-Campylobacter hyointestinalis	facultative anaerobe	FALSE
 Campylobacter jejuni	facultative anaerobe	FALSE
-Campylobacter pinnipediorum	facultative anaerobe	FALSE
 Campylobacter rectus	anaerobe	FALSE
 Campylobacter showae	anaerobe	FALSE
 Campylobacter ureolyticus	anaerobe	FALSE
@@ -163,64 +108,37 @@ Capnocytophaga haemolytica	facultative anaerobe	FALSE
 Capnocytophaga leadbetteri	anaerobe	FALSE
 Capnocytophaga ochracea	anaerobe	FALSE
 Capnocytophaga sputigena	anaerobe	FALSE
-Carboxydothermus hydrogenoformans	anaerobe	FALSE
 Cardiobacterium hominis	facultative anaerobe	FALSE
-Castellaniella defragrans	aerobe	FALSE
 Catenulispora acidiphila	aerobe	FALSE
-Caulifigura coniformis	aerobe	FALSE
-Caulobacter rhizosphaerae	aerobe	FALSE
 Cellulomonas fimi	aerobe	FALSE
 Cellulomonas flavigena	aerobe	FALSE
-Cellulomonas gilvus	facultative anaerobe	FALSE
-Cellulosilyticum lentocellum	anaerobe	FALSE
 Cellulosimicrobium cellulans	anaerobe	FALSE
-Changchengzhania lutea	aerobe	FALSE
-Chelatococcus daeguensis	aerobe	FALSE
-Chitinophaga alhagiae	aerobe	FALSE
-Chlorobaculum parvum	anaerobe	FALSE
-Chlorobaculum tepidum	anaerobe	FALSE
 Chlorobium limicola	anaerobe	FALSE
 Chromobacterium vaccinii	aerobe	FALSE
 Chromobacterium violaceum	aerobe	FALSE
 Chryseobacterium arthrosphaerae	aerobe	FALSE
 Chryseobacterium aureum	aerobe	FALSE
-Chryseobacterium bernardetii	aerobe	FALSE
 Chryseobacterium carnipullorum	aerobe	FALSE
 Chryseobacterium gleum	aerobe	FALSE
-Chryseobacterium haifense	aerobe	FALSE
 Chryseobacterium indologenes	aerobe	FALSE
 Chryseobacterium joostei	aerobe	FALSE
 Chryseobacterium nakagawai	aerobe	FALSE
 Chryseobacterium taklimakanense	aerobe	FALSE
-Cloacibacillus porcorum	anaerobe	FALSE
 Cloacibacterium normanense	aerobe	FALSE
 Clostridium aceticum	anaerobe	FALSE
 Clostridium carboxidivorans	anaerobe	FALSE
-Clostridium chauvoei	anaerobe	FALSE
 Clostridium cochlearium	anaerobe	FALSE
 Clostridium drakei	anaerobe	FALSE
-Clostridium innocuum	anaerobe	FALSE
 Clostridium kluyveri	anaerobe	FALSE
-Clostridium novyi	anaerobe	FALSE
-Clostridium saccharoperbutylacetonicum	anaerobe	FALSE
 Clostridium tyrobutyricum	anaerobe	FALSE
-Cnuibacter physcomitrellae	aerobe	FALSE
-Comamonas piscis	aerobe	FALSE
 Comamonas testosteroni	aerobe	FALSE
-Coriobacterium glomerans	anaerobe	FALSE
-Corynebacterium amycolatum	anaerobe	FALSE
 Corynebacterium argentoratense	facultative anaerobe	FALSE
-Corynebacterium atypicum	facultative anaerobe	FALSE
 Corynebacterium aurimucosum	aerobe	FALSE
-Corynebacterium camporealensis	aerobe	FALSE
 Corynebacterium casei	aerobe	FALSE
 Corynebacterium diphtheriae	facultative anaerobe	FALSE
 Corynebacterium efficiens	aerobe	FALSE
 Corynebacterium epidermidicanis	facultative anaerobe	FALSE
-Corynebacterium halotolerans	aerobe	FALSE
 Corynebacterium humireducens	facultative anaerobe	FALSE
-Corynebacterium jeikeium	facultative anaerobe	FALSE
-Corynebacterium kroppenstedtii	facultative anaerobe	FALSE
 Corynebacterium macginleyi	facultative anaerobe	FALSE
 Corynebacterium marinum	facultative anaerobe	FALSE
 Corynebacterium matruchotii	aerobe	FALSE
@@ -231,14 +149,11 @@ Corynebacterium singulare	aerobe	FALSE
 Corynebacterium sphenisci	facultative anaerobe	FALSE
 Corynebacterium stationis	aerobe	FALSE
 Corynebacterium striatum	facultative anaerobe	FALSE
-Corynebacterium terpenotabidum	aerobe	FALSE
 Corynebacterium testudinoris	aerobe	FALSE
 Corynebacterium tuberculostearicum	aerobe	FALSE
 Corynebacterium urealyticum	facultative anaerobe	FALSE
 Corynebacterium vitaeruminis	facultative anaerobe	FALSE
 Corynebacterium xerosis	aerobe	FALSE
-Costertonia aggregata	aerobe	FALSE
-Crenobacter cavernae	aerobe	FALSE
 Cronobacter sakazakii	aerobe	FALSE
 Cruoricaptor ignavus	facultative anaerobe	FALSE
 Cryptobacterium curtum	anaerobe	FALSE
@@ -247,58 +162,40 @@ Cupriavidus campinensis	aerobe	FALSE
 Cupriavidus metallidurans	aerobe	FALSE
 Cupriavidus necator	aerobe	FALSE
 Cupriavidus pinatubonensis	aerobe	FALSE
-Cupriavidus taiwanensis	aerobe	FALSE
 Curtobacterium flaccumfaciens	aerobe	FALSE
 Cutibacterium acnes	facultative anaerobe	FALSE
 Cutibacterium avidum	anaerobe	FALSE
-Cyclobacterium amurskyense	aerobe	FALSE
 Dehalobacter restrictus	anaerobe	FALSE
 Deinococcus actinosclerus	aerobe	FALSE
 Deinococcus irradiatisoli	aerobe	FALSE
-Deinococcus radiodurans	aerobe	FALSE
 Delftia acidovorans	aerobe	FALSE
 Denitratisoma oestradiolicum	aerobe	FALSE
-Desulfatibacillum aliphaticivorans	anaerobe	FALSE
-Desulfitobacterium dehalogenans	anaerobe	FALSE
-Desulfitobacterium hafniense	anaerobe	FALSE
 Desulfobulbus propionicus	anaerobe	FALSE
-Desulfohalobium retbaense	anaerobe	FALSE
 Desulfomicrobium orale	anaerobe	FALSE
 Desulfosarcina widdelii	anaerobe	FALSE
 Desulfosporosinus acidiphilus	anaerobe	FALSE
 Desulfosporosinus orientis	anaerobe	FALSE
 Desulfosporosinus youngiae	anaerobe	FALSE
-Desulfotalea psychrophila	anaerobe	FALSE
 Desulfovibrio fairfieldensis	anaerobe	FALSE
 Desulfovibrio piger	anaerobe	FALSE
 Desulfurivibrio alkaliphilus	anaerobe	FALSE
 Devriesea agamarum	facultative anaerobe	FALSE
-Dietzia lutea	aerobe	FALSE
 Dolosigranulum pigrum	anaerobe	FALSE
-Dongshaea marina	facultative anaerobe	FALSE
-Dyella japonica	aerobe	FALSE
 Dyella thiooxydans	aerobe	FALSE
 Dysosmobacter welbionis	facultative anaerobe	FALSE
 Eggerthella lenta	anaerobe	FALSE
 Eikenella corrodens	anaerobe	FALSE
 Elizabethkingia anophelis	aerobe	FALSE
 Ensifer adhaerens	aerobe	FALSE
-Ensifer alkalisoli	aerobe	FALSE
 Enterobacter cancerogenus	aerobe	FALSE
 Enterobacter cloacae	aerobe	FALSE
 Enterobacter hormaechei	aerobe	FALSE
 Enterocloster bolteae	anaerobe	FALSE
-Enterocloster clostridioformis	anaerobe	FALSE
 Enterococcus casseliflavus	facultative anaerobe	FALSE
 Enterococcus durans	facultative anaerobe	FALSE
 Enterococcus faecalis	facultative anaerobe	FALSE
 Epidermidibacterium keratini	aerobe	FALSE
-Ethanoligenens harbinense	anaerobe	FALSE
-Eubacterium callanderi	anaerobe	FALSE
-Eubacterium cellulosolvens	anaerobe	FALSE
 Eubacterium limosum	anaerobe	FALSE
-Ewingella americana	aerobe	FALSE
-Exiguobacterium mexicanum	aerobe	FALSE
 Faecalibacillus intestinalis	anaerobe	FALSE
 Fibrella aestuarina	aerobe	FALSE
 Fictibacillus arsenicus	aerobe	FALSE
@@ -309,9 +206,6 @@ Flavobacterium album	aerobe	FALSE
 Flavobacterium anhuiense	aerobe	FALSE
 Flavobacterium crocinum	aerobe	FALSE
 Flavobacterium gilvum	aerobe	FALSE
-Flavobacterium haoranii	aerobe	FALSE
-Flavobacterium johnsoniae	aerobe	FALSE
-Flavobacterium sediminis	aerobe	FALSE
 Frankia alni	aerobe	FALSE
 Fretibacterium fastidiosum	anaerobe	FALSE
 Fusobacterium gonidiaformans	anaerobe	FALSE
@@ -324,24 +218,15 @@ Gardnerella vaginalis	anaerobe	FALSE
 Gemella haemolysans	anaerobe	FALSE
 Gemella morbillorum	anaerobe	FALSE
 Gemella sanguinis	facultative anaerobe	FALSE
-Geoalkalibacter subterraneus	anaerobe	FALSE
-Geobacter sulfurreducens	anaerobe	FALSE
 Georgenia faecalis	aerobe	FALSE
 Glaesserella parasuis	facultative anaerobe	FALSE
-Gluconobacter oxydans	aerobe	FALSE
 Glutamicibacter halophytocola	aerobe	FALSE
 Glutamicibacter mishrai	aerobe	FALSE
-Glutamicibacter nicotianae	aerobe	FALSE
 Gordonia phthalatica	aerobe	FALSE
 Gordonia rubripertincta	aerobe	FALSE
 Gordonia terrae	aerobe	FALSE
-Gordonibacter urolithinfaciens	anaerobe	FALSE
 Gottschalkia acidurici	anaerobe	FALSE
-Gramella forsetii	aerobe	FALSE
-Gramella salexigens	aerobe	FALSE
 Granulibacter bethesdensis	aerobe	FALSE
-Granulicella tundricola	aerobe	FALSE
-Gynuella sunshinyii	facultative anaerobe	FALSE
 Haemophilus aegyptius	aerobe	FALSE
 Haemophilus ducreyi	facultative anaerobe	FALSE
 Haemophilus haemolyticus	facultative anaerobe	FALSE
@@ -349,23 +234,13 @@ Haemophilus influenzae	facultative anaerobe	FALSE
 Haemophilus parahaemolyticus	facultative anaerobe	FALSE
 Haemophilus parainfluenzae	facultative anaerobe	FALSE
 Haemophilus pittmaniae	facultative anaerobe	FALSE
-Halioglobus pacificus	aerobe	FALSE
-Halobacillus mangrovi	aerobe	FALSE
-Hathewaya histolytica	anaerobe	FALSE
 Herbaspirillum frisingense	aerobe	FALSE
 Herbaspirillum robiniae	aerobe	FALSE
 Herbaspirillum seropedicae	aerobe	FALSE
-Herbinix luporum	anaerobe	FALSE
 Histophilus somni	facultative anaerobe	FALSE
-Hoeflea phototrophica	aerobe	FALSE
 Hoyosella subflava	aerobe	FALSE
 Hungatella hathewayi	anaerobe	FALSE
 Hydrogenophaga crassostreae	aerobe	FALSE
-Hydrogenophaga pseudoflava	aerobe	FALSE
-Hylemonella gracilis	aerobe	FALSE
-Hymenobacter russus	aerobe	FALSE
-Ignavibacterium album	anaerobe	FALSE
-Immundisolibacter cernigliae	aerobe	FALSE
 Isoptericola dokdonensis	aerobe	FALSE
 Janibacter limosus	aerobe	FALSE
 Janibacter melonis	aerobe	FALSE
@@ -374,7 +249,6 @@ Janthinobacterium lividum	aerobe	FALSE
 Jiangella alkaliphila	aerobe	FALSE
 Jonquetella anthropi	anaerobe	FALSE
 Kerstersia gyiorum	aerobe	FALSE
-Kibdelosporangium phytohabitans	aerobe	FALSE
 Kingella denitrificans	facultative anaerobe	FALSE
 Kingella kingae	facultative anaerobe	FALSE
 Kingella oralis	aerobe	FALSE
@@ -383,18 +257,14 @@ Kocuria flava	aerobe	FALSE
 Kocuria rhizophila	aerobe	FALSE
 Kocuria turfanensis	aerobe	FALSE
 Kocuria varians	aerobe	FALSE
-Kordia antarctica	facultative anaerobe	FALSE
 Kroppenstedtia eburnea	aerobe	FALSE
 Labilibaculum antarcticum	facultative anaerobe	FALSE
-Lacrimispora saccharolytica	anaerobe	FALSE
-Lacrimispora sphenoides	anaerobe	FALSE
 Lactobacillus acidophilus	anaerobe	FALSE
 Lactobacillus crispatus	anaerobe	FALSE
 Lactobacillus gasseri	anaerobe	FALSE
 Lactobacillus iners	anaerobe	FALSE
 Lactobacillus jensenii	anaerobe	FALSE
 Lactobacillus johnsonii	anaerobe	FALSE
-Laribacter hongkongensis	aerobe	FALSE
 Lautropia mirabilis	aerobe	FALSE
 Leifsonia shinshuensis	aerobe	FALSE
 Leifsonia xyli	facultative anaerobe	FALSE
@@ -404,84 +274,44 @@ Leptotrichia hongkongensis	anaerobe	FALSE
 Leptotrichia shahii	anaerobe	FALSE
 Leptotrichia wadei	anaerobe	FALSE
 Leucobacter muris	aerobe	FALSE
-Leuconostoc pseudomesenteroides	facultative anaerobe	FALSE
 Limnochorda pilosa	anaerobe	FALSE
-Luteibacter rhizovicinus	aerobe	FALSE
 Luteimicrobium xylanilyticum	aerobe	FALSE
-Luteimonas granuli	aerobe	FALSE
 Luteipulveratus mongoliensis	aerobe	FALSE
-Lutibacter profundi	facultative anaerobe	FALSE
-Lysobacter enzymogenes	aerobe	FALSE
-Lysobacter gummosus	aerobe	FALSE
-Maioricimonas rarisocia	aerobe	FALSE
 Mameliella alba	aerobe	FALSE
-Mannheimia granulomatis	facultative anaerobe	FALSE
 Maribacter cobaltidurans	aerobe	FALSE
-Maridesulfovibrio salexigens	anaerobe	FALSE
-Mariniblastus fucicola	aerobe	FALSE
-Marinobacterium aestuarii	aerobe	FALSE
 Marisediminicola antarctica	aerobe	FALSE
-Martelella mediterranea	aerobe	FALSE
 Massilia albidiflava	aerobe	FALSE
 Massilia flava	aerobe	FALSE
-Massilia plicata	aerobe	FALSE
-Massilia putida	aerobe	FALSE
 Massilia violaceinigra	aerobe	FALSE
-Melioribacter roseus	facultative anaerobe	FALSE
-Methanobrevibacter millerae	anaerobe	FALSE
-Methanobrevibacter olleyae	anaerobe	FALSE
 Methanobrevibacter smithii	anaerobe	FALSE
-Methanosphaera stadtmanae	anaerobe	FALSE
 Methylobacterium aquaticum	aerobe	FALSE
 Methylobacterium brachiatum	aerobe	FALSE
-Methylobacterium currus	aerobe	FALSE
 Methylobacterium mesophilicum	aerobe	FALSE
 Methylobacterium nodulans	aerobe	FALSE
-Methylocystis bryophila	aerobe	FALSE
 Microbacterium aurum	aerobe	FALSE
 Microbacterium chocolatum	facultative anaerobe	FALSE
 Microbacterium esteraromaticum	aerobe	FALSE
 Microbacterium hydrocarbonoxydans	aerobe	FALSE
 Microbacterium lemovicicum	aerobe	FALSE
 Microbacterium oleivorans	aerobe	FALSE
-Microbacterium oryzae	aerobe	FALSE
 Microbacterium oxydans	aerobe	FALSE
-Microbacterium paraoxydans	aerobe	FALSE
 Microbacterium sediminis	aerobe	FALSE
 Microbacterium testaceum	aerobe	FALSE
 Micrococcus luteus	aerobe	FALSE
 Micromonospora craniellae	aerobe	FALSE
 Micromonospora rifamycinica	aerobe	FALSE
 Micromonospora terminaliae	aerobe	FALSE
-Micromonospora tulbaghiae	facultative anaerobe	FALSE
-Micromonospora zamorensis	aerobe	FALSE
 Microterricola viridarii	aerobe	FALSE
-Microvirgula aerodenitrificans	aerobe	FALSE
-Mixta gaviniae	facultative anaerobe	FALSE
 Mogibacterium diversum	anaerobe	FALSE
 Moorella glycerini	anaerobe	FALSE
-Moraxella bovis	facultative anaerobe	FALSE
 Moraxella osloensis	facultative anaerobe	FALSE
-Mucilaginibacter gotjawali	aerobe	FALSE
-Mucilaginibacter mallensis	aerobe	FALSE
 Mucilaginibacter paludis	facultative anaerobe	FALSE
 Muribaculum gordoncarteri	anaerobe	FALSE
 Muribaculum intestinale	anaerobe	FALSE
 Muricauda lutaonensis	aerobe	FALSE
-Muricauda ruestringensis	facultative anaerobe	FALSE
 Mycobacterium avium	aerobe	FALSE
-Mycobacterium branderi	facultative anaerobe	FALSE
-Mycobacterium florentinum	facultative anaerobe	FALSE
 Mycobacterium gordonae	facultative anaerobe	FALSE
-Mycobacterium haemophilum	aerobe	FALSE
-Mycobacterium heckeshornense	facultative anaerobe	FALSE
 Mycobacterium intracellulare	facultative anaerobe	FALSE
-Mycobacterium paraseoulense	aerobe	FALSE
-Mycobacterium riyadhense	facultative anaerobe	FALSE
-Mycobacterium seoulense	aerobe	FALSE
-Mycobacterium shinjukuense	aerobe	FALSE
-Mycobacterium stephanolepidis	aerobe	FALSE
-Myroides phaeus	aerobe	FALSE
 Nakamurella panacisegetis	aerobe	FALSE
 Neisseria animalis	facultative anaerobe	FALSE
 Neisseria animaloris	facultative anaerobe	FALSE
@@ -501,79 +331,46 @@ Neisseria subflava	facultative anaerobe	FALSE
 Neisseria wadsworthii	facultative anaerobe	FALSE
 Neisseria weaveri	aerobe	FALSE
 Neisseria zoodegmatis	facultative anaerobe	FALSE
-Niabella soli	aerobe	FALSE
 Niastella koreensis	aerobe	FALSE
-Nibribacter ruber	aerobe	FALSE
 Nocardia asteroides	aerobe	FALSE
 Nocardia cyriacigeorgica	aerobe	FALSE
 Nocardia farcinica	aerobe	FALSE
 Nocardia mangyaensis	aerobe	FALSE
-Nocardia nova	aerobe	FALSE
-Nocardia terpenica	aerobe	FALSE
 Nocardia yunnanensis	aerobe	FALSE
-Nocardioides baekrokdamisoli	aerobe	FALSE
 Nocardioides daphniae	aerobe	FALSE
 Nocardioides houyundeii	aerobe	FALSE
 Nocardioides humi	aerobe	FALSE
 Nocardioides mesophilus	aerobe	FALSE
-Nocardioides sambongensis	aerobe	FALSE
 Nocardiopsis dassonvillei	facultative anaerobe	FALSE
 Nocardiopsis gilva	aerobe	FALSE
-Nonlabens spongiae	aerobe	FALSE
-Novosphingobium pentaromativorans	aerobe	FALSE
 Odoribacter splanchnicus	anaerobe	FALSE
 Olsenella uli	anaerobe	FALSE
 Opitutus terrae	anaerobe	FALSE
 Ornithinimicrobium flavum	aerobe	FALSE
-Oryzomicrobium terrae	facultative anaerobe	FALSE
-Oscillibacter valericigenes	anaerobe	FALSE
 Oxalobacter formigenes	anaerobe	FALSE
-Paenibacillus alvei	aerobe	FALSE
 Paenibacillus baekrokdamisoli	aerobe	FALSE
 Paenibacillus bovis	aerobe	FALSE
-Paenibacillus chitinolyticus	aerobe	FALSE
 Paenibacillus donghaensis	aerobe	FALSE
 Paenibacillus durus	anaerobe	FALSE
 Paenibacillus lycopersici	aerobe	FALSE
-Paenibacillus sabinae	anaerobe	FALSE
 Paenibacillus stellifer	aerobe	FALSE
 Paludibacter propionicigenes	anaerobe	FALSE
-Paludisphaera borealis	aerobe	FALSE
-Pandoraea norimbergensis	aerobe	FALSE
 Pandoraea thiooxydans	aerobe	FALSE
 Pannonibacter phragmitetus	aerobe	FALSE
 Parabacteroides distasonis	anaerobe	FALSE
 Parabacteroides goldsteinii	anaerobe	FALSE
-Paraburkholderia atlantica	aerobe	FALSE
-Paraburkholderia caffeinilytica	facultative anaerobe	FALSE
-Paraburkholderia graminis	aerobe	FALSE
-Paraburkholderia hospita	aerobe	FALSE
-Paraburkholderia megapolitana	aerobe	FALSE
 Paraburkholderia phenoliruptrix	aerobe	FALSE
-Paraburkholderia phymatum	aerobe	FALSE
-Paraburkholderia phytofirmans	aerobe	FALSE
-Paraburkholderia terricola	aerobe	FALSE
-Paraburkholderia xenovorans	aerobe	FALSE
 Paracoccus pantotrophus	facultative anaerobe	FALSE
-Paracoccus yeei	aerobe	FALSE
 Paraoerskovia marina	facultative anaerobe	FALSE
-Paraprevotella xylaniphila	anaerobe	FALSE
-Pararhodospirillum photometricum	anaerobe	FALSE
 Parascardovia denticolens	anaerobe	FALSE
-Paraurantiacibacter namhicola	aerobe	FALSE
-Parolsenella catena	anaerobe	FALSE
 Parvimonas micra	anaerobe	FALSE
 Pasteurella multocida	facultative anaerobe	FALSE
 Pauljensenia hongkongensis	anaerobe	FALSE
 Pedobacter roseus	aerobe	FALSE
 Pedobacter suwonensis	aerobe	FALSE
 Pedococcus dokdonensis	aerobe	FALSE
-Pelagerythrobacter marensis	aerobe	FALSE
 Pelobacter propionicus	anaerobe	FALSE
-Pelosinus fermentans	anaerobe	FALSE
-Peptoclostridium acidaminophilum	anaerobe	FALSE
 Phocaeicola coprophilus	aerobe	FALSE
-Phocaeicola dorei	anaerobe	FALSE
 Phocaeicola salanitronis	anaerobe	FALSE
 Phocaeicola vulgatus	anaerobe	FALSE
 Phreatobacter stygius	aerobe	FALSE
@@ -598,71 +395,40 @@ Propionibacterium acidifaciens	anaerobe	FALSE
 Propionibacterium australiense	anaerobe	FALSE
 Propionibacterium freudenreichii	anaerobe	FALSE
 Protaetiibacter intestinalis	aerobe	FALSE
-Proteiniphilum saccharofermentans	facultative anaerobe	FALSE
 Pseudobutyrivibrio xylanivorans	anaerobe	FALSE
 Pseudodesulfovibrio profundus	anaerobe	FALSE
 Pseudomonas aeruginosa	aerobe	FALSE
 Pseudomonas alcaligenes	aerobe	FALSE
-Pseudomonas alcaliphila	aerobe	FALSE
 Pseudomonas antarctica	aerobe	FALSE
 Pseudomonas arsenicoxydans	aerobe	FALSE
-Pseudomonas atacamensis	aerobe	FALSE
-Pseudomonas chlororaphis	aerobe	FALSE
 Pseudomonas cichorii	aerobe	FALSE
-Pseudomonas extremorientalis	aerobe	FALSE
-Pseudomonas fluorescens	aerobe	FALSE
 Pseudomonas fulva	aerobe	FALSE
-Pseudomonas furukawaii	aerobe	FALSE
 Pseudomonas koreensis	aerobe	FALSE
-Pseudomonas libanensis	aerobe	FALSE
 Pseudomonas lundensis	aerobe	FALSE
-Pseudomonas luteola	aerobe	FALSE
-Pseudomonas migulae	aerobe	FALSE
-Pseudomonas nitroreducens	aerobe	FALSE
-Pseudomonas palleroniana	aerobe	FALSE
 Pseudomonas poae	aerobe	FALSE
-Pseudomonas psychrophila	aerobe	FALSE
-Pseudomonas reinekei	aerobe	FALSE
 Pseudomonas rhodesiae	aerobe	FALSE
 Pseudomonas simiae	aerobe	FALSE
 Pseudomonas stutzeri	aerobe	FALSE
 Pseudomonas taetrolens	aerobe	FALSE
 Pseudomonas trivialis	aerobe	FALSE
-Pseudomonas umsongensis	aerobe	FALSE
 Pseudomonas vancouverensis	aerobe	FALSE
 Pseudomonas xanthomarina	aerobe	FALSE
-Psychrobacter arcticus	aerobe	FALSE
-Psychrobacter urativorans	aerobe	FALSE
 Pulveribacter suum	aerobe	FALSE
 Ralstonia insidiosa	aerobe	FALSE
-Ralstonia solanacearum	aerobe	FALSE
-Rhizobium favelukesii	aerobe	FALSE
-Rhodobacter capsulatus	aerobe	FALSE
 Rhodococcus erythropolis	aerobe	FALSE
 Rhodococcus fascians	aerobe	FALSE
 Rhodococcus hoagii	facultative anaerobe	FALSE
-Rhodococcus pyridinivorans	aerobe	FALSE
 Rhodococcus ruber	facultative anaerobe	FALSE
 Rhodococcus triatomae	aerobe	FALSE
 Rhodoferax antarcticus	anaerobe	FALSE
 Rhodoferax saidenbachensis	aerobe	FALSE
-Roseivirga pacifica	aerobe	FALSE
-Roseobacter ponti	aerobe	FALSE
-Roseomonas mucosa	aerobe	FALSE
 Rothia aeria	aerobe	FALSE
 Rothia dentocariosa	aerobe	FALSE
 Rothia mucilaginosa	facultative anaerobe	FALSE
 Rothia terrae	aerobe	FALSE
-Rubrobacter indicoceani	aerobe	FALSE
 Rugosibacter aromaticivorans	aerobe	FALSE
-Ruminiclostridium cellulolyticum	anaerobe	FALSE
-Saccharomonospora azurea	aerobe	FALSE
-Saccharomonospora cyanea	aerobe	FALSE
 Saccharomonospora marina	aerobe	FALSE
-Saccharomonospora viridis	aerobe	FALSE
-Salinispira pacifica	anaerobe	FALSE
 Salinispora arenicola	aerobe	FALSE
-Salinispora tropica	aerobe	FALSE
 Sanguibacter keddieii	aerobe	FALSE
 Scardovia inopinata	anaerobe	FALSE
 Schaalia cardiffensis	anaerobe	FALSE
@@ -672,31 +438,17 @@ Selenomonas sputigena	anaerobe	FALSE
 Serinicoccus chungangensis	aerobe	FALSE
 Serinicoccus marinus	aerobe	FALSE
 Serratia fonticola	aerobe	FALSE
-Serratia proteamaculans	aerobe	FALSE
-Silicimonas algicola	aerobe	FALSE
-Simiduia agarivorans	aerobe	FALSE
 Simonsiella muelleri	aerobe	FALSE
 Singulisphaera acidiphila	aerobe	FALSE
-Sphaerochaeta coccoides	anaerobe	FALSE
-Sphaerochaeta pleomorpha	anaerobe	FALSE
-Sphingobium baderi	aerobe	FALSE
-Sphingobium herbicidovorans	aerobe	FALSE
 Sphingomonas alpina	aerobe	FALSE
 Sphingomonas insulae	aerobe	FALSE
-Sphingomonas koreensis	aerobe	FALSE
-Sphingopyxis alaskensis	aerobe	FALSE
-Sphingopyxis granuli	aerobe	FALSE
 Spirochaeta thermophila	anaerobe	FALSE
 Sporolactobacillus terrae	facultative anaerobe	FALSE
-Sporomusa termitida	anaerobe	FALSE
-Stenotrophomonas maltophilia	aerobe	FALSE
-Sterolibacterium denitrificans	aerobe	FALSE
 Streptacidiphilus bronchialis	aerobe	FALSE
 Streptococcus anginosus	facultative anaerobe	TRUE
 Streptococcus australis	facultative anaerobe	FALSE
 Streptococcus constellatus	anaerobe	FALSE
 Streptococcus cristatus	facultative anaerobe	TRUE
-Streptococcus equinus	facultative anaerobe	FALSE
 Streptococcus gordonii	facultative anaerobe	TRUE
 Streptococcus infantis	facultative anaerobe	FALSE
 Streptococcus intermedius	facultative anaerobe	FALSE
@@ -710,76 +462,39 @@ Streptococcus sanguinis	facultative anaerobe	TRUE
 Streptococcus sobrinus	facultative anaerobe	FALSE
 Streptococcus troglodytae	facultative anaerobe	FALSE
 Streptococcus vestibularis	facultative anaerobe	TRUE
-Streptomyces cacaoi	facultative anaerobe	FALSE
 Streptomyces cadmiisoli	aerobe	FALSE
-Streptomyces capitiformicae	aerobe	FALSE
-Streptomyces cyaneochromogenes	aerobe	FALSE
-Streptomyces davaonensis	aerobe	FALSE
-Streptomyces fodineus	aerobe	FALSE
-Streptomyces koyangensis	aerobe	FALSE
-Streptomyces olivaceus	aerobe	FALSE
-Streptomyces prasinus	aerobe	FALSE
-Streptomyces spongiicola	aerobe	FALSE
 Streptomyces vietnamensis	aerobe	FALSE
-Streptomyces viridosporus	aerobe	FALSE
 Streptomyces xinghaiensis	aerobe	FALSE
 Streptosporangium roseum	aerobe	FALSE
-Succinivibrio dextrinosolvens	anaerobe	FALSE
-Sulfuricella denitrificans	facultative anaerobe	FALSE
-Sulfuriflexus mobilis	anaerobe	FALSE
 Sulfurifustis variabilis	facultative anaerobe	FALSE
 Sulfuritalea hydrogenivorans	anaerobe	FALSE
-Sutterella megalosphaeroides	anaerobe	FALSE
-Symmachiella dynata	aerobe	FALSE
-Syntrophobotulus glycolicus	anaerobe	FALSE
 Syntrophotalea acetylenica	anaerobe	FALSE
 Syntrophus aciditrophicus	anaerobe	FALSE
 Tannerella forsythia	anaerobe	FALSE
 Tepidanaerobacter acetatoxydans	anaerobe	FALSE
-Terriglobus saanensis	aerobe	FALSE
 Tessaracoccus aquimaris	aerobe	FALSE
 Tessaracoccus flavescens	aerobe	FALSE
 Tessaracoccus flavus	facultative anaerobe	FALSE
-Thauera aromatica	aerobe	FALSE
 Thauera chlorobenzoica	aerobe	FALSE
 Thauera humireducens	facultative anaerobe	FALSE
-Thermacetogenium phaeum	anaerobe	FALSE
 Thermaerobacter marianensis	aerobe	FALSE
-Thermoanaerobacterium aotearoense	anaerobe	FALSE
-Thermoanaerobacterium thermosaccharolyticum	anaerobe	FALSE
-Thermoanaerobacterium xylanolyticum	anaerobe	FALSE
 Thermobacillus composti	aerobe	FALSE
-Thermochromatium tepidum	anaerobe	FALSE
 Thioalkalivibrio sulfidiphilus	aerobe	FALSE
-Thioclava nitratireducens	aerobe	FALSE
-Thiospirochaeta perfilievii	anaerobe	FALSE
 Treponema azotonutricium	anaerobe	FALSE
 Treponema brennaborense	anaerobe	FALSE
-Treponema caldarium	anaerobe	FALSE
 Treponema denticola	anaerobe	FALSE
 Treponema parvum	anaerobe	FALSE
 Treponema pedis	anaerobe	FALSE
 Treponema putidum	anaerobe	FALSE
 Treponema ruminis	anaerobe	FALSE
 Treponema succinifaciens	anaerobe	FALSE
-Trueperella bialowiezensis	aerobe	FALSE
 Trueperella pyogenes	anaerobe	FALSE
 Tsukamurella paurometabola	aerobe	FALSE
 Tsukamurella tyrosinosolvens	aerobe	FALSE
-Tsuneonella mangrovi	facultative anaerobe	FALSE
-Tumebacillus avium	facultative anaerobe	FALSE
-Tuwongella immobilis	aerobe	FALSE
-Variibacter gotjawalensis	aerobe	FALSE
 Variovorax boronicumulans	aerobe	FALSE
 Variovorax paradoxus	aerobe	FALSE
 Veillonella atypica	anaerobe	FALSE
 Veillonella dispar	anaerobe	FALSE
 Veillonella parvula	anaerobe	FALSE
 Vespertiliibacter pulmonis	aerobe	FALSE
-Vibrio fluvialis	aerobe	FALSE
-Virgibacillus phasianinus	aerobe	FALSE
-Woeseia oceani	facultative anaerobe	FALSE
-Xanthomonas fragariae	aerobe	FALSE
-Xylophilus rhododendri	aerobe	FALSE
-Zobellia galactanivorans	aerobe	FALSE
 Zymomonas mobilis	anaerobe	FALSE

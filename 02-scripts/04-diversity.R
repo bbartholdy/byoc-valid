@@ -17,6 +17,14 @@ species_otu_table <- otu_table %>%
   t() %>%
   as_tibble(rownames = "sample")
 
+genus_otu_table <- species_otu_table %>%
+  pivot_longer(-sample, names_to = "species", values_to = "count") %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  dplyr::select(!species) %>%
+  group_by(sample, genus) %>%
+  summarise(count = sum(count)) %>%
+  pivot_wider(names_from = genus, values_from = count)
+
 comp_metadata <- analysis_metadata %>%
   filter(
     Env != "medium",
@@ -35,10 +43,18 @@ species_otu_matrix <- species_otu_table %>%
   column_to_rownames(var = "sample") %>%
   as.matrix()
 
+genus_otu_matrix <- genus_otu_table %>%
+  #dplyr::select(!contains("Enterococcus")) %>%
+  column_to_rownames(var = "sample") %>%
+  as.matrix()
+
 byoc_otu_matrix <- species_otu_matrix %>%
   subset(rownames(species_otu_matrix) %in% experiment_metadata$`#SampleID`)
 
 comp_otu_matrix <- species_otu_matrix %>%
+  subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
+
+comp_matrix_genus <- genus_otu_matrix %>%
   subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
 
 # Alpha diversity ---------------------------------------------------------
@@ -96,17 +112,25 @@ write_tsv(exp_pca_loadings, here("05-results/experiment-pca-loadings.tsv"))
 # Comparative samples
 
 clr_species <- logratio.transfo(comp_otu_matrix, "CLR", 1)
+clr_genus <- logratio.transfo(comp_matrix_genus, "CLR", 1)
 
 # convert from clr to data frame
 clr_species_copy <- clr_species
 class(clr_species_copy) <- "matrix"
 
+clr_genus_copy <- clr_genus
+class(clr_genus_copy) <- "matrix"
+
 clr_species_datf <- clr_species_copy %>%
+  as_tibble(rownames = "sample")
+
+clr_genus_datf <- clr_genus_copy %>%
   as_tibble(rownames = "sample")
 
 write_tsv(clr_species_datf, "05-results/clr-compar.tsv")
 
 spca_species <- spca(clr_species, ncomp = 10, scale = F)
+spca_genus <- spca(clr_genus, ncomp = 10, scale = F)
 
 spca_compar <- spca_species$x %>%
   as_tibble(rownames = "sample")
@@ -116,11 +140,6 @@ pca_loadings <- spca_species$rotation %>%
   as_tibble(rownames = "species") %>% 
   dplyr::select(species, PC1, PC2, PC3) %>%
   arrange(desc(abs(PC1)))
-
-pca_loadings
-
-pca_loadings %>%
-  arrange(desc(abs(PC2)))
 
 save(spca_species, file = here("05-results/spca_species.rda"))
 write_tsv(pca_loadings, here("05-results/all-pca-loadings.tsv"))
@@ -132,6 +151,25 @@ Y <- tibble("#SampleID" = rownames(clr_species)) %>%
     ) %>%
   .$Env
 species_splsda <- splsda(clr_species, Y)
-
 plotIndiv(species_splsda, group = Y, ind.names = F, legend = T)
 
+genus_splsda <- splsda(clr_genus, Y)
+plotIndiv(genus_splsda, group = Y, ind.names = F, legend = T)
+
+# Bray-Curtis
+
+#byoc_braydist <- vegdist(byoc_otu_matrix, method = "bray")
+byoc_braydist <- avgdist(byoc_otu_matrix, 50)
+
+byoc_braydist %>%
+  as.matrix() %>%
+  as_tibble(rownames = "sample") %>% 
+  pivot_longer(-sample) %>% 
+  filter(sample < name) %>%
+  left_join(experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  left_join(experiment_metadata, by = c("name" = "#SampleID")) %>%
+  dplyr::select(!contains(c("treatment", "plate", "row", "col"))) %>%
+  mutate(day = if_else(day.y > day.x, day.y, day.x)) %>%
+  ggplot(aes(x = day, y = value)) +
+    geom_line()
+  
