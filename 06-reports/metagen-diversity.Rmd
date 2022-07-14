@@ -274,27 +274,39 @@ loading_theme <-  theme_minimal() +
       axis.line.x = element_line(),
       legend.position = "bottom"
           )
+min_PC1 <- min(exp_pca_loadings$PC1)
+min_PC2 <- min(exp_pca_loadings$PC2)
+max_PC1 <- max(exp_pca_loadings$PC1)
+max_PC2 <- max(exp_pca_loadings$PC2)
 ```
 
 ```{r}
 exp_pca_loadings %>%
-  mutate(species = fct_reorder(species, desc(abs(PC1)))) %>%
-  slice_head(n = 20) %>%
+  arrange(desc(PC1)) %>%
+  mutate(species = fct_reorder(species, desc(PC1))) %>%
+  # top 20 positive and top 20 negative loadings
+  slice(c(
+    1:20, 
+    seq(from = nrow(exp_pca_loadings)-19, to = nrow(exp_pca_loadings))
+    )) %>%
   ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
     geom_bar(stat = "identity", width = 0.8) +
-    scale_x_continuous(limits = c(-0.2,0.2)) +
+    scale_x_continuous(limits = c(min_PC1,max_PC1)) +
     scale_fill_manual(
       values = viridisLite::turbo(n = length(levels(as.factor(bac_properties$`Oxygen tolerance`))))) +
     labs(title = "component 1", x = "") +
     loading_theme
 
 exp_pca_loadings %>%
-  arrange(desc(abs(PC2))) %>%
-  mutate(species = fct_reorder(species, desc(abs(PC2)))) %>%
-  slice_head(n = 20) %>%
+  arrange(desc(PC2)) %>%
+  mutate(species = fct_reorder(species, desc(PC2))) %>%
+  slice(c(
+    1:20,
+    seq(from = nrow(exp_pca_loadings)-19, to = nrow(exp_pca_loadings))
+    )) %>%
   ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
     geom_bar(stat = "identity", width = 0.8) +
-    scale_x_continuous(limits = c(-0.18,0.18)) +
+    scale_x_continuous(limits = c(-0.18,0.1)) +
   scale_fill_manual(
       values = viridisLite::turbo(
         n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
@@ -308,8 +320,8 @@ exp_pca_loadings %>%
 #plotLoadings(spca_byoc, 2, ndisplay = 15)
 ```
 
-PC1 sees mostly negative loadings, especially aerobes and facultative anaerobes.
-PC2 is slightly more balanced.
+PC1 sees mostly negative loadings on aerobes and facultative anaerobes, while
+positive loadings are mostly anaerobes. PC2 is slightly more balanced.
 
 ### Artificial calculus and comparative oral sources
 

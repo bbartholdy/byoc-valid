@@ -31,6 +31,7 @@ sourcetracker2 <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2
 sourcetracker2_stdevs <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")) 
 otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
+neg_controls <- read_tsv(here("04-analysis/decontam/negative-controls.tsv"))
 ```
 
 ## SourceTracker
@@ -129,8 +130,7 @@ The samples were organised by day they were sampled,
 ```{r}
 day_order <- experiment_metadata %>%
   mutate(Env = factor(
-    Env, 
-    levels = c("saliva", "medium", "calculus") # force level order so it doesn't order alphabetically
+    Env, levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
     ) 
   ) %>% 
   group_by(Env) %>%
@@ -148,11 +148,9 @@ day_order <- experiment_metadata %>%
 #   arrange(day)
 ```
 
-then visualised.
+then visualised. Plot of estimated contributions of various sources to the artificial calculus and artificial saliva samples. Samples are arranged from left to right by how late in the experiment they were sampled, with left being the earliest samples.
 
 ```{r}
-#| label: st-plot
-#| fig-cap: "Plot of estimated contributions of various sources to the artificial calculus and artificial saliva samples. Samples are arranged from left to right by how late in the experiment they were sampled, with left being the earliest samples."
 sourcetracker2_long %>% 
   ggplot(aes(y = SampleID, x= proportion, fill = source)) +
     geom_col() +
@@ -231,7 +229,8 @@ species_summ <- byoc_table_long %>%
   summarise(count = sum(n))
 ```
 
-After running the **decontam** package, the samples contained between
+After running `isContaminant()` and filtering out (non-oral) potential contaminants,
+the samples contained between
 `r paste(range(species_summ$count), collapse = " and ")`
 species with a mean of
 `r paste(round(mean(species_summ$count), 2))`.
