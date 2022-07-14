@@ -1,7 +1,7 @@
-nf-core/eager	v2.4.1
+nf-core/eager	v2.4.4
 Nextflow	v21.03.0.edge
 FastQC	v0.11.9
-MultiQC	v1.11
+MultiQC	v1.12
 AdapterRemoval	v2.3.2
 fastP	v0.20.1
 BWA	v0.7.17-r1188
@@ -10,13 +10,13 @@ circulargenerator	v1.0
 Samtools	v1.12
 endorS.py	v0.4
 DeDup	v0.12.8
-Picard MarkDuplicates	vVersion:2.26.0
+Picard MarkDuplicates	v2.26.0
 Qualimap	v2.2.2-dev
 Preseq	v3.1.1
-GATK HaplotypeCaller	<span style="color:#999999;">N/A</span>
+GATK HaplotypeCaller	v4.2.0.0
 GATK UnifiedGenotyper	v3.5-0-g36282e4
 freebayes	v1.3.5
-sequenceTools	v1.4.0.5
+sequenceTools	v1.5.2
 VCF2genome	v0.91
 MTNucRatioCalculator	v0.7
 bedtools	v2.30.0
