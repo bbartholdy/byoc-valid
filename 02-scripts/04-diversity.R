@@ -64,6 +64,9 @@ alpha_div_shan <- vegan::diversity(species_otu_matrix)
 alpha_div_inv <- vegan::diversity(species_otu_matrix, index = "invsimpson")
 alpha_div_unb <- simpson.unb(species_otu_matrix,inverse = T)
 
+species_rich <- specnumber(species_otu_matrix)
+pilou_even <- alpha_div_shan/log(species_rich)
+
 alpha_div <- 
   as_tibble(
     alpha_div_shan, rownames = "sample"
@@ -76,9 +79,14 @@ alpha_div <-
     as_tibble(alpha_div_unb, rownames = "sample"),
     by = "sample"
   ) %>%
+  full_join(
+    as_tibble(pilou_even, rownames = "sample"),
+    by = "sample"
+  ) %>%
   rename(shannon = value.x,
          simp_inv = value.y,
-         simp_unb = value)
+         simp_unb = value.x.x,
+         pilou_even = value.y.y)
   
 
 write_tsv(alpha_div, here("05-results/alpha-diversity.tsv"))
