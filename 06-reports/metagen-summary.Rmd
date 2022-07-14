@@ -1,0 +1,879 @@
+---
+title: "Summary of metagenomic analysis"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(here)
+library(tidyverse)
+library(cuperdec)
+library(patchwork)
+library(mixOmics)
+# set document chunk options
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+# metadata
+metadata <- read_tsv(here("01-documentation/metadata.tsv"))
+experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
+analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+software <- read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
+conda_env <- read_tsv(here("01-documentation/conda_versions.tsv"), skip = 2)
+lib_conc <- read_tsv(here("01-documentation/SYN_DNA_concentrations.tsv"))
+# analysis results
+sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
+all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
+list_of_contaminants <- read_tsv(here("04-analysis/decontam/list-of-contaminants.txt"), col_names = F)
+oral_taxa <- cuperdec_database_ex %>%
+  filter(isolation_source == "oral")
+bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
+otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
+clr_byoc <- read_tsv(here("05-results/clr-byoc.tsv"))
+clr_compar <- read_tsv(here("05-results/clr-compar.tsv"))
+load(here("05-results/spca_byoc.rda"))
+load(here("05-results/spca_species.rda"))
+
+# convert post-decontam OTU table to long format for easier wrangling
+species_counts_long <- otu_table %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count") %>%
+  rename(species = `#OTU ID`) %>%
+  filter(sample %in% analysis_metadata$`#SampleID`)
+
+genus_counts_long <- species_counts_long %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  group_by(sample, genus) %>%
+  summarise(count = sum(count)) %>% 
+  group_by(sample) %>%
+  mutate(rel_abund = count / sum(count)) %>%
+  ungroup()
+
+# join species counts and bacterial properties (oxygen tolerance and ABS)
+species_properties <- bac_properties %>%
+  right_join(species_counts_long, by = "species") %>%
+  group_by(sample) %>%
+  mutate(
+    abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
+    rel_abund = count / sum(count)
+    ) %>%
+  ungroup()
+
+# convert centered log-ratio transformed counts to long format
+clr_compar_long <- clr_compar %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+
+clr_byoc_long <- clr_byoc %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+
+# Helper objects
+env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove environmental controls
+day_order <- experiment_metadata %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>% 
+  mutate(Env = factor(
+    Env, 
+    levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
+    ) 
+  ) %>% 
+  group_by(Env) %>%
+  arrange(day, .by_group = T) %>%
+  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
+  mutate(
+    rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
+    col = case_when(rm == T ~ "red", # excluded samples coloured red
+                    rm == F ~ "black"))
+treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
+env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
+
+experiment_colours <- experiment_metadata %>%
+  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>% 
+  arrange(day) %>% 
+  mutate(treat_col = case_when(
+           treatment == "potato" ~ treatment_colours[1],
+           treatment == "wheat" ~ treatment_colours[2],
+           treatment == "mix" ~ treatment_colours[3],
+           treatment == "control" ~ treatment_colours[4],
+           is.na(treatment) ~ "grey"),
+         env_col = case_when(
+           Env == "saliva" ~ env_colours[5],
+           Env == "byoc_calculus" ~ env_colours[1],
+           Env == "medium" ~ env_colours[8]
+         ))
+analysis_colours <- analysis_metadata %>%
+  filter(Env != env_controls) %>%
+  mutate(env_col = case_when(
+    Env == "saliva" ~ env_colours[5],
+    Env == "byoc_calculus" ~ env_colours[1],
+    Env == "medium" ~ env_colours[8],
+    Env == "buccal_mucosa" ~ env_colours[6],
+    Env == "subgingival_plaque" ~ env_colours[2],
+    Env == "supragingival_plaque" ~ env_colours[3],
+    Env == "modern_calculus" ~ env_colours[4],
+    Env == "vitro_biofilm" ~ env_colours[7]
+         ))
+```
+
+## Introduction
+
+Metagenomic analysis was conducted on our oral biofilm model to assess the
+viability of the model as a proxy for dental calculus.
+
+## Materials
+
+```{r}
+metadata %>%
+  filter(Study == "this_study")
+
+byoc_samples <- metadata %>% 
+  filter(str_detect(`#SampleID`, "SYN"))
+```
+
+A total of `r nrow(byoc_samples)` biofilm model samples were taken throughout the
+course of the
+experiment and includes saliva inoculate, media from the wells, and the biofilm
+end-product. DNA extraction was performed at the archaeogenetic facility at the
+Max Planck Institute for the Science of Human History (Jena, Germany). 
+
+Extractions were
+performed in duplicates<!-- ?? -->. A total of <!-- sample size --> DNA extracts.
+
+DNeasy PowerSoil Kit from QIAGEN. C2 inhibitor removal step skipped, going directly
+to C3 step.
+
+were paired-end sequenced on a NextSeq (2 color chemistry) to 150bp
+
+### Comparative samples
+
+```{r}
+comp_samples <- metadata %>%
+  filter(Project != "this_study")
+
+comp_samples
+```
+
+## Methods
+
+### Preprocessing
+
+Processing of the raw DNA reads was conducted using the
+`r paste(filter(software, str_detect(software, "eager")))`
+pipeline [@yatesEAGER2020].
+Adapter removal and read merging was performed using
+`r paste(filter(software, str_detect(software, regex("adapterremoval", ignore_case = T))))`
+[@AdapterRemovalv2]. Merged reads were mapped to the human reference genome,
+GRCh38, using
+`r paste(filter(software, str_detect(software, regex("bwa", ignore_case = T))))`
+[@BWA] with default settings (-n 0.01; -l 32), and unmapped reads were extracted
+using
+`r paste(filter(software, str_detect(software, regex("samtools", ignore_case = T))))`.
+
+Metagenomic classification was conducted in
+`r paste(filter(software, str_detect(software, regex("kraken", ignore_case = T))))`
+using the Standard database (https://benlangmead.github.io/aws-indexes/k2).
+
+Kraken output reports were combined and converted to OTU tables, and only
+species-level assignments were selected for downstream analysis
+[02-scripts/00-comb-kraken-reports.R](02-scripts/00-comb-kraken-reports.R).
+The OTU tables were further filtered by removing species with relative abundance
+lower than 0.001%.
+
+### Authentication
+
+```{r}
+#| label: lib-conc-table
+lib_conc %>%
+  knitr::kable()
+```
+
+SourceTracker [@knightsSourceTracker2011] was used to estimate source composition
+of the oral biofilm model samples using a Bayesian framework. Samples were compared
+with oral and environmental controls to detect potential external contamination.
+
+Potential contaminants were identified using the frequency and prevalence method
+in the **decontam** v`r packageVersion("decontam")` [@R-decontam] R package.
+[02-scripts/02-authentication.R](../02-scripts/02-authentication.R). Samples
+from *indoor_air*, *skin*, and *sediment* were used as negative controls for
+the prevalence method with a probability threshold of 0.01. 
+[DNA concentrations](../01-documentation/SYN_DNA_concentrations.tsv) were used
+for the 'frequency' method with a probability threshold of 0.99
+and negative controls. 
+
+Putative contaminants were filtered out of the
+[OTU tables](../05-results/post-decontam_taxatable.tsv) for all downstream analyses.
+
+See [06-reports/metagen-authentication.Rmd](../06-reports/metagen-authentication.Rmd)
+for more details.
+<!-- cuperdec [@yatesOralMicrobiome2021]-->
+
+### Community composition
+
+Genus- and species-level OTU tables were prepared from the decontaminated OTU
+table, and relative abundance of species in a sample was calculated as recommended
+for compositional data [@gloorMicrobiomeDatasets2017].
+
+Information on the oxygen tolerance of bacterial species was downloaded from 
+[BacDive](https://bacdive.dsmz.de) on
+`r str_extract(list.files("../03-data/", pattern = "bacdive"), "\\d{4}-\\d{2}-\\d{2}")`.
+A list of amylase-binding streptococci (ABS) was created based on
+[@nikitkovaStarchBiofilms2013].
+
+Alpha-diversity, specifically the Shannon Index, was calculated to compare species
+richness and diversity across experimental and comparative oral samples. Shannon
+Index was calculated using the R package **vegan** v`r packageVersion("vegan")`
+[@Rvegan].
+
+Sparse principal components analysis (sPCA) was conducted on centered-log-ratio
+(CLR) transformed species-level counts using the R package **mixOmics**
+v`r packageVersion("mixOmics")` [@RmixOmics]. The **mixOmics** implementation of
+sPCA uses a LASSO penalisation to eliminate unimportant variables.
+Two separate analyses were conducted: 1) on experiment samples to assess the
+difference in sample types and biofilm age; and 2) on oral comparative samples
+and biofilm model end-products to explore community differences between *in vitro*
+and *in vivo* biofilms.
+
+Loadings obtained from the sPCA analyses were used in combination with
+CLR-transformed counts to create heatmaps of species- and genus-level counts
+within the experiment and across comparative samples.
+
+Beta-diversity, Bray Curtis dissimilarity.
+
+### Differential abundance analysis
+
+## Results
+
+```{r}
+#| label: results-setup
+sourcetracker2_long <- sourcetracker2 %>%
+  pivot_longer(cols = where(is.numeric), 
+               values_to = "proportion", 
+               names_to = "SampleID") %>%
+  rename(source = ...1)
+
+removed_samples <- metadata %>%
+  anti_join(analysis_metadata) %>%
+  rename(samples = `#SampleID`)
+```
+
+### Authentication
+
+#### SourceTracker
+
+Results from SourceTracker indicated a large portion of species from most samples
+are from an oral origin (plaque, saliva, or calculus). Some samples contained a
+large proportion of species from potential contaminants (indoor air) and of
+unknown origin. Potential contaminants were compared to a database of oral
+bacteria to see the proportion of known oral species were present in the samples.
+Many of the species assigned to `indoor_air` are known oral species
+(Figure \@ref(fig:st-plot)).
+
+```{r}
+#| label: st-plot
+#| fig-cap: "Plot of estimated contributions of various sources to the artificial calculus and artificial saliva samples. Samples are arranged from top to bottom by how late in the experiment they were sampled, with bottom being the earliest samples. Sample names in red indicate samples that were removed from further analysis due to contamination."
+st_plot <- sourcetracker2_long %>% 
+  ggplot(aes(y = SampleID, x= proportion, fill = source)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = day_order$`#SampleID`) +
+    scale_fill_viridis_d(option = "C") +
+    theme(
+      panel.grid.major.y = element_blank(),
+      axis.title = element_blank(),
+      axis.text.y = element_text(vjust = 0.5, hjust = 0.5, colour = day_order$col),
+      legend.position = "top"
+      )
+
+oral_plot <- all_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$species, "oral", "other")) %>%
+  ggplot(aes(y = SampleID, x = count, fill = oral_source)) +
+    geom_col(position = "fill") +
+    scale_y_discrete(limits = day_order$`#SampleID`) +  
+    scale_fill_viridis_d(option = "C") +
+    theme_minimal() +
+    theme(
+      panel.grid.major.y = element_blank(),
+      axis.text.y = element_blank(),
+      #axis.text.y = element_text(colour = day_order$col),
+      axis.title = element_blank(),
+      legend.position = "top"
+      )
+
+st_plot + oral_plot + plot_annotation(tag_levels = "A")
+```
+
+Based on these results, samples
+`r paste(removed_samples$samples, collapse = ", ")`
+were removed from further analysis. The removed samples were all sampled late in
+the experiment (day 18+).
+
+```{r}
+removed_samples %>%
+  left_join(experiment_metadata, by = c("samples" = "#SampleID", "Env")) %>%
+  dplyr::select(samples, Env, day) %>%
+  arrange(day)
+```
+
+
+#### decontam
+
+```{r}
+#| label: decontam-byoc-summ
+#| include: false
+byoc_summ <- species_counts_long %>%
+  filter(str_detect(sample, "SYN"),
+         count > 0) %>%
+  group_by(sample) %>%
+  count(species) %>%
+  summarise(count = sum(n))
+```
+
+A total of `r nrow(list_of_contaminants)` potential contaminants were removed.
+Remaining counts of species in the biofilm samples ranged between
+`r paste(range(byoc_summ$count), collapse = " and ")`
+with a mean of
+`r paste(round(mean(byoc_summ$count), 2))`.
+
+```{r}
+#| label: decontam-plot
+#| fig-cap: "Remaining number of species per sample following removal of contaminants."
+byoc_summ %>%
+  ggplot(aes(x = count, y = sample)) +
+    geom_col() +
+    theme_minimal() +
+    theme(axis.title.y = element_blank())
+```
+
+### Community composition
+
+Alpha-diversity. Days are grouped to increase sample sizes:
+
+- Inoculation (`inoc`) = days 0,3,5
+- Treatment (`treatm`) = days 7,9,12,15
+- End-product (`final`) = day 24
+
+```{r}
+#| label: comp-setup
+alpha_div_long <- alpha_div %>%
+  pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+  left_join(metadata, by = c("sample" = "#SampleID")) %>%
+  left_join(experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
+  mutate(day_grouped = case_when( # group days to increase sample size
+    day < 6 ~ "inoc",
+    day > 6 & day < 24 ~ "treatm",
+    day == 24 ~ "final"),
+    day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "final"))
+    )
+```
+  
+```{r}
+#| label: alpha-experiment-plot
+#| fig-cap: "Plot of alpha-diversity indices across experiment samples grouped by sampling time."
+
+alpha_div_long %>%
+  filter(str_detect(sample, "SYN")) %>%
+  #mutate(day = as.factor(day)) %>%
+  ggplot(aes(x = day_grouped, y = value)) +
+    geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
+    geom_boxplot(width = 0.12) +
+    facet_wrap(~ index, scales = "free_y") +
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    )
+```
+
+```{r}
+#| label: alpha-compar-plot
+alpha_div_long %>%
+  filter(!Env %in% env_controls) %>%
+  mutate(Env = case_when(str_detect(Env, "plaque") ~ "plaque",
+                         TRUE ~ Env)) %>%
+  ggplot(aes(x = Env, y = value)) +
+    geom_violin(aes(col = Env, fill = Env), alpha = 0.5) +
+    geom_boxplot(width = 0.1) +
+    facet_wrap(~ index, scales = "free_y") +
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    )
+```
+
+```{r}
+#| label: alpha-div-tbl
+alpha_div_long %>%
+  filter(
+    Env != "skin",
+    Env != "sediment",
+    Env != "stool",
+    Env != "indoor_air") %>%
+  group_by(index, Env) %>%
+  summarise(mean = mean(value),
+            sd = sd(value))
+```
+
+
+Alpha-diversity sees a slight decrease over the course of the experiment. The
+model calculus is less variable than the initial and middle biofilm samples.
+Compared to other oral samples, there is lower species diversity and richness
+in the medium and model calculus.
+
+```{r}
+#| label: spca-setup
+#| include: false
+# explained variance
+byoc_explain_var <- spca_byoc$prop_expl_var$X # experiment samples
+compar_explain_var <- spca_species$prop_expl_var$X # comparative samples
+
+# loadings of samples
+byoc_princomp <- spca_byoc$x %>% # experiment samples
+  as_tibble(rownames = "sample") %>%
+  left_join(experiment_metadata, by = c("sample" = "#SampleID"))
+spca_compar <- spca_species$x %>% # comparative samples
+  as_tibble(rownames = "sample") %>%
+  left_join(metadata, by = c("sample" = "#SampleID"))
+
+# loadings of species
+exp_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
+  as_tibble(rownames = "species") %>%
+  left_join(bac_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1)))
+comp_pca_loadings <- spca_species$rotation %>% # comparative samples
+  as_tibble(rownames = "species") %>%
+  left_join(bac_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1)))
+#exp_pca_loadings
+```
+
+### Species profiles
+
+```{r}
+#| label: species-profiles-setup
+#| include: false
+# which species had no match on BacDive
+no_match <- unique(
+  filter(
+    species_properties, is.na(`Oxygen tolerance`)
+    )$species
+  )
+```
+
+
+Information on the oxygen tolerance of bacterial species was downloaded from 
+[BacDive](https://bacdive.dsmz.de) on
+`r str_extract(list.files("03-data/", pattern = "oxytol"), "\\d{4}-\\d{2}-\\d{2}")`.
+A total of **`r length(no_match)`** out of
+**`r length(unique(species_counts_long$species))`**
+(`r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`)
+species did not have a match on BacDive.
+
+A list of amylase-binding streptococci (ABS) was created based on
+@nikitkovaStarchBiofilms2013.
+
+
+#### Experiment samples
+
+```{r}
+#| label: species-properties-plots
+
+# Oxygen tolerance plots
+oxy_tol <- species_properties %>%
+  distinct(species, .keep_all = T) %>% 
+  count(`Oxygen tolerance`) %>%
+  mutate(#`Oxygen tolerance` = replace_na(`Oxygen tolerance`, "unknown"),
+         perc = scales::percent(n / sum(n), accuracy = 0.1)) %>%
+  ggplot(aes(x = "", y = n, fill = `Oxygen tolerance`)) +
+    geom_col(colour = "white") + 
+    coord_polar(theta = "y") +
+    geom_text(aes(label = perc), position = position_stack(vjust = 0.5), col = "white") +
+    theme_void() +
+    scale_fill_manual(
+      values = c(viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))))
+    )
+
+byoc_oxytol <- species_properties %>% 
+  filter(str_detect(sample, "SYN")) %>% 
+  ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = rev(day_order$`#SampleID`)) +
+    scale_fill_manual(
+      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`))))
+      ) +
+  theme(
+    axis.text.y = element_text(colour = rev(experiment_colours$env_col))
+  )
+
+# ABS plots
+byoc_abs <- species_properties %>% 
+  filter(str_detect(sample, "SYN")) %>%
+  ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = rev(day_order$`#SampleID`)) +
+    scale_fill_viridis_d(option = "G") +
+    theme(
+      axis.text.y = element_blank(),
+      axis.title = element_blank()
+      )
+```
+
+```{r}
+#| label: fig-byoc-properties
+#| fig-cap: "The distribution of oxygen tolerance (left) and ABS (right) in experimental samples."
+byoc_oxytol + byoc_abs + plot_layout(guides = "collect")
+```
+
+```{r}
+#| label: scree-byoc
+#| fig-cap: "Scree plot of principal components from the sPCA on experiment samples."
+plot(spca_byoc, type = "l")
+```
+
+```{r}
+#| label: byoc-spca-plot-setup
+#| include: false
+
+# set common ggplot theme for loading plots
+loading_theme <-  theme_minimal() +
+    theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.ticks.x.bottom = element_line(size = 1),
+      axis.text.y = element_text(),
+      axis.text.x = element_text(vjust = -0.2),
+      axis.line.x = element_line(),
+      legend.position = "bottom"
+          )
+# helper objects to set x-axis limits
+min_byoc_PC1 <- min(exp_pca_loadings$PC1)
+min_byoc_PC2 <- min(exp_pca_loadings$PC2)
+max_byoc_PC1 <- max(exp_pca_loadings$PC1)
+max_byoc_PC2 <- max(exp_pca_loadings$PC2)
+min_comp_PC1 <- min(comp_pca_loadings$PC1)
+min_comp_PC2 <- min(comp_pca_loadings$PC2)
+max_comp_PC1 <- max(comp_pca_loadings$PC1)
+max_comp_PC2 <- max(comp_pca_loadings$PC2)
+
+byoc_spca_plot <- byoc_princomp %>%
+  ggplot(aes(
+    x = PC1, y = PC2, 
+    col = as_factor(day),
+    shape = Env
+    )
+  ) +
+    geom_point(size = 4, stroke = 1) +
+    labs(
+      x = paste(
+        "PC1", 
+        scales::percent(byoc_explain_var[[1]], accuracy = 0.1)),
+      y = paste(
+        "PC2", 
+        scales::percent(byoc_explain_var[[2]], accuracy = 0.1)),
+      col = "Sampling day",
+      shape = "Sample type"
+      ) +
+    theme_bw() +
+    scale_shape_discrete(solid = F) +
+    scale_colour_viridis_d()
+
+byoc_comp_1 <- exp_pca_loadings %>%
+  arrange(desc(PC1)) %>% 
+  mutate(species = fct_reorder(species, desc(PC1))) %>%
+   slice(c(
+    1:20,
+    seq(from = nrow(exp_pca_loadings)-19, to = nrow(exp_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(min_byoc_PC1,max_byoc_PC1)) +
+    scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 1", x = "") +
+    loading_theme
+
+byoc_comp_2 <- exp_pca_loadings %>%
+  arrange(desc(PC2)) %>%
+  mutate(species = fct_reorder(species, desc(PC2))) %>%
+   slice(c(
+    1:20,
+    seq(from = nrow(exp_pca_loadings)-19, to = nrow(exp_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(min_byoc_PC2,max_byoc_PC2)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 2", x = "") +
+    loading_theme
+```
+
+```{r}
+#| label: spca-byoc-plot
+#| fig-cap: "sPCA on species-level counts from experiment samples only."
+byoc_spca_plot
+byoc_comp_1
+byoc_comp_2 #+ plot_layout(guides = "collect", ncol = 2) + plot_annotation(tag_levels = "A")
+```
+
+PC1 separates most of the samples types, i.e., saliva, medium, and model calculus,
+as well as increasing sample age (from left to right).
+PC2 separates medium from saliva and model calculus, as well as early medium samples
+from later medium samples. Negative loadings consist of aerobes, anaerobes, and
+facultative anaerobes, while positive loadings are mostly anaerobes. The main
+driver of differences between early and late samples seems to be that earlier
+samples are enriched with aerobes and facultative anaerobes, while later samples
+are dominated by anaerobes.
+
+#### Comparative samples
+
+```{r}
+compar_oxytol <- species_properties %>% 
+  filter(sample %in% filter(
+    analysis_metadata, str_detect(Env, "plaque|calculus|mucosa")
+      )$`#SampleID`
+    ) %>% 
+  #mutate(`Oxygen tolerance` = forcats::fct_explicit_na(`Oxygen tolerance`)) %>%
+  ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
+    geom_col() +
+    theme_minimal() +
+    #scale_fill_viridis_d(option = "H") +
+    scale_fill_manual(
+      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`))))) +
+  theme(
+    axis.text.y = element_text(
+        colour = rev(filter(analysis_colours, str_detect(Env, "plaque|calculus|mucosa"))$env_col)
+    ),
+    axis.title.y = element_blank()
+  )
+
+# ABS plots
+compar_abs <- species_properties %>% 
+  filter(sample %in% filter(
+    analysis_metadata, str_detect(Env, "plaque|calculus|mucosa")
+      )$`#SampleID`
+    ) %>%
+  ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
+    geom_col() +
+    theme_minimal() +
+    #scale_y_discrete(position = "right", labels = rev(filter(analysis_metadata, str_detect(Env, "plaque|calculus|mucosa"))$Env)) + 
+    #ylim(values = rev(filter(analysis_metadata, str_detect(Env, "plaque|calculus|mucosa"))$Env)) +
+    scale_fill_viridis_d(option = "G") +
+    theme(
+      axis.text.y = element_blank(),
+      axis.title = element_blank()
+      )
+```
+
+```{r}
+compar_oxytol + compar_abs + plot_layout(guides = "collect")
+```
+
+The most notable differences between model calculus and oral samples are the
+lower proportion of ABS in and higher proportion of anaerobes in model calculus,
+as well as the absence of aerobes.
+
+```{r}
+#| label: scree-comp
+#| fig-cap: "Scree plot of principal components from the sPCA on comparative samples and model calculus."
+plot(spca_species, type = "l")
+```
+
+```{r}
+#| label: spca-comp-plot
+#| fig-cap: "sPCA on species-level counts from comparative oral samples and model calculus." 
+# sPCA plot of PCs 1 and 2
+spca_compar %>%
+  ggplot(aes(x = PC1, y = PC2, col = Env, shape = Env)) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    theme_bw() +
+    labs(x = paste(
+      "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
+      )
+    ) +
+  scale_colour_viridis_d(option = "C") +
+  scale_shape_manual(values = 1:length(levels(as.factor(spca_compar$Env))))
+
+biplot(
+  spca_species,
+  comp = 1:2,
+  cutoff = 0.90,
+  ind.names = F, var.names.size = 3)
+
+# sPCA plot of PCs 1 and 3
+spca_compar %>%
+  ggplot(aes(x = PC1, y = PC3, col = Env, shape = Env)) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    theme_bw() +
+    labs(x = paste(
+      "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC3", scales::percent(compar_explain_var[[3]], accuracy = 0.1)
+      )
+    ) +
+  scale_colour_viridis_d(option = "C") +
+  scale_shape_manual(values = 1:length(levels(as.factor(spca_compar$Env)))) +
+  labs(col = "Env", shape = "Env")
+
+# loading plot PC1
+comp_pca_loadings %>%
+  arrange(desc(PC1)) %>% 
+  mutate(species = fct_reorder(species, desc(PC1))) %>%
+  slice(c(
+    1:20,
+    seq(from = nrow(comp_pca_loadings)-19, to = nrow(comp_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(min_comp_PC1,max_comp_PC1)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 1", x = "") +
+    loading_theme
+
+# loading plot PC2
+comp_pca_loadings %>%
+  arrange(desc(PC2)) %>%
+  mutate(species = fct_reorder(species, desc(PC2))) %>%
+  slice(c(
+    1:20,
+    seq(from = nrow(comp_pca_loadings)-19, to = nrow(comp_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC2, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(min_comp_PC2,max_comp_PC2)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 2", x = "") +
+    loading_theme
+
+# loading plot PC3
+comp_pca_loadings %>%
+  arrange(desc(PC3)) %>%
+  mutate(species = fct_reorder(species, desc(abs(PC3)))) %>%
+  slice(c(
+    1:20,
+    seq(from = nrow(comp_pca_loadings)-19, to = nrow(comp_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC3, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(limits = c(-0.12,0.12)) +
+    scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(title = "component 3", x = "") +
+    loading_theme
+```
+
+PC1 separates *in vivo* (negative) from *in vitro* (positive) oral samples.
+PC2 separates the model calculus (positive) from the comparative *in vitro* biofilm
+(negative). The positive PC1 loadings are dominated by *Enterococcus* spp.,
+*Lactobacillus* spp., and aerobes. Negative PC1 loadings are mixed oxygen tolerant
+and dominated by *Capnocytophaga* and *Neisseria* spp. Model calculus has a
+unique signature on PC1 and PC2, driven largely by *Enterococcus* spp.
+
+
+```{r}
+#| label: clr-heatmap-plots
+# Top positive loadings on PC1
+compar_pos_pc1 <- clr_compar_long %>%
+  left_join(comp_pca_loadings, by = "species") %>%
+  left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
+  left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% arrange(comp_pca_loadings, desc(PC1))$species[1:100]) %>%
+  #arrange(sample, PC1.y) %>%
+  ggplot(aes(x = reorder(sample, PC1.y), y = reorder(species, PC1.x, decreasing = T), fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c() +
+    theme(
+      axis.title.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.text.x = element_text(
+        angle = 90, size = 8, vjust = 0.5, hjust = 1,
+        colour = analysis_colours %>%
+          right_join(
+            as_tibble(spca_species$x, rownames = "#SampleID"), 
+            by = "#SampleID") %>%
+          arrange(PC1) %>% 
+          .$env_col
+      )
+      )
+
+# Top negative loadings on PC1
+compar_neg_pc1 <- clr_compar_long %>%
+  left_join(comp_pca_loadings, by = "species") %>%
+  left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
+  #left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
+  #arrange(species, PC1.y) %>% # arrange by species loading (PC1.x)
+  filter(species %in% arrange(comp_pca_loadings, PC1)$species[1:100]) %>%
+  arrange(sample, PC1.x) %>% # arrange by sample loading (PC1.y)
+  ggplot(aes(x = reorder(sample, PC1.y), y = reorder(species, PC1.x, decreasing = T), fill = clr_count)) +
+    geom_tile() +
+    scale_fill_viridis_c() +
+    #scale_x_discrete(position = "top", labels = rev(filter(analysis_metadata, str_detect(Env, "plaque|calculus|mucosa|vitro|saliva"))$Env)) + 
+    theme(
+      axis.title.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.position = "none"
+      #axis.text.x = element_text(angle = 90)
+      # axis.text.x = element_text(
+      #   angle = 90, size = 8, vjust = 0.5, hjust = 1,
+      #   colour = analysis_colours %>%
+      #     right_join(
+      #       as_tibble(spca_species$x, rownames = "#SampleID"), 
+      #       by = "#SampleID") %>%
+      #     arrange(PC1) %>% 
+      #     .$env_col
+      # )
+      )
+```
+
+```{r}
+#| label: fig-clr-heatmap
+#| fig-cap: "Heat maps of the top 100 negative loadings (top) and top 100 positive loadings (bottom) from the sPCA. Colour is centered log-ratio transformed species counts. Light is more abundant."
+compar_neg_pc1 + compar_pos_pc1 + plot_layout(guides = "collect", ncol = 1)
+```
+
+
+*Enterococcus faecalis*, *Enterococcus casseliflavus*, and *Enterococcus durans*
+are more abundant in the *in vitro* biofilm samples than
+*in vivo* samples of plaque and calculus. Conversely, *Neisseria* spp. and
+*Actinomyces* spp. are deficient in the *in vitro* samples.
+
+
