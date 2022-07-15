@@ -31,7 +31,6 @@ sourcetracker2 <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2
 sourcetracker2_stdevs <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")) 
 otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
-neg_controls <- read_tsv(here("04-analysis/decontam/negative-controls.tsv"))
 ```
 
 ## SourceTracker
@@ -209,7 +208,7 @@ filter_result <- simple_filter(curves, 60)
 ```
 
 ```{r}
-plot_cuperdec(curves, metadata_table, filter_result)
+plot_cuperdec(curves, metadata_table, filter_result, restrict_x = 250)
 ```
 
 ## decontam

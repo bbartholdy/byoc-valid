@@ -148,6 +148,8 @@ neg_controls <- analysis_metadata %>%
   rename(sample = `#SampleID`) %>%
   dplyr::select(sample, neg)
 
+write_tsv(neg_controls, "04-analysis/decontam/negative-controls.tsv")
+
 # Need to order neg_controls according to otu_filtered_matrix
 
 analysis_metadata %>%
@@ -198,7 +200,7 @@ contaminants <- prev_notcontaminants %>%
     freq_contaminants
   )
 
-# number of contaminants identified
+# number of contaminants identified by each method
 sum(which_contaminants_freq$contaminant)
 sum(which_contaminants_prev$contaminant)
 sum(which_notcontaminants_prev$not.contaminant) # number of non-contaminants
@@ -221,4 +223,4 @@ otu_decontam <- otu_removed_table %>%
   filter(!(`#OTU ID` %in% true_contaminants))
 
 write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv"))
-write_tsv(as_tibble(true_contaminants), here("05-results/list-of-contaminants.txt"), col_names = F)
+write_tsv(as_tibble(true_contaminants), here("04-analysis/list-of-contaminants.txt"), col_names = F)
