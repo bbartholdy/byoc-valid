@@ -22,36 +22,8 @@ bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"
 
 Data are converted to `phyloseq` format. Experiment samples are first run on
 their own, and then artificial calculus samples are run together with calculus
-and plaque reference samples.
-
-```{r}
-calculus_otu <- taxatable %>%
-  column_to_rownames(var = "#OTU ID") %>% 
-  dplyr::select(which(
-    colnames(.) %in% filter(
-      analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`
-  )) %>%
-  otu_table(taxa_are_rows = T)
-
-experiment_otu <- taxatable %>%
-  column_to_rownames(var = "#OTU ID") %>% 
-  dplyr::select(which(colnames(.) %in% experiment_metadata$`#SampleID`)) %>%
-  otu_table(taxa_are_rows = T)
-
-experiment_sample <- experiment_metadata %>%
-  filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
-  column_to_rownames(var = "#SampleID") %>% 
-  sample_data()
-
-experiment_phyloseq <- phyloseq(experiment_otu, experiment_sample)
-
-calculus_sample <- analysis_metadata %>%
-  filter(str_detect(Env, "calculus|plaque")) %>%
-  column_to_rownames(var = "#SampleID") %>%
-  sample_data()
-
-calculus_phyloseq <- phyloseq(calculus_otu, calculus_sample)
-```
+and plaque reference samples
+(see [02-scripts/05-diff-abundance.R](../02-scripts/05-diff-abundance.R)).
 
 ## ANCOM-BC
 
@@ -65,27 +37,6 @@ between donated saliva, medium, and the final calculus product.
 ### Across experiment
 
 ```{r}
-exp_da <- ANCOMBC::ancombc(
-  experiment_phyloseq, 
-  formula = "Env",
-  group = "Env",
-  global = F,
-  p_adj_method = "fdr")
-```
-
-```{r}
-# from vignette("ANCOMBC")
-samp_frac <- exp_da$samp_frac
-# Replace NA with 0
-samp_frac[is.na(samp_frac)] = 0 
-# add 1 to counts for log-transformation
-log_exp_otu <- log(microbiome::abundances(experiment_otu) + 1)
-
-# Adjust the log observed abundances
-# Bias-corrected (log) observed abundances
-log_exp_otu_adj <- exp(t(t(log_exp_otu) - samp_frac)) %>%
-  as_tibble(rownames = "species")
-
 exp_logf_full <- as_tibble(exp_da$res$lfc, rownames = "species") %>%
   pivot_longer(-species, values_to = "lfc") %>%
   full_join(
@@ -131,6 +82,11 @@ exp_logf_full %>%
     geom_vline(xintercept = 0, linetype = "dashed") +
     facet_wrap(~ env)
 
+# highest positive and negative log-fold changes
+
+
+
+
 # top 30 species from PC1
 exp_logf_full %>%
   filter(species %in% exp_pca_loadings$species[1:20]) %>% 
@@ -154,6 +110,8 @@ exp_logf_full %>%
     facet_wrap(~ env)
 
 ### PROVIDE OXYGEN TOLERANCE OF SPECIES ###
+# bar plot with error bars instead of points?
+# fill of bars as oxygen tolerance?
 ```
 
 Species with the highest log-fold change mainly see a reduction from saliva to
