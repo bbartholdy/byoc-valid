@@ -1,0 +1,15 @@
+Sample_Name	Library_ID	Lane	Colour_Chemistry	SeqType	Organism	Strandedness	UDG_Treatment	R1	R2	BAM
+SRR5975923	SRR5975923	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975923_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975923_2.fastq.gz	NA
+SRR5975924	SRR5975924	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975924_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975924_2.fastq.gz	NA
+SRR5975925	SRR5975925	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975925_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975925_2.fastq.gz	NA
+SRR5975926	SRR5975926	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975926_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975926_2.fastq.gz	NA
+SRR5975927	SRR5975927	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975927_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975927_2.fastq.gz	NA
+SRR5975928	SRR5975928	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975928_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975928_2.fastq.gz	NA
+SRR5975929	SRR5975929	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975929_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975929_2.fastq.gz	NA
+SRR5975930	SRR5975930	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975930_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975930_2.fastq.gz	NA
+SRR5975931	SRR5975931	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975931_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975931_2.fastq.gz	NA
+SRR5975932	SRR5975932	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975932_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975932_2.fastq.gz	NA
+SRR5975933	SRR5975933	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975933_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975933_2.fastq.gz	NA
+SRR5975934	SRR5975934	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975934_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975934_2.fastq.gz	NA
+SRR5975936	SRR5975936	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975936_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975936_2.fastq.gz	NA
+SRR5975937	SRR5975937	1	4	PE	NA	double	none	/home/bartholdybp/data1/databases/refseq/source/SRR5975937_1.fastq.gz	/home/bartholdybp/data1/databases/refseq/source/SRR5975937_2.fastq.gz	NA
