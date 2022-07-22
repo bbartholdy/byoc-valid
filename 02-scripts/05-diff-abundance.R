@@ -7,7 +7,7 @@ library(ANCOMBC)
 taxa_table <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
 analysis_metadata <- readr::read_tsv("01-documentation/analysis-metadata.tsv")
 experiment_metadata <- readr::read_tsv("01-documentation/experiment-metadata.tsv")
-
+bac_properties <- read_tsv("01-documentation/species-properties.tsv")
 # function to calculate bias-corrected log-observed abundances
 # from vignette("ANCOMBC")
 
@@ -35,7 +35,9 @@ taxa_table_long <- taxa_table %>%
 byoc_matrix <- taxa_table_long %>%
   filter(str_detect(sample, "SYN")) %>%
   pivot_wider(names_from = "sample", values_from = "count") %>%
-  column_to_rownames(var = "#OTU ID") %>%
+  column_to_rownames(var = "#OTU ID") 
+
+byoc_otu <- byoc_matrix %>%
   otu_table(taxa_are_rows = T)
 
 byoc_meta <- experiment_metadata %>%
@@ -43,7 +45,7 @@ byoc_meta <- experiment_metadata %>%
   column_to_rownames(var = "#SampleID") %>% 
   sample_data()
 
-byoc_phyloseq <- phyloseq(byoc_matrix, byoc_meta)
+byoc_phyloseq <- phyloseq(byoc_otu, byoc_meta)
 
 plaque_matrix <- taxa_table_long %>%
   filter(
@@ -60,14 +62,14 @@ plaque_meta <- analysis_metadata %>%
   column_to_rownames(var = "#SampleID") %>%
   sample_data()
 
-calculus_phyloseq <- phyloseq(plaque_matrix, plaque_meta)
+plaque_phyloseq <- phyloseq(plaque_matrix, plaque_meta)
 
 
 # Differential abundance --------------------------------------------------
 
-# across experiment
-exp_da <- ANCOMBC::ancombc(
-  experiment_phyloseq, 
+# within experiment
+byoc_da <- ANCOMBC::ancombc(
+  byoc_phyloseq, 
   formula = "Env",
   group = "Env",
   global = F,
@@ -83,9 +85,56 @@ plaque_da <- ANCOMBC::ancombc(
   p_adj_method = "fdr"
   )
 
+byoc_log_abund <- bias_correct(byoc_da, byoc_otu)
+
+byoc_logf_full <- as_tibble(byoc_da$res$lfc, rownames = "species") %>%
+  pivot_longer(-species, values_to = "lfc") %>%
+  full_join(
+    as_tibble(byoc_da$res$se, rownames = "species") %>%
+      pivot_longer(-species, values_to = "se"),
+    by = c("species", "name")
+  ) %>%
+  full_join(
+    as_tibble(byoc_da$res$q, rownames = "species") %>%
+      pivot_longer(-species, values_to = "q_value"),
+    by = c("species", "name")
+  ) %>%
+  mutate(upper = lfc + se,
+         lower = lfc - se,
+         name = str_remove(name, "^Env"),
+         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
+                         TRUE ~ name)) %>%
+  rename(env = name)
 
 
+# table with log-fold change statistics between artificial calculus and others
+# negative lfc means higher abundance in artificial calculus
+# positive lfc means lower abundance in art calculus
+plaque_logf_change <- as_tibble(plaque_da$res$lfc, rownames = "species") #%>%
+plaque_logf_se <- as_tibble(plaque_da$res$se, rownames = "species") #%>%
+plaque_logf_q <- as_tibble(plaque_da$res$q_val, rownames = "species")
 
+plaque_logf_full <- plaque_logf_change %>%
+  pivot_longer(-species, values_to = "lfc") %>%
+  full_join(
+    plaque_logf_se %>%
+      pivot_longer(-species, values_to = "se"),
+    by = c("species", "name")
+  ) %>%
+  full_join(
+    plaque_logf_q %>%
+      pivot_longer(-species, values_to = "q_value"),
+    by = c("species", "name")
+  ) %>%
+  mutate(lower = lfc - se,
+         upper = lfc + se,
+         name = str_remove(name, "^Env"),
+         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
+                         TRUE ~ name)) %>%
+  rename(env = name)
+
+write_tsv(byoc_logf_full, "05-results/byoc_logf-full.tsv")
+write_tsv(plaque_logf_full, "05-results/plaque_logf-full.tsv")
 
 
 
@@ -130,31 +179,31 @@ function(x, pallette, n) {
 
 # Diff abundance ----------------------------------------------------------
 
-exp_day <- ANCOMBC::ancombc(
-  experiment_phyloseq, 
-  formula = "Env",
-  group = "Env",
-  global = T,
-  p_adj_method = "fdr")
-
-ANCOMBC::ancom(experiment_phyloseq, main_var = "Env")
-
-# from vignette("ANCOMBC")
-samp_frac <- exp_day$samp_frac
-# Replace NA with 0
-samp_frac[is.na(samp_frac)] = 0 
-# add 1 to counts for log-transformation
-log_exp_otu <- log(microbiome::abundances(experiment_otu) + 1)
-
-# Adjust the log observed abundances
-log_exp_otu_adj = t(t(log_exp_otu))
-# Bias-corrected log observed abundances
-  # Show the first 6 samples
-round(log_exp_otu_adj[, 1:6], 2) %>% 
-  as_tibble(rownames = "species") %>%
-  .$SYN001.A0101
-
-class(otu_table(taxatable_matrix, taxa_are_rows = T))
+# exp_day <- ANCOMBC::ancombc(
+#   experiment_phyloseq, 
+#   formula = "Env",
+#   group = "Env",
+#   global = T,
+#   p_adj_method = "fdr")
+# 
+# ANCOMBC::ancom(experiment_phyloseq, main_var = "Env")
+# 
+# # from vignette("ANCOMBC")
+# samp_frac <- exp_day$samp_frac
+# # Replace NA with 0
+# samp_frac[is.na(samp_frac)] = 0 
+# # add 1 to counts for log-transformation
+# log_exp_otu <- log(microbiome::abundances(experiment_otu) + 1)
+# 
+# # Adjust the log observed abundances
+# log_exp_otu_adj = t(t(log_exp_otu))
+# # Bias-corrected log observed abundances
+#   # Show the first 6 samples
+# round(log_exp_otu_adj[, 1:6], 2) %>% 
+#   as_tibble(rownames = "species") %>%
+#   .$SYN001.A0101
+# 
+# class(otu_table(taxatable_matrix, taxa_are_rows = T))
 
 
 

@@ -41,24 +41,6 @@ sample_taxatable <- kraken_otu_filtered %>%
   pivot_wider(names_from = sample, values_from = count) %>%
   mutate(across(where(is.numeric), replace_na, 0))
 
-# Comparative tables
-
-# comp_env <- c("saliva", "modern_calculus", "supragingival_plaque", "subgingival_plaque")
-# comp_samples <- metadata %>%
-#   filter(
-#     SourceSink == "source",
-#     Env %in% comp_env) %>%
-#   .$`#SampleID`
-# 
-# comp_taxatable_long <- kraken_otu_filtered %>%
-#   filter(sample %in% comp_samples) %>%
-#   dplyr::select(!sum_abund)
-# 
-# comp_taxatable <- comp_taxatable_long %>%
-#   dplyr::select(!rel_abund) %>%
-#   pivot_wider(names_from = species, values_from = count) %>%
-#   mutate(across(where(is.numeric), replace_na, 0))
-
 write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
 
