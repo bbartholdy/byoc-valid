@@ -153,7 +153,7 @@ were paired-end sequenced on a NextSeq (2 color chemistry) to 150bp
 
 ```{r}
 comp_samples <- metadata %>%
-  filter(Project != "this_study")
+  filter(Study != "this_study")
 
 comp_samples
 ```
@@ -246,7 +246,7 @@ Beta-diversity, Bray Curtis dissimilarity.
 
 ### Differential abundance analysis
 
-Differential abundance is calculated using the ANCOM-BC method from the `ANCOMBC`
+Differential abundance is calculated using the ANCOM-BC method from the **ANCOMBC**
 v`r packageVersion("ANCOMBC")` R package [@linANCOMBC2020].
 P-values adjusted using the false discovery rate (FDR) method. Samples
 grouped by sample type (i.e. saliva, plaque, modern calculus, model calculus).
@@ -677,6 +677,35 @@ are dominated by anaerobes.
 
 #### Comparative samples
 
+The core microbiome of plaque and calculus samples.
+
+```{r}
+#| label: fig-genus-env
+#| fig-cap: "Mean relative abundances at the genus level between sample types. NA = other genera."
+genus_counts_long %>%
+  left_join(metadata, by = c("sample" = "#SampleID")) %>%
+  filter(str_detect(Env, "plaque|calculus")) %>%
+  group_by(Env, genus) %>%
+  summarise(rel_abund = mean(rel_abund)) %>%
+  mutate(#rel_abund = count / sum(count),
+         genus = case_when(rel_abund < 0.06 ~ NA_character_,
+                             TRUE ~ genus)) %>%
+  #filter(rel_abund > 0.05) %>% 
+  ggplot(aes(x = "", y = rel_abund, fill = genus)) +
+    geom_col() +
+    coord_polar(theta = "y", start = 0) +
+    facet_wrap(~ Env) +
+    theme_void() +
+    #scale_fill_manual(viridisLite::viridis())) 
+    scale_fill_viridis_d(na.value = "grey50")
+```
+
+The main overlap between the model calculus and oral comparative
+samples are the high relative abundance of *Streptococcus* and
+*Veillonella*. Model calculus is consists mostly of *Enterococcus*
+and *Veillonella* spp., while oral comparative samples are more
+diverse (consistent with results from alpha diversity).
+
 ```{r}
 compar_oxytol <- species_properties %>% 
   filter(sample %in% filter(
@@ -906,8 +935,8 @@ compar_neg_pc1 + compar_pos_pc1 + plot_layout(guides = "collect", ncol = 1)
 
 *Enterococcus faecalis*, *Enterococcus casseliflavus*, and *Enterococcus durans*
 are more abundant in the *in vitro* biofilm samples than
-*in vivo* samples of plaque and calculus. Conversely, *Neisseria* spp. and
-*Actinomyces* spp. are deficient in the *in vitro* samples.
+*in vivo* samples of plaque and calculus. Conversely, *Neisseria*, *Actinomyces*,
+and *Capnocytophaga* spp. are deficient in the *in vitro* samples.
 
 ### Differential abundance
 
@@ -1051,14 +1080,17 @@ plaque_logf_pc2 <- plaque_logf_full %>%
 plaque_logf_pc1 / plaque_logf_pc2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
 ```
 
+<!-- which species are there no differences between samples? -->
+<!-- how many species are different vs. not different between model and real? -->
 
 ## Discussion
 
 <!-- from metagen-diversity -->
-Main takeaway is the loss of diversity across the experiment and compared to
-reference samples. The donated saliva for the experiment had a lower diversity
-than the reference saliva samples, and may have contributed to a lower diversity
-in experiment samples. Community profile of model calculus differs from
+Main takeaway is the loss of diversity from donated saliva to model calculus, and
+when compared to oral reference samples. The donated saliva for the experiment
+had a lower diversity than the reference saliva samples, and may have contributed
+to a lower diversity in experiment samples. Community profile of model calculus
+differs from
 the oral reference samples, while modern calculus mostly resembles oral reference
 samples. The main difference between model and reference samples seems to be
 a lack of aerobes in model samples and a dominance by *Enterococcus* spp.
@@ -1068,25 +1100,27 @@ a lack of aerobes in model samples and a dominance by *Enterococcus* spp.
 in the model calculus samples compared to the reference samples and
 may represent one of the main differences between model calculus and other
 reference samples, especially modern calculus, consistent with the results of the
-sPCA analysis.
-
-<!-- from metagen-explore -->
+sPCA analysis. The high relative abundance of *E. faecalis* may represent
+contamination despite it being commonly found in the oral cavity. It was also
+abundant in the comparative *in vitro* biofilm study.
+*Enterococcus* spp. out-competing other species may be a problem in
+model biofilm studies, but more comparative studies are needed to confirm
+(and there are not many WGS studies out there).
+*Capnocytophaga*, *Actinomyces*, and *Neisseria* spp. deficient in model samples
+(both this study and comparative).
 Very few aerobes made it into the model. Apart from the donated saliva, very few
 aerobes were detected in any of the experimental samples. *Rothia* spp. disappeared
-between saliva and medium samples. We may need to introduce more oxygen into
-the protocol, or increase the frequency of medium replacement (e.g. every two
-days instead of three).
+between saliva and medium samples. We may need to increase the frequency of
+medium replacement (e.g. every two days instead of three) to help promote the
+growth of aerobes. *Capnocytophaga* and *Actinomyces* spp. are predominantly
+(facultative) anaerobes, so their deficiency must be attributed to different
+reasons. Both *Capnocytophaga* and *Neisseria* spp. are fastidious and
+require an atmosphere with at least 5% carbon dioxide to thrive, so the model
+may have a low carbon dioxide atmosphere [@tonjumNeisseria2017].
 
-ABS are also underrepresented
-in the experimental samples compared to the modern calculus and plaque reference
-samples. The high relative abundance of *E. faecalis* may represent contamination
-despite it being commonly found in the oral cavity. There was a relatively low
-frequency of ABS in the model samples compared to the reference samples,
-which may be attributed to the presence of sucrose in the treatment solutions,
-potentially eliminating the need for ABS.
+ABS are also underrepresented in the experimental samples
+compared to the modern calculus and plaque reference samples. There was a
+relatively low frequency of ABS in the model samples compared to the reference
+samples, which may be attributed to the presence of sucrose in the treatment
+solutions, potentially eliminating the niche for ABS.
 
-*Actinomyces* spp. and *Neisseria* spp. deficient in model samples
-(both this study and comparative).
-
-*Enterococcus* spp. outcompeting other species may be a problem in
-model biofilms...

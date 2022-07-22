@@ -18,6 +18,8 @@ experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadat
 pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
 exp_pca_loadings <- readr::read_tsv(here("05-results/experiment-pca-loadings.tsv"))
 bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
 ```
 
 Data are converted to `phyloseq` format. Experiment samples are first run on
@@ -37,26 +39,6 @@ between donated saliva, medium, and the final calculus product.
 ### Across experiment
 
 ```{r}
-exp_logf_full <- as_tibble(exp_da$res$lfc, rownames = "species") %>%
-  pivot_longer(-species, values_to = "lfc") %>%
-  full_join(
-    as_tibble(exp_da$res$se, rownames = "species") %>%
-      pivot_longer(-species, values_to = "se"),
-    by = c("species", "name")
-  ) %>%
-  full_join(
-    as_tibble(exp_da$res$q, rownames = "species") %>%
-      pivot_longer(-species, values_to = "q_value"),
-    by = c("species", "name")
-  ) %>%
-  mutate(upper = lfc + se,
-         lower = lfc - se,
-         name = str_remove(name, "^Env"),
-         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
-         TRUE ~ name)) %>%
-  rename(env = name) %>%
-  left_join(bac_properties, by = "species")
-
 exp_logf_full %>%
   arrange(desc(abs(lfc))) %>%
   slice_head(n = 20) %>%
@@ -82,11 +64,6 @@ exp_logf_full %>%
     geom_vline(xintercept = 0, linetype = "dashed") +
     facet_wrap(~ env)
 
-# highest positive and negative log-fold changes
-
-
-
-
 # top 30 species from PC1
 exp_logf_full %>%
   filter(species %in% exp_pca_loadings$species[1:20]) %>% 
@@ -106,8 +83,8 @@ exp_logf_full %>%
     geom_point() +
     geom_linerange(aes(xmin = lower, xmax = upper)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
-    theme_bw() +
-    facet_wrap(~ env)
+    facet_wrap(~ env) +
+    theme_bw()
 
 ### PROVIDE OXYGEN TOLERANCE OF SPECIES ###
 # bar plot with error bars instead of points?
@@ -123,41 +100,6 @@ reduction of species occurs in
 ### Artificial vs. modern calculus
 
 ```{r}
-calculus_da <- ANCOMBC::ancombc(
-  calculus_phyloseq, 
-  formula = "Env",
-  group = "Env",
-  global = F,
-  p_adj_method = "fdr")
-
-# table with log-fold change statistics between artificial calculus and others
-  # negative lfc means higher abundance in artificial calculus
-  # positive lfc means lower abundance in art calculus
-calc_logf_change <- as_tibble(calculus_da$res$lfc, rownames = "species") #%>%
-    #select(species, Envmedium) %>%
-calc_logf_se <- as_tibble(calculus_da$res$se, rownames = "species") #%>%
-    #select(!c(Envsaliva.x, Envsaliva.y)) %>%
-calc_logf_q <- as_tibble(calculus_da$res$q_val, rownames = "species")
-
-calc_logf_full <- calc_logf_change %>%
-  pivot_longer(-species, values_to = "lfc") %>%
-  full_join(
-    calc_logf_se %>%
-      pivot_longer(-species, values_to = "se"),
-    by = c("species", "name")
-  ) %>%
-  full_join(
-    calc_logf_q %>%
-      pivot_longer(-species, values_to = "q_value"),
-    by = c("species", "name")
-  ) %>%
-  mutate(lower = lfc - se,
-         upper = lfc + se,
-         name = str_remove(name, "^Env"),
-         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
-         TRUE ~ name)) %>%
-  rename(env = name)
-
 head(calc_logf_full)
 ```
 
