@@ -2,7 +2,7 @@
 title: "FTIR analysis"
 always_allow_html: true
 output:
-  word_document: default
+  #word_document: default
   html_notebook: default
   html_document:
     df_print: paged
@@ -39,10 +39,12 @@ grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 ```
 
-To determine the mineral composition and crystallisation of the artificial dental
-calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy. We
-compared the spectra of artificial dental calculus with spectra of archaeological
-dental calculus, as well as splitting factors.
+To determine the mineral composition and level of crystallisation of the model
+dental calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy.
+We compared the spectra of model dental calculus with spectra of archaeological
+dental calculus and used a built-in Omnic search library for mineral identification
+[@weinerInfraredSpectroscopy2010]. The splitting factor of carbonate hydroxyapatite
+was calculated using a macro script.
 
 ## Materials
 
@@ -56,47 +58,51 @@ n_samples <- ftir_metadata %>%
     weight = mean(weight_mg, na.rm = T)
     )
 
-knitr::kable(n_samples, digits = 2, caption = "Summary of FTIR samples used in analysis, including weight in mg.")
+knitr::kable(n_samples, digits = 2, caption = "Summary of FTIR samples used in analysis, including weight in mg. Only a portion of the samples were analysed, so the weight is not indicative of the amount of calculus analysed.")
 ```
 
 `r sum(n_samples$n)` model biofilm samples from days 7, 16, 20, and 24, were analysed.
 Reference samples for comparison included two modern calculus samples and an
 archaeological calculus sample. The archaeological sample was an isolated tooth
-from Middenbeemster, a rural Dutch site from the 19th century. Samples
-`r paste0(subset(ftir_metadata, !is.na(ftir_metadata$comb))$sample_id)`
-had to be combined to provide enough material for analysis. Only samples collected
-on the same day were combined with each other
-(`r paste(unique(subset(ftir_metadata, !is.na(ftir_metadata$comb))$comb))`). Samples from days 7 and 12 did
-not produce enough material for a grind curve. They were largely composed of
-organics and proteins, i.e. would not be able to produce a splitting factor, anyway.
+from Middenbeemster, a rural Dutch site from the 19th century. Some samples
+had to be combined to provide enough material for analysis
+(see Table \@ref(tab:comb-data-summary)). Only samples collected
+on the same day were combined. No grind curves were produced for samples from
+days 7 and 12. These were largely composed of organics and proteins, and did not
+form enough carbonated hydroxtapatite for analysis.
 
 ```{r}
-#| label: grind-data-summary
-grind_data %>%
-  filter(Sample == "Artificial calculus") %>%
-  group_by(day) %>% 
-  summarise(
-    n = n()
-    ) %>%
-  knitr::kable()
+#| label: comb-data-summary
+ftir_metadata %>%
+  filter(!is.na(ftir_metadata$comb)) %>%
+  #group_by(day) #%>%
+  select(sample_id, day, comb) %>%
+  mutate(comb = str_remove(comb, "_grind_a")) %>%
+  distinct(comb, .keep_all = T)
 ```
 
 Table: Summary of samples used in grinding curves.
 
 ## Methods
 
-Samples were ground with KBr and pressed under up to two tons of pressure.
-Repeated measurements were taken and after different grinding durations, and
-a grind curve was produced following -@asscherAtomicDisorder2011.
-Samples were ground and analysed up to six times (a-f) for the grind curve.
-The analysis was conducted at Haifa University with a Thermo Nicolet is5
-spectrometer in transmission,
-at 4 cm$^{-1}$ resolution, with an average of 32 scans between wavenumbers 4000
-and 400 cm$^{-1}$.
-The splitting factor was calculated following -@asscherAtomicDisorder2011,
-using the full width at half maximum (FWHM) of the main peak at 1035. Grinds a-f
-represent different levels of grinding. Samples denoted with an 'a' were ground
-for the least amount of time and 'f' the most.
+Samples were analysed following the method presented in @asscherAtomicDisorder2011.
+A few $\mu$g of each sample were repeatedly ground together with KBr and pressed
+in a 7 mm die under two tons of pressure using a Specac mini-pellet press.
+Repeated measurements of the splitting factor were taken after each grind, and a
+grind curve was produced following @asscherAtomicDisorder2011. Samples were
+ground and analysed up to six times (a-f) for the grind curve.
+Samples were analysed at the Laboratory for Sedimentary Archaeology, Haifa 
+University. The analysis was conducted with a Thermo Nicolet is5 spectrometer in
+transmission, at 4 cm$^{-1}$ resolution, with an average of 32 scans between
+wavenumbers 4000 and 400 cm$^{-1}$.
+The splitting factor was calculated following @weinerStatesPreservation1990,
+by dividing the sum of the height of the absorptions at 603 cm$^{-1}$ and 567 cm$^{-1}$
+in the height of the valley between them. Following @asscherAtomicDisorder2011
+we plotted the IRSF against the full width at half maximum (FWHM) of the main
+absorption at 1035, and compared our grinding curves to the ones produced by
+@asscherAtomicDisorder2011. Grinds a-f represent different levels of grinding.
+Samples denoted with an 'a' were ground for the least amount of time and 'f' the
+most.
 
 ## Results
 
@@ -195,11 +201,16 @@ Day 7 spectra have large O--H and amide A absorbance bands in stretching mode ar
 as well as three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
 2920, and 2850 cm$^{-1}$. There is a clear amide I peak at 1650 and a less
 pronounced amide II peak at 1545 cm$^{-1}$. 
-In the 'fingerprint' region, C--O$_3^{2-}$ at 1400 absorbance band corresponding to the v~3~ stretching vibrations, P--O~4~ absorbance band
-corresponding to the v~3~ antisymmetric stretching vibrations
+In the 'fingerprint' region, C--O$_3^{2-}$ at 1450 and 1400 absorbance bands
+corresponding to the v~3~ asummetric stretching vibrations, P--O~4~ absorbance band
+corresponding to the v~3~ asymmetric stretching vibrations
 at 1080 cm$^{-1}$, and minor phosphate absorption bands around 500 cm$^{-1}$ in
 sample F7.1A6, but absent in sample F7.2D1. The absorption bands at 1080
-cm$^{-1}$ could also be a C--N stretching mode from aliphatic amines.
+cm$^{-1}$, and 1040-1047 cm$^{-1}$ and minor bending absorption bands of the
+phosphate doublet around 605 cm$^{-1}$ and 560 cm$^{-1}$ in sample F7.2D1, but
+absent in sample F7.1A6. The absorption bands at 1080 cm$^{-1}$ could be a C--N
+stretching mode from aliphatic amines, but may also come from silicate contamination
+(typical quartz doublet at 797, 780).
 The relative absorbance of O--H and Amide I and II bands are higher than the
 phosphate bands, representing a relatively higher content of lipids and proteins
 than inorganic content. Large variation between spectra.
@@ -226,8 +237,6 @@ of both amide and O--H to PO~4~ v~3~ absorbance bands.
 Three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
 2920, and 2850 cm$^{-1}$. Reduced variation between two of the three spectra.
 
-What is the absorbance band at 1080?? Is it actually  Phosphate??
-
 ### Day 16
 
 ```{r}
@@ -248,7 +257,8 @@ ggplotly()
 Day 16, the ratio of O--H and amides to PO~4~ has shifted, with
 the main peak shifting to the PO~4~ v~3~ absorbance band at 1040
 (except in sample F16.1A2). A well-defined PO~4~ doublet at 600 and 560 is
-present. Small CO$_3^{2-}$ stretching vibrations at 870 cm$^{-1}.
+present. Small CO$_3^{2-}$ asymmetric stretching at 1450 cm$^{-1}$ and 1415 cm$^{-1}$,
+and stretching vibrations at 875-870 cm$^{-1}$.
 Decreased variability between the spectra, with most spectra exhibiting a
 higher phosphate-to-protein/lipid ratio.
 
@@ -307,11 +317,13 @@ ftir_data %>%
 
 The main difference in the samples across the experiment, with
 increasing age, is an
-increase in the main peak at around 1040 cm-1, appearance of
-the phosphate doublet around 600 and 560 cm-1 between day 12
-and 16, an increase
-in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm-1,
-and a reduction of the C--H2 and C--H3 stretching vibrations.
+increase in the main PO~4~ v~3~ peak at around 1040 cm$^{-1}$, appearance of
+the phosphate doublet around 600 and 560 cm$^{-1}$ between day 12
+and 16, an increase in the carbonate peaks at 1458-1450 cm$^{-1}$ and 1415-1420
+cm$^{-1}$, an increase
+in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm$^{-1}$,
+and a reduction of the C--H~2~ and C--H~3~ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$.
 
 High lipid and protein content consistent with the presence of extracellular
 polysaccharides and bacteria within a matrix. Microbial DNA and RNA may be
@@ -321,7 +333,7 @@ later obscured by the increasing phosphate peak at 1040 cm$^{-1}$
 the O--H stretch is also consistent with a biofilm, which is around 90%
 water [@bergerOralBiofilms2018]. As the samples mature, the ratio of proteins
 and lipids to phosphates shift from predominance of organic content to
-inorganic content.
+inorganic content in the form of carbonated hydroxyapatite.
 
 Early spectra, days 7 and 12, are also similar to collagen spectra, with the
 OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
@@ -345,7 +357,7 @@ ftir_data %>%
 
 The archaeological and modern reference spectra are largely indistinguishable and
 consist of an O--H absorbance band (3400 cm$^{-1}$), CH~3~ bands (3000--2900 cm$^{-1}$),
-carbonate (1420, 1460, 870 cm$^{-1}$), amide I band (1650 cm$^{-1}$), and phosphates
+carbonate (1420, 1458-1450, 875-870 cm$^{-1}$), amide I band (1650 cm$^{-1}$), and phosphates
 (1040, 604, 566 cm$^{-1}$).
 
 ```{r}
@@ -400,14 +412,19 @@ difference is a lower organic component in reference samples seen as a reduced
 amide I peak at around 1637 compared to the carbonate peak at around 1420, and
 an absence of amide II and III. Also a reduction in CH~3~ bands at 3000-2900 cm$^{-1}$.
 
-#### Grind curves
+#### Grinding curves
 
-Splitting factors were calculated from the grinding measurements, and a
-grinding curve was created to explore crystallinity (crystal size) order and
+Splitting factors of the doublet, and FWHM of the main PO~4~ peak at 1040 were
+calculated from the grinding measurements, and plotted against each other to
+create grinding curves to explore crystallinity (crystal size) and the order and
 disorder. Disorder is a steep slope and large FWHM.
 
-Samples are similar to fresh bone and dentin. No appreciable differences between
-days 16, 20, and 24.
+Samples were compared to the results of @asscherAtomicDisorder2011 and
+@asscherVariationsAtomic2011, and the slopes
+of the trend lines for our model calculus are similar to those of fresh bone and
+dentin. No appreciable differences between days 16, 20, and 24. The archaeological
+dental calculus does show a slightly increased slope, although more archaeological
+samples are needed to show if this is consistent in archaeological calculus.
 
 ```{r message=FALSE, warning=FALSE}
 #| label: grind-plots
@@ -457,9 +474,9 @@ grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right 
 ## Discussion
 
 Experimental samples are indicative of biofilm growth and maturation, including
-mineralisation, represented by a reduction in proteins and lipids and the increasing
-intensity of peaks related to hydroxyapatite (1040 and 600-550 cm$^{-1}$) and
-carbonate (1420, 1460, 870 cm$^{-1}$) over the course of the experiment.
+mineralisation, represented by a reduction in proteins and lipids (1460, 1420, 870)
+and the increasing intensity of peaks related to carbonated hydroxyapatite (1040,
+600-550 cm$^{-1}$) over the course of the experiment.
 
 The presence of collagen in dental calculus (and saliva) is still not clear. It
 may be a result of external contamination [@mackiePreservationMetaproteome2017]
@@ -471,7 +488,10 @@ which may or may not be related to periodontitis
 matrix.
 
 The artificial samples from day 24 resemble both the modern reference samples and
-the archaeological sample in mineral composition and crystallinity. 
+the archaeological sample in mineral composition and crystallinity. The steeper
+slope of the archaeological sample may suggest larger crystals, which is to be
+expected, as the inorganic crystals expand into the space left by degrading
+organic matter over time [@weinerBiologicalMaterials2010]. 
 Overall, the spectra of the artificial calculus show an increase in the
 inorganic component and a decrease in the organic component over time.
 The grinding curves for days 16, 20, and 24 were very similar, suggesting
