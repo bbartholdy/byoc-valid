@@ -1,9 +1,18 @@
 project:
   type: default
-  output-dir: 07-publications/_output
+  output-dir: _output
+  execute-dir: project
+  pre-render: _bib.R
+execute: 
+  freeze: true
 title: TBD
-author: |
-  B.P. Bartholdy, I. Velsko, S. Gur-Arieh, Z. Fagernäs, S. Seng, A.G. Henry
+author: 
+  -name: B.P. Bartholdy
+  -name: I. Velsko
+  -name: S. Gur-Arieh
+  -name: Z. Fagernäs
+  -name: S. Seng
+  -name: A.G. Henry
 citation-location: document
 bibliography: references.bib
 abstract-title: Abstract

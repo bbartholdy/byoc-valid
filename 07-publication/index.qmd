@@ -6,17 +6,44 @@ knitr::opts_chunk$set(
   message = FALSE,
   fig.path = "figures/",
   fig.align = "center")
-library(tidyverse)
+library(tidyr)
+library(readr)
+library(dplyr)
+library(forcats)
+library(stringr)
+library(ggplot2)
 library(here)
 library(patchwork)
 #source(here("02-scripts/authentication.R"))
 # upload data
-dna_metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
-ftir_metadata <- readr::read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_data <- readr::read_csv(here("05-results/ftir-data_long.csv"))
+dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
+dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
+bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
+genus_oxytol <- read_tsv(here("01-documentation/genus-O2tolerance.tsv"))
+otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+load(here("05-results/spca_byoc.rda"))
+load(here("05-results/spca_species.rda"))
+alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
+
+# FTIR
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
 ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
-# ggplot theme options
-options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
+
+# Materials and methods setup
+
+# upload names and versions of software used
+software_versions <- readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
+
+# Helper objects
+env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove environmental controls
+
+# set ggplot theme options
+options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
+        ggplot2.discrete.fill = function() scale_fill_viridis_d())
 ## Compile refs.bib using rbbt package ##
 # cite_keys <- rbbt::bbt_detect_citations(here("analysis/paper/paper.Rmd")) 
 # cite_keys <- unlist(cite_keys, use.names = FALSE)
@@ -31,9 +58,14 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
 
 {{< include intro.qmd >}}
 
+# Materials and Methods
 
 {{< include matmet.qmd >}}
 
 # Results
 
 {{< include results.qmd >}}
+
+# Discussion
+
+{{< include disc.qmd >}}

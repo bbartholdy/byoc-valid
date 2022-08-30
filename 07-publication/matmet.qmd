@@ -1,7 +1,14 @@
-# Materials and methods
-<!-- Create table for all samples and indicate which samples underwent DNA, FTIR, etc. -->
-
 ## Biofilm growth
+
+<!-- Create table for all samples and indicate which samples underwent DNA, FTIR, etc. -->
+```{r}
+#| label: matmet-setup
+#| include: false
+
+# env_summ <- metadata %>%
+#   group_by(Env) %>%
+#   count()
+```
 
 In this study we employ a multispecies oral biofilm model following a modified
 protocol from Sissons and colleagues [-@sissonsMultistationPlaque1991] and
@@ -11,7 +18,8 @@ is autoclaved at 120&deg;C, 1 bar overpressure, for 20 mins.
 
 The artificial saliva (AS) is a modified version of the basal medium mucin (BMM)
 described by Sissons and colleagues [-@sissonsMultistationPlaque1991].
-It contains 2.5 g/l partially purified mucin from porcine stomach (Type III, Sigma M1778),
+It is a complex medium containing 2.5 g/l partially purified mucin from porcine
+stomach (Type III, Sigma M1778),
 5 g/l trypticase peptone (Roth 2363.1), 10 g/l proteose peptone (Oxoid LP0085),
 5 g/l yeast extract (BD 211921), 2.5 g/l KCl, 0.35 g/l NaCl, 1.8 mmol/l CaCl~2~,
 5.2 mmol/l Na~2~HPO~4~ [@sissonsMultistationPlaque1991], 6.4 mmol/l NaHCO~3~
@@ -70,16 +78,17 @@ detect starch contamination.
 ## Metagenomics
 
 ```{r sample-data}
-dna_metadata %>%
-  group_by(Env, day) %>%
-  #count() %>%
-  summarise(n = n()) %>%
-  arrange(day, n)
+dna_samples <- dna_metadata %>%
+  filter(Study == "this_study") %>%
+  dplyr::select(`#SampleID`, Env)
+dna_samples %>%
+  knitr::kable()
 ```
 
 
 <!-- Samples sent to Jena -->
-Samples were taken from the artificial saliva during the experiment, and from the
+A total of `r nrow(dna_samples)` samples were taken during the experiment from
+the donated saliva, artificial saliva, and from the
 biofilm end-product on day 24.
 DNA extraction was performed at the archaeogenetic facility at the Max Planck
 Institute for the Science of Human History (Jena, Germany). Extractions were
@@ -95,20 +104,59 @@ were paired-end sequenced on a NextSeq (2 color chemistry) to 150bp
 <!-- EAGER settings -->
 ### Preprocessing
 
-Processing of the raw DNA reads was conducted using the EAGER pipeline v. 2.4.1 [@yatesEAGER2020].
-Adapter removal and read merging was performed using AdapterRemoval v. 2.3.2 [@AdapterRemovalv2].
+Processing of the raw DNA reads was conducted using the
+`r paste(filter(software_versions, str_detect(software, "eager")))`
+pipeline [@yatesEAGER2020].
+Adapter removal and read merging was performed using
+`r paste(filter(software_versions, str_detect(software, regex("adapterremoval", ignore_case = T))))`
+[@AdapterRemovalv2].
 Merged reads were mapped to the human reference genome (GRCh38 <!--link-->)
-using BWA v. 0.7.17-r1188 [@BWA] with default settings (-n 0.01; -l 32).
-<!-- SAMTools-->
-<!-- endorS.py-->
-<!-- Kraken -->
+using
+`r paste(filter(software_versions, str_detect(software, regex("bwa", ignore_case = T))))`
+[@BWA] with default settings (-n 0.01; -l 32), and
+unmapped reads were extracted using
+`r paste(filter(software_versions, str_detect(software, regex("samtools", ignore_case = T))))`.
+
+Metagenomic classification was conducted in
+`r paste(filter(software_versions, str_detect(software, regex("kraken", ignore_case = T))))`
+using the Standard database [@kraken2].
 <!-- cuperdec [@yatesOralMicrobiome2021]-->
-The R package *decontam* [@R-decontam] was used to identify potential contaminants
-using library extraction blanks with a probability threshold of 0.1.
 
-Metagenomic classification in Kraken 2 using the Standard database [@kraken2].
+Environmental reference samples were downloaded from ENA and using SRA Toolkit.<!-- reference supp. mat.-->
+Oral reference samples were downloaded from the Human Metagenome Project (HMP),
+and modern calculus samples from Velsko et al. [-@velskoDentalCalculus2017]
+Only paired reads were processed, singletons were removed. Biofilm model samples
+from Edlund et al. [-@edlundUncoveringComplex2018] were used as a reference.
+Links to the specific
+sequences, including human-filtered reads from this study, are included in the
+metadata<!-- link to metadata file-->.
 
-Reference samples downloaded from... Singletons were removed.
+### Authentication
+
+<!-- sourcetracker -->
+Species with lower than 0.001% relative abundance were removed.
+SourceTracker [@knightsSourceTracker2011] was used to estimate source composition
+of the oral biofilm model samples using a Bayesian framework. Sampes were compared
+with oral and environmental controls to detect potential external contamination.
+The R package *decontam* v`r packageVersion("decontam")` [@R-decontam] was used
+to identify potential contaminants
+using DNA concentrations with a probability threshold of 0.95
+and negative controls with a probability threshold of 0.05. Putative contaminants
+were filtered out of the OTU tables for all downstream analyses.
+Authentication methods are described in more
+detail in the Supplementary material.<!--../06-reports/metagen-authentication.Rmd-->
+
+### Community composition
+
+Relative abundances of communities were calculated at the species- and genus-level,
+as recommended for compositional data [@gloorMicrobiomeDatasets2017].
+Shannon index calculated on species OTU tables of all artificial and oral reference
+samples using the vegan `r packageVersion("vegan")` R package [@Rvegan]. Sparse
+principal components analysis (sPCA) was performed on model biofilm samples to ...
+and a separate sPCA analysis was performed on biofilm model end-products and oral
+reference samples using the mixOmics R package `r packageVersion("mixOmics")` [@RmixOmics].
+
+### Differential abundance
 
 ## FTIR
 
@@ -117,28 +165,48 @@ byoc_ftir <- ftir_metadata %>%
   filter(source == "Artificial")
 ```
 
-<!-- FTIR specs -->
-FTIR analysis was conducted on `r nrow(byoc_ftir)` samples of the biofilm sampled
-on days 7, 12, 16, 20, and 24. Samples
-`r paste0(subset(ftir_metadata, !is.na(ftir_metadata$comb))$sample_id)`
-had to be combined to provide enough material for analysis. Only samples collected
-on the same day were combined with each other
-(`r paste(unique(subset(ftir_metadata, !is.na(ftir_metadata$comb))$comb))`).
-Samples were ground together with KBr and pressed under up to two tons of pressure.
-Repeated measurements were taken and after different grinding durations, and
-a grind curve was produced following -@asscherAtomicDisorder2011.
-Grinding curves were prepared for samples from days 16, 20, and 24. We were unable
-to obtain grinding curves from days 7 and 12 due to insufficient mineralisation.
-Samples were ground and analysed up to six times (suffix grind_[a-f]) for the grind curve,
-with samples denoted 'a' ground for the least amount of time and 'f' the most.
-The analysis was conducted at Haifa University with a Thermo Nicolet is5
-spectrometer in transmission at 4 cm$^{-1}$ resolution, with an average of 32 scans
-between wavenumbers 4000 and 400 cm$^{-1}$.
-The splitting factor was calculated following -@asscherAtomicDisorder2011,
-using the full width at half maximum (FWHM) of the main peak at 1040.
+To determine the mineral composition and level of crystallisation of the model
+dental calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy.
+We compared the spectra of model dental calculus with spectra archaeological
+dental calculus and used a built-in Omnic search library for
+mineral identification [@weinerInfraredSpectroscopy2010]. 
+The archaeological sample was dental calculus from an isolated tooth from
+Middenbeemster, a rural, 19th century Dutch site. Samples were analysed
+at the Laboratory for Sedimentary Archaeology, Haifa University. The analysis was
+conducted with a Thermo Nicolet is5 spectrometer in transmission, at 4 cm$^{-1}$
+resolution, with an average of 32 scans between wavenumbers 4000 and 400 cm$^{-1}$.
 
-<!-- Shira -->
+Analysis was conducted on `r nrow(byoc_ftir)` biofilm samples from days
+7, 12, 16, 20, and 24. Some samples from the same sampling day had to be
+combined to provide enough material for analysis. Samples analysed for FTIR
+originated from a different experiment than the metagenomic samples, following
+the same protocol (as described above).
+Samples were analysed following the method presented in
+@asscherAtomicDisorder2011. A few $\mu$g of each sample were repeatedly ground
+together with KBr and pressed in a 7 mm die under two tons of pressure using a
+Specac mini-pellet press (Specac Ltd., GS01152).
+Repeated measurements of the splitting factor were taken after each grind, and a
+grind curve was produced following @asscherAtomicDisorder2011. Samples were
+ground and analysed up to six times (sample suffix a-f) for the grinding curve.
+Grinding curves were prepared for samples from days 16, 20, and 24. No grind
+curves were produced for samples from days 7 and 12. These were largely composed
+of organics and proteins, and did not form enough carbonated hydroxtapatite for
+analysis. The splitting factor of carbonate hydroxyapatite was calculated using
+a macro script, following @weinerStatesPreservation1990, by dividing the sum of
+the height of the absorptions at 603 cm$^{-1}$ and 567 cm$^{-1}$ in the height
+of the valley between them. Following @asscherAtomicDisorder2011 we plotted the
+IRSF against the full width at half maximum (FWHM) of the main absorption at 1035,
+and compared our grinding curves to the ones produced by @asscherAtomicDisorder2011.
+
+Splitting factors of the doublet, and FWHM of the main PO~4~ peak at 1040 were
+calculated from the grinding measurements, and plotted against each other to
+create grinding curves to explore crystallinity (crystal size) and the order and
+disorder. Disorder is a steep slope and large FWHM.
 
 ## Statistics
 
 <!-- R packages used -->
+Statistical analysis was conducted in R Statistical Software `r version$version.string`
+(`r version$nickname`) [@Rbase]. Data cleaning and wrangling performed with packages from
+**tidyverse** [@tidyverse2019]. Plots were created using ggplot2 [@Rggplot].
+

@@ -1,10 +1,12 @@
-# Discussion
-
 <!-- Big summary/important statement for the science -->
-Here, we present a long-term oral biofilm model with mineralisation to address
+In this study we present a [long-term] oral biofilm model with mineralisation
+to produce model dental calculus. The aim of the model is to address
 a variety of research questions related to dental calculus, both in the present
 and in the past.
-The performance of the model as a proxy for dental calculus, was evaluated
+We also assess the viability of our model as a proxy for dental calculus.
+
+used metagenomic classification and FTIR to  in bacterial and mineral content.
+The performance of our model as a proxy for dental calculus was evaluated
 using metagenomic screening for bacterial composition, and FTIR for mineral 
 structure.
 <!-- Scientific findings as extension of previous work -->
@@ -12,6 +14,39 @@ structure.
 <!-- Findings' scientific implications -->
 
 <!-- secondary findings -->
+<!-- metagenomics -->
+While our model is not an anaerobic system, the anaerobes seem to have outcompeted
+aerobes and facultative anaerobes over the course of the experiment. This may
+be a result of biofilm microenvironments, where species can produce favourable
+environments within biofilms<!--cite-->.
+
+<!-- FTIR discussion-->
+Experimental samples are indicative of biofilm growth and maturation, including
+mineralisation, represented by a reduction in proteins and lipids (1460, 1420, 870)
+and the increasing intensity of peaks related to carbonated hydroxyapatite (1040,
+600-550 cm$^{-1}$) over the course of the experiment.
+
+The presence of collagen in dental calculus (and saliva) is still not clear. It
+may be a result of external contamination [@mackiePreservationMetaproteome2017]
+or end-products
+of collagen degradation (e.g. carboxyterminal telopeptide of type I collagen, ICTP)
+which may or may not be related to periodontitis
+[@gursoySalivaryCollagen2013]. It is more likely that the proline-rich proteins
+(secondary amine) present in the samples are attributed to the biofilm
+matrix.
+
+The artificial samples from day 24 resemble both the modern reference samples and
+the archaeological sample in mineral composition and crystallinity. The steeper
+slope of the archaeological sample may suggest larger crystals, which is to be
+expected, as the inorganic crystals expand into the space left by degrading
+organic matter over time [@weinerBiologicalMaterials2010]. More samples are
+needed to see if this is consistent in archaeological samples.
+Overall, the spectra of the artificial calculus show an increase in the
+inorganic component and a decrease in the organic component over time.
+The grinding curves for days 16, 20, and 24 were very similar, suggesting
+that the CPMU solution (introduced on day 16) may not have much of an effect.
+
+<!-- mineralisation occurs despite different community composition, supporting the argument that initial mineralisation is a chemical process (catalysed by biological factors). -->
 
 <!-- How this engineering will facilitate future research -->
 
@@ -27,9 +62,24 @@ Research relating to $alpha$-amylase activity and its effect on the oral biome
 it is not present in the naturally in the system (as shown in <!--cite starch paper-->). The reason for the absence of $alpha$-amylase is not clear...
 There is of course no renewable source for $alpha$-amylase once the inoculations
 have been completed; furthermore, there does not seem to be any retention of $alpha$-amylase
-by amylase-binding bacteria (ABB).
-<!-- Why is it not present???
-compare ABS species in samples (both media and final calculus) to ABS species in plaque/calculus. Different proportions? No need for a-amylase with sucrose feedings?-->.
+by amylase-binding streptococci (ABS).
+ABS are present in the system, but do not seem to be binding amylase. At this point
+we are unable to explain why. 
+<!-- Is it possible that the mixture of sucrose in the starch solutions eliminates the need to feed on starch? -->
+
+<!-- dominance of aerobes may affect interpretation of dietary studies 
+Although samples were quite consitent within the experiment-->
+
+<!-- BacDive limited info - more than 50% missing oxygen tolerance info-->
+
+<!-- modern calculus references samples were all from the same geographic origin -->
+
+Single donor may have affected diversity of model. Donated saliva had a lower mean
+alpha-diversity than other saliva samples.
+
+<!-- CPMU was mixed under sterile conditions, but the solution itself was not
+sterilised (not sure if it can be), so may have introduced contamination. None of the
+post-CPMU (day 14+) medium samples made it past authentication -->
 
 <!-- limitations of FTIR and DNA analysis for validation of the model. -->
 
