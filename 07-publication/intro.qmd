@@ -65,7 +65,7 @@ octacalcium phosphate (OCP), whitlockite (WHT), and brushite (BHT). During initi
 mineralisation the main mineral component is BHT, which shifts to HAP in more
 mature dental calculus [@jinSupragingivalCalculus2002; @hayashizakiSiteSpecific2008].
 The exact elemental composition of dental calculus varies by individual due to
-various factors, including diet [@hayashizakiSiteSpecificMineral2008; @jiFluorideMagnesium2000].
+various factors, including diet [@hayashizakiSiteSpecific2008; @jiFluorideMagnesium2000].
 
 The role of bacteria in dental
 calculus formation is still not clear, and dental calculus formation has been
@@ -95,7 +95,7 @@ These are often short-term models grown over a few days, but there also exist lo
 term models used to develop dental calculus
 [@middletonVitroCalculus1965; @sissonsMultistationPlaque1991; @wongCalciumPhosphate2002]. 
 There are multiple different types of models ranging from simplistic agar plate or
-multiwell-plate models [@ceriCalgaryBiofilmDevice1999; @extercateAAA2010],
+multiwell-plate models [@ceriCalgaryBiofilm1999; @extercateAAA2010],
 to more complex setups like the constant depth film fermenter (CDFF) [@petersConstantDepth1988]
 and the multi-station artificial mouth (MAM) [@sissonsMultistationPlaque1991]. The more
 complex models have the benefit of a continuous flow of saliva or saliva-like medium

@@ -21,6 +21,31 @@ be a result of biofilm microenvironments, where species can produce favourable
 environments within biofilms<!--cite-->.
 
 <!-- FTIR discussion-->
+The main difference in the samples across the experiment, with
+increasing age, is an
+increase in the main PO~4~ v~3~ peak at around 1040 cm$^{-1}$, appearance of
+the phosphate doublet around 600 and 560 cm$^{-1}$ between day 12
+and 16, an increase in the carbonate peaks at 1458-1450 cm$^{-1}$ and 1415-1420
+cm$^{-1}$, an increase
+in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm$^{-1}$,
+and a reduction of the C--H~2~ and C--H~3~ stretching vibrations at 2960,
+2920, and 2850 cm$^{-1}$.
+
+High lipid and protein content consistent with the presence of extracellular
+polysaccharides and bacteria within a matrix. Microbial DNA and RNA may be
+visible from peaks around 1200--800 cm$^{-1}$ on days 7 and 12, which are
+later obscured by the increasing phosphate peak at 1040 cm$^{-1}$
+[@jainIsolationCharacterization2013]. The presence of water indicated by
+the O--H stretch is also consistent with a biofilm, which is around 90%
+water [@bergerOralBiofilms2018]. As the samples mature, the ratio of proteins
+and lipids to phosphates shift from predominance of organic content to
+inorganic content in the form of carbonated hydroxyapatite.
+
+Early spectra, days 7 and 12, are also similar to collagen spectra, with the
+OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
+1659, 1552, and 1240 cm$^{-1}$, respectively 
+[@rohanizadehUltrastructuralStudy2005; @martinezcortizasLinkingStructural2020].
+
 Experimental samples are indicative of biofilm growth and maturation, including
 mineralisation, represented by a reduction in proteins and lipids (1460, 1420, 870)
 and the increasing intensity of peaks related to carbonated hydroxyapatite (1040,
@@ -46,7 +71,9 @@ inorganic component and a decrease in the organic component over time.
 The grinding curves for days 16, 20, and 24 were very similar, suggesting
 that the CPMU solution (introduced on day 16) may not have much of an effect.
 
-<!-- mineralisation occurs despite different community composition, supporting the argument that initial mineralisation is a chemical process (catalysed by biological factors). -->
+<!-- mineralisation occurs despite different community composition, supporting the argument that initial mineralisation is a chemical process (catalysed by biological factors). 
+bacterial affinity to hydroxyapatite @bertranMineralizationDNA2013
+-->
 
 <!-- How this engineering will facilitate future research -->
 

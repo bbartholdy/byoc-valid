@@ -135,7 +135,7 @@ max_comp_PC2 <- max(compar_pca_loadings$PC2)
 The sources of taxa were estimated using SourceTracker2 [@knightsSourceTracker2011].
 The results suggest that the majority of taxa across samples have an oral microbial
 signature. SourceTracker2 results were compared to a database of oral taxa
-[@fellowsyatesEvolutionChanging2021] to prevent removal of samples where oral taxa
+[@yatesOralMicrobiome2021] to prevent removal of samples where oral taxa
 were assigned to a non-oral source, as some similar taxa with a signature from
 multiple sources are often classified as "Unknown" [@velskoMicrobialDifferences2019].
 A few samples suspected of containing a large proportion of contamination
@@ -154,6 +154,7 @@ shan_byoc <- alpha_summ_byoc %>%
 
 ```{r}
 #| label: fig-shannon-byoc
+#| fig-cap: "Plot of Shannon Index across experiment samples grouped by sampling time."
 alpha_div_long %>%
   filter(str_detect(sample, "SYN"),
          index == "shannon") %>%
@@ -173,7 +174,9 @@ alpha_div_long %>%
 
 <!-- species diversity -->
 We used the Shannon Index to assess the species diversity and richness in our
-samples over the course of the experiment. There was a slight decrease in mean
+samples over the course of the experiment. Samples were grouped into sampling
+categories due to low sample sizes on sampling days (inoc = days 0, 3, 5; treatm =
+days 7, 9, 12, 15; final = day 24). There was a slight decrease in mean
 alpha diversity between inoculation
 (M = `r filter(shan_byoc, day_grouped == "inoc")$mean`, sd = `r filter(shan_byoc, day_grouped == "inoc")$sd`)
 and treatment and final samples
@@ -263,15 +266,21 @@ abundance of aerobes and facultative anaerobes in the inoculate, especially
 anaerobes, especially *Selenomonas* spp.
 
 ```{r}
+byoc_da_pca <- byoc_logf_full %>%
+  inner_join(byoc_pca_loadings, by = "species")
+```
+
+
+```{r}
 #| label: fig-diffabund-byoc
-#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, squares are enriched in saliva, and triangles in medium. Plot shows the top 20 absolute log-fold changes between model calculus and other sample types."
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, squares are enriched in saliva, and triangles in medium. Lines are standard error. Plot shows the top 20 absolute log-fold changes between model calculus and saliva."
 byoc_logf_full %>% 
   group_by(env) %>% 
   arrange(desc(abs(lfc))) %>%
-  slice_head(n = 30) %>% # causes loss of some env values
+  slice_head(n = 60) %>% # causes loss of some env values
   ungroup() %>%
   arrange(desc(abs(lfc))) %>%
-  slice_head(n = 30) %>% # extract top 20 lfc from modern_calculus
+  slice_head(n = 60) %>% # extract top 20 lfc from modern_calculus
   bind_rows(filter( # recombine with other env values so all are included in plot
     byoc_logf_full, 
     env != "saliva",
@@ -285,11 +294,12 @@ byoc_logf_full %>%
     geom_vline(xintercept = 0, linetype = "dashed") +
     facet_wrap(~ env) +
     theme_bw() +
-    scale_colour_viridis_d(option = "H")
+    scale_colour_viridis_d(option = "H", na.value = "grey50")
 
 ```
 
-Species enriched in saliva compared to model calculus are largely aerobic, while
+Species enriched in saliva compared to model calculus are largely aerobic or
+facultative anaerobic, while
 species enriched in model calculus compared to saliva are mainly anaerobes
 [@fig-diffabund-byoc].
 
@@ -347,7 +357,7 @@ than biofilm samples from this study (Supp. Mat.)<!--link to supp mat-->.
 
 ```{r}
 #| label: fig-genus-env
-#| fig-cap: "Mean relative abundances at the genus level between sample types. NA = other genera."
+#| fig-cap: "Core microbiome of the different types of samples represented as mean relative abundances at the genus level. NA = other genera."
 genus_counts_long %>%
   left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
   filter(str_detect(Env, "plaque|calculus")) %>%
@@ -442,15 +452,90 @@ compar_comp_2
 
 Model calculus samples are distinct from both the oral reference samples and
 the biofilm model reference samples. They are separated from oral reference samples
-mainly on PC1, and from biofilm model reference samples on PC2. The highest
+mainly on PC1, and from biofilm model reference samples (and, to some extent, oral samples)
+on PC2. The highest
 negative contributions are a mix of all types of aerotolerance, while the
 positive contributions are mostly (facultative) anaerobes, with *Enterococcus* spp.
 as the top three positive contributors to PC1. Top negative contributors are
-*Capnocytophaga* spp. The top positive contributors to PC2 are all anaerobes,
+*Capnocytophaga* spp as well as the aerobes *Corynebacterium matruchotii* and
+*Rothia dentocariosa*. The top positive contributors to PC2 are all anaerobes,
 mainly from the genus *Selenomonas*. Top negative contributors to PC2 are a mix of
 aerotolerances, with many *Streptococcus* spp. 
 
-## FTIR
+```{r}
+#| label: comp-diffabund-fig-setup
+compar_da_pca <- plaque_logf_full %>%
+  inner_join(compar_pca_loadings, by = "species")
+
+ compar_logf <- compar_da_pca %>%
+   arrange(desc(abs(lfc))) %>%
+   slice_head(n = 90) %>%
+   ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +  
+    theme_bw() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_blank()
+          ) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50")
+
+compar_logf_pc1 <- compar_da_pca %>%
+  arrange(desc(abs(PC1))) %>% # order by absolute value of loadings
+  slice_head(n = 90) %>% # show top 30 species (3 groups * 30 = 90)
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +  
+    theme_bw() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_blank()
+          ) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50")
+
+
+compar_logf_pc2 <- compar_da_pca %>%
+  arrange(desc(abs(PC2))) %>%
+  slice_head(n = 90) %>% 
+  mutate(`Oxygen tolerance` = factor(
+    `Oxygen tolerance`, levels = c("aerobe", "anaerobe", "facultative anaerobe"))
+    ) %>%
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    theme_bw() +
+    facet_wrap(~ env) +
+    theme(axis.title.y = element_blank()) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_x_continuous(limits = layer_scales(compar_logf_pc1)$x$get_limits()) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50", drop = FALSE)
+```
+
+```{r}
+#| label: fig-diffabund-comp2
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, triangles in modern calculus, diamonds are enriched in subgingival plaque, and squares in supragingival plaque. Plot shows the top 30 loadings (absolute value) in PC1 (A) and PC2 (B) between model calculus and other sample types, ordered by decreasing log-fold change. Bars represent standard error."
+
+compar_logf_pc1 / compar_logf_pc2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
+```
+
+Based on the differential abundance analysis on the top loadings from PC1,
+the main differences between model
+calculus and oral reference samples, are that the oral reference samples are
+enriched with species with a diverse oxygen tolerance from a wide range of genera,
+while the model calculus is enriched with *Enterococcus* spp. The largest
+differences occur in *Corynebacterium matruchotii*, *Rothia dentocariosa*, and
+*Capnocytophaga gingivalis* ([@fig-diffabund-comp2]A).
+This is echoed in the differential abundance analysis on top loadings from PC2,
+where most of the species are enriched in model calculus, all of which are
+anaerobes, and the largest differences occurring in *Cryptobacterium curtum*,
+*Eggerthella lenta*, and *Mogibacterium diversum* ([@fig-diffabund-comp2]B).
+
+## Increasing mineralisation over the course of the experiment
 
 ```{r}
 #| label: results-ftir-setup
@@ -486,10 +571,10 @@ grind_all_plot <- ftir_grind_data %>%
 #| fig-cap: "Select spectra from all experiment sampling days."
 #| layout-ncol: 2
 #| fig-subcap:
-#|  - "A"
-#|  - "B"
-#|  - "C"
-#|  - "D"
+#|  - "Spectra from day 7 samples."
+#|  - "Spectra from day 12 samples."
+#|  - "Spectra from day 16 samples."
+#|  - "Spectra from day 24 samples (final product)."
 # day 7
 ftir_data %>%
   filter(
@@ -551,15 +636,13 @@ around 3400 cm$^{-1}$, as well as three marked CH~3~ and CH$_2$ stretching
 vibrations at 2960, 2920, and 2850 cm$^{-1}$. There is a clear amide I peak at
 1650 and a less pronounced amide II peak at 1545 cm$^{-1}$. 
 In the 'fingerprint' region, C--O$_3^{2-}$ at 1450 and 1400 absorbance bands
-corresponding to the v~3~ asummetric stretching vibrations, P--O~4~ absorbance band
+corresponding to the v~3~ asymmetric stretching vibrations, P--O~4~ absorbance band
 corresponding to the v~3~ asymmetric stretching vibrations
 at 1080 cm$^{-1}$, and minor phosphate absorption bands around 500 cm$^{-1}$ in
 sample F7.1A6, but absent in sample F7.2D1. The absorption bands at 1080
 cm$^{-1}$, and 1040-1047 cm$^{-1}$ and minor bending absorption bands of the
 phosphate doublet around 605 cm$^{-1}$ and 560 cm$^{-1}$ in sample F7.2D1, but
-absent in sample F7.1A6. The absorption bands at 1080 cm$^{-1}$ could be a C--N
-stretching mode from aliphatic amines, but may also come from silicate contamination
-(typical quartz doublet at 797, 780).
+absent in sample F7.1A6.
 The relative absorbance of O--H and Amide I and II bands are higher than the
 phosphate bands, representing a relatively higher content of lipids and proteins
 than inorganic content. Large variation between spectra.
@@ -585,45 +668,39 @@ cm$^{-1}$, well-defined PO~4~ doublet at 600-550 cm$^{-1}$. Amide I band,
 with small amide II and III bands. Carbonate peaks also present.
 Very little variation between all of the spectra.
 
-
-
-The main difference in the samples across the experiment, with
-increasing age, is an
-increase in the main PO~4~ v~3~ peak at around 1040 cm$^{-1}$, appearance of
-the phosphate doublet around 600 and 560 cm$^{-1}$ between day 12
-and 16, an increase in the carbonate peaks at 1458-1450 cm$^{-1}$ and 1415-1420
-cm$^{-1}$, an increase
-in the ratio of the Amide I/II to peaks at around 1650 and 1540 cm$^{-1}$,
-and a reduction of the C--H~2~ and C--H~3~ stretching vibrations at 2960,
-2920, and 2850 cm$^{-1}$.
-
-High lipid and protein content consistent with the presence of extracellular
-polysaccharides and bacteria within a matrix. Microbial DNA and RNA may be
-visible from peaks around 1200--800 cm$^{-1}$ on days 7 and 12, which are
-later obscured by the increasing phosphate peak at 1040 cm$^{-1}$
-[@jainIsolationCharacterization2013]. The presence of water indicated by
-the O--H stretch is also consistent with a biofilm, which is around 90%
-water [@bergerOralBiofilms2018]. As the samples mature, the ratio of proteins
-and lipids to phosphates shift from predominance of organic content to
-inorganic content in the form of carbonated hydroxyapatite.
-
-Early spectra, days 7 and 12, are also similar to collagen spectra, with the
-OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
-1659, 1552, and 1240 cm$^{-1}$, respectively 
-[@rohanizadehUltrastructuralStudy2005; @martinezcortizasLinkingStructural2020].
+```{r}
+#| label: compare-calc-spectra
+#| warning: false
+#| fig-cap: "Spectra from archaeological calculus, modern reference calculus, and artificial calculus are compared. Absorbance was shifted to allow comparison of the three spectra, so the absorbance should be interpreted as relative, not absolute."
+ftir_data %>%
+  filter(
+    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
+      sample == "modern_ref1"
+    ) %>%
+  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.45,
+                         TRUE ~ abs)) %>% 
+  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+    geom_line() +
+    theme_classic() +
+    # scale_x_continuous(
+    #   n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    # ) +
+    scale_x_reverse() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
+```
 
 The archaeological and modern reference spectra are largely indistinguishable and
 consist of an O--H absorbance band (3400 cm$^{-1}$), CH~3~ bands (3000--2900 cm$^{-1}$),
 carbonate (1420, 1458-1450, 875-870 cm$^{-1}$), amide I band (1650 cm$^{-1}$), and phosphates
 (1040, 604, 566 cm$^{-1}$).
+The model calculus samples from the end of the experiment are similar to both
+reference samples. The main difference is a lower organic component in reference
+samples seen as a reduced amide I peak at around 1637 compared to the carbonate
+peak at around 1420, and an absence of amide II and III. Also a reduction in
+CH~3~ bands at 3000-2900 cm$^{-1}$.
 
-The biofilm samples from the end of the experiment are similar to both reference
-samples. The main
-difference is a lower organic component in reference samples seen as a reduced
-amide I peak at around 1637 compared to the carbonate peak at around 1420, and
-an absence of amide II and III. Also a reduction in CH~3~ bands at 3000-2900 cm$^{-1}$.
-
-### Grinding curves
+### Similar crystallinity and order compared to reference calculus
 
 ```{r message=FALSE, warning=FALSE}
 #| label: fig-grind-curve-inset
@@ -663,12 +740,11 @@ grind_calc_plot <- ftir_grind_data %>%
       ) +
     scale_colour_viridis_d(end = 0.4)
 
-grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right = 1, top = 1) + 
+grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.52, right = 1, top = 1.03) + 
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 ```
 
 <!-- FTIR spectra comparison of artificial and reference dental calculus -->
-
 Samples were compared to the results of @asscherAtomicDisorder2011 and
 @asscherVariationsAtomic2011, and the slopes
 of the trend lines for our model calculus are similar to those of fresh bone and

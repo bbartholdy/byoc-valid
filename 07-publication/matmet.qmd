@@ -12,7 +12,7 @@
 
 In this study we employ a multispecies oral biofilm model following a modified
 protocol from Sissons and colleagues [-@sissonsMultistationPlaque1991] and
-Shellis [-@shellisSyntheticSalivaCultural1978]. The setup comprises a polypropylene
+Shellis [-@shellisSyntheticSaliva1978]. The setup comprises a polypropylene
 24 deepwell PCR plate (KingFisher 97003510) with a lid containing 24 pegs (substrata), which
 is autoclaved at 120&deg;C, 1 bar overpressure, for 20 mins.
 
@@ -23,7 +23,7 @@ stomach (Type III, Sigma M1778),
 5 g/l trypticase peptone (Roth 2363.1), 10 g/l proteose peptone (Oxoid LP0085),
 5 g/l yeast extract (BD 211921), 2.5 g/l KCl, 0.35 g/l NaCl, 1.8 mmol/l CaCl~2~,
 5.2 mmol/l Na~2~HPO~4~ [@sissonsMultistationPlaque1991], 6.4 mmol/l NaHCO~3~
-[@shellisSyntheticSalivaCultural1978], 2.5 mg/l haemin. This is subsequently
+[@shellisSyntheticSaliva1978], 2.5 mg/l haemin. This is subsequently
 adjusted to pH 7 with NaOH pellets and stirring, autoclaved (15 min, 120&deg;C,
 1 bar overpressure), and supplemented with 5.8 \(mu\)mol/l menadione, 5 mmol/l urea,
 and 1 mmol/l arginine [@sissonsMultistationPlaque1991].
@@ -50,7 +50,7 @@ inoculation.
 Starch treatments were initiated on day 9 to avoid starch granule counts being
 affected by $alpha$-amylase hydrolysis from inoculation saliva. An $\alpha$-amylase
 assay confirmed the absence of any $\alpha$-amylase activity in the system
-[@bartholdyInvestigatingBiases2021].
+[@bartholdyInvestigatingBiases2022].
 Starch treatments replaced sucrose treatments, occurring twice per day
 for six minutes. The starch treatments involved transferring the substrata to a
 new plate containing a 0.25% (w/v) starch from potato (Roth 9441.1) solution, a
@@ -63,7 +63,7 @@ and during treatments, the rpm was increased to 60.
 After 15 days, mineralisation was encouraged with a
 calcium phosphate monofluorophosphate urea (CPMU) solution containing
 20 mmol/l CaCl~2~, 12 mmol/l NaH~2~PO~4~, 5 mmol/l Na~2~PO~3~F, 500 mmol/l Urea
-[@pearceConcomitantDepositionStrontium1987; @sissonsMultistationPlaque1991],
+[@pearceConcomitantDeposition1987; @sissonsMultistationPlaque1991],
 and (0.04 g/l MgCl). The substrata were submerged in 1 ml/well CPMU five times daily,
 every two hours, for six minutes. During the mineralisation period, starch treatments
 were reduced to once per day after the five CPMU treatments. This cycle was repeated
@@ -138,7 +138,7 @@ Species with lower than 0.001% relative abundance were removed.
 SourceTracker [@knightsSourceTracker2011] was used to estimate source composition
 of the oral biofilm model samples using a Bayesian framework. Sampes were compared
 with oral and environmental controls to detect potential external contamination.
-The R package *decontam* v`r packageVersion("decontam")` [@R-decontam] was used
+The R package *decontam* v`r packageVersion("decontam")` [@Rdecontam] was used
 to identify potential contaminants
 using DNA concentrations with a probability threshold of 0.95
 and negative controls with a probability threshold of 0.05. Putative contaminants
@@ -208,5 +208,5 @@ disorder. Disorder is a steep slope and large FWHM.
 <!-- R packages used -->
 Statistical analysis was conducted in R Statistical Software `r version$version.string`
 (`r version$nickname`) [@Rbase]. Data cleaning and wrangling performed with packages from
-**tidyverse** [@tidyverse2019]. Plots were created using ggplot2 [@Rggplot].
+**tidyverse** [@tidyverse2019]. Plots were created using ggplot2 [@ggplot2].
 

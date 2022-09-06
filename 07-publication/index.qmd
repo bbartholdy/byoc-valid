@@ -45,9 +45,11 @@ env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove 
 options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
         ggplot2.discrete.fill = function() scale_fill_viridis_d())
 ## Compile refs.bib using rbbt package ##
-# cite_keys <- rbbt::bbt_detect_citations(here("analysis/paper/paper.Rmd")) 
+# qmd_files <- list.files("../07-publication/", ".qmd")
+# cite_keys <- rbbt::bbt_detect_citations(qmd_files)
 # cite_keys <- unlist(cite_keys, use.names = FALSE)
-# rbbt::bbt_write_bib(here("analysis/paper/refs.bib"), keys = cite_keys, overwrite = T, translator = "bibtex")
+# ignore <- cite_keys[stringr::str_detect(cite_keys, "^fig-")]
+# rbbt::bbt_write_bib(here("07-publications/references.bib"), keys = cite_keys, overwrite = T, translator = "bibtex", ignore = ignore)
 # ## end refs.bib ##
 # 
 # ## Word count ##
