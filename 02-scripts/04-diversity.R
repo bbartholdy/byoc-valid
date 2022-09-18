@@ -1,6 +1,7 @@
 library(mixOmics)
 library(vegan)
-library(tidyverse)
+library(dplyr)
+library(tibble)
 library(here)
 
 otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
@@ -104,8 +105,6 @@ class(clr_byoc_copy) <- "matrix"
 clr_byoc_datf <- clr_byoc_copy %>%
   as_tibble(rownames = "sample")
 
-write_tsv(clr_byoc_datf, "05-results/clr-byoc.tsv")
-
 spca_byoc <- spca(clr_byoc, ncomp = 10, scale = F)
 byoc_explain_var <- spca_byoc$prop_expl_var$X
 
@@ -149,9 +148,6 @@ pca_loadings <- spca_species$rotation %>%
   dplyr::select(species, PC1, PC2, PC3) %>%
   arrange(desc(abs(PC1)))
 
-save(spca_species, file = here("05-results/spca_species.rda"))
-write_tsv(pca_loadings, here("05-results/all-pca-loadings.tsv"))
-
 Y <- tibble("#SampleID" = rownames(clr_species)) %>%
   left_join(
     comp_metadata,
@@ -180,4 +176,7 @@ byoc_braydist %>%
   mutate(day = if_else(day.y > day.x, day.y, day.x)) %>%
   ggplot(aes(x = day, y = value)) +
     geom_line()
-  
+
+save(spca_species, file = here("05-results/spca_species.rda"))
+write_tsv(pca_loadings, here("05-results/all-pca-loadings.tsv"))
+write_tsv(clr_byoc_datf, "05-results/clr-byoc.tsv")

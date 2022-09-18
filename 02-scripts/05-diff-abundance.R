@@ -1,5 +1,7 @@
 # Compare species abundance for biofilm samples and modern plaque/calculus
-library(tidyverse)
+library(dplyr)
+library(tibble)
+library(tidyr)
 library(phyloseq)
 library(ANCOMBC)
 taxa_table <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")

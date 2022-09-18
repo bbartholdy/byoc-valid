@@ -14,7 +14,9 @@ Load necessary packages.
 library(cuperdec)
 library(decontam)
 library(here)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 ```
 
 Upload the data and metadata.

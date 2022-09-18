@@ -9,7 +9,9 @@ output:
 #| label: setup
 #| include: false
 library(here)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 library(cuperdec)
 library(patchwork)
 library(mixOmics)

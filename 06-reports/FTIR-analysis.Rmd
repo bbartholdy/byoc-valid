@@ -17,8 +17,10 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE)
 options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 library(patchwork)
+library(stringr)
 library(here)
 library(plotly)
 ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
@@ -31,7 +33,7 @@ ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 #| eval: false
 
 # Loading libraries and data
-library(tidyverse)
+library(dplyr)
 library(patchwork)
 library(here)
 ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))

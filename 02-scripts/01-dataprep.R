@@ -1,5 +1,6 @@
 library(here)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
 
 # Data upload -------------------------------------------------------------
 
@@ -41,9 +42,6 @@ sample_taxatable <- kraken_otu_filtered %>%
   pivot_wider(names_from = sample, values_from = count) %>%
   mutate(across(where(is.numeric), replace_na, 0))
 
-write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
-write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
-
 # mapping for SourceTracker
 
 st_map <- metadata %>%
@@ -63,4 +61,7 @@ st_map_nosedi <- st_map_plaque_comb %>%
   filter(Env != "sediment",
          Env != "buccal_mucosa") %>% 
   write_tsv(here("04-analysis/sourcetracker/ST_no-sedi.txt"))
+
+write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
+write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
 

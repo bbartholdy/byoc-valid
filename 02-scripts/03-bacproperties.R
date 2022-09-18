@@ -1,7 +1,8 @@
 # Bacterial properties
 
 library(BacDive)
-library(tidyverse)
+library(dplyr)
+library(tibble)
 
 
 # Upload data -------------------------------------------------------------
@@ -35,8 +36,6 @@ all_species_names <- taxatable %>%
     .$`#OTU ID`
 all_species_names[which(str_detect(all_species_names, coll("]")))]
 length(all_species_names)
-
-write_tsv(as_tibble(all_species_names), "species-list-for-bacdive.txt", col_names = F)
 
 # combine similar oxygen tolerances
 bacdive_oxytol_comb <- bacdive_oxytol %>%
@@ -84,5 +83,6 @@ bac_properties <- sample_oxytol %>%
   mutate(abs = case_when(species %in% abs_vector ~ TRUE,
                          TRUE ~ FALSE))
 
+write_tsv(as_tibble(all_species_names), "species-list-for-bacdive.txt", col_names = F)
 write_tsv(bac_properties, "01-documentation/species-properties.tsv")
 write_tsv(genus_oxytol, "01-documentation/genus-O2tolerance.tsv")

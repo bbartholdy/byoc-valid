@@ -6,7 +6,10 @@ output: html_notebook
 ```{r setup, include=FALSE}
 #library(vegan)
 library(mixOmics)
-library(tidyverse)
+library(dplyr)
+library(tibble)
+library(forcats)
+library(ggplot2)
 library(here)
 
 load(here("05-results/spca_byoc.rda"))

@@ -5,8 +5,11 @@
 
 library(decontam)
 library(cuperdec)
-library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(purrr)
 library(here)
+library(tibble)
 
 # upload data
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
@@ -119,9 +122,6 @@ otu_removed_table <- otu_filtered_table %>%
 otu_removed_long <- otu_comb_long %>%
   filter(!sample %in% remove_samples)
 
-write_tsv(all_data_long, "04-analysis/sourcetracker/source-comb_long.tsv")
-write_tsv(analysis_metadata, "01-documentation/analysis-metadata.tsv")
-
 # decontam ----------------------------------------------------------------
 
 otu_prev_matrix <- otu_removed_table %>%
@@ -147,8 +147,6 @@ neg_controls <- analysis_metadata %>%
     TRUE ~ FALSE)) %>%
   rename(sample = `#SampleID`) %>%
   dplyr::select(sample, neg)
-
-write_tsv(neg_controls, "04-analysis/decontam/negative-controls.tsv")
 
 # Need to order neg_controls according to otu_filtered_matrix
 
@@ -222,5 +220,11 @@ true_contaminants <- contaminant_species[!contaminant_species %in% oral_taxa$spe
 otu_decontam <- otu_removed_table %>%
   filter(!(`#OTU ID` %in% true_contaminants))
 
+# export sourcetracker and metadata
+write_tsv(all_data_long, "04-analysis/sourcetracker/source-comb_long.tsv")
+write_tsv(analysis_metadata, "01-documentation/analysis-metadata.tsv")
+
+# export decontam results
+write_tsv(neg_controls, "04-analysis/decontam/negative-controls.tsv")
 write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv"))
 write_tsv(as_tibble(true_contaminants), here("04-analysis/list-of-contaminants.txt"), col_names = F)

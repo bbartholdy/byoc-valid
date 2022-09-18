@@ -4,7 +4,10 @@ output: html_notebook
 ---
 
 ```{r setup, include=FALSE}
-library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
 library(here)
 metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
 analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))

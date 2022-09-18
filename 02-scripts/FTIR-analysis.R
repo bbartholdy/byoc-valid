@@ -1,4 +1,8 @@
-library(tidyverse)
+library(readr)
+library(dplyr)
+library(tibble)
+library(tidyr)
+library(stringr)
 library(here)
 library(patchwork)
 
@@ -102,7 +106,8 @@ names(ftir_data_list) <- sample_names
 
 ftir_metadata <- sample_names %>%
   as_tibble() %>%
-  mutate(sample = value) %>%
+  mutate(sample = value,
+         analysis_id = sample) %>% # keep original sample ID
   separate_rows(sample, sep = "\\+") %>% 
   mutate(
     sample_id = str_extract(sample, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
@@ -167,7 +172,7 @@ ftir_data_list_cleaned <- lapply(ftir_data_list, clean_ftir)
 
 ftir_data <- do.call(bind_rows, ftir_data_list_cleaned)
 
-ftir_data_long <- inner_join(ftir_metadata, ftir_data, by = "sample")
+ftir_data_long <- inner_join(ftir_metadata, ftir_data, by = c("analysis_id" = "sample"))
 
 write_csv(grind_data, "05-results/grind-data_cleaned.csv")
 write_csv(ftir_data_long, "05-results/ftir-data_long.csv")

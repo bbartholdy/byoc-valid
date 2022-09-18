@@ -41,6 +41,7 @@ vignettes/*.pdf
 
 # Output created by Quarto
 07-publication/_output/
+/.quarto/
 
 # R Environment Variables
 .Renviron
@@ -65,6 +66,3 @@ vignettes/*.pdf
 **/*.fna
 **/*.fa
 **/*.nb.html
-
-
-/.quarto/
