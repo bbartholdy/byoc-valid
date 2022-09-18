@@ -1,13 +1,11 @@
 # Compare species abundance for biofilm samples and modern plaque/calculus
-  # compare aerobic and anaerobic
-  # genus-level comparison
 library(tidyverse)
 library(phyloseq)
 library(ANCOMBC)
 taxa_table <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
 analysis_metadata <- readr::read_tsv("01-documentation/analysis-metadata.tsv")
 experiment_metadata <- readr::read_tsv("01-documentation/experiment-metadata.tsv")
-bac_properties <- read_tsv("01-documentation/species-properties.tsv")
+#bac_properties <- read_tsv("01-documentation/species-properties.tsv")
 # function to calculate bias-corrected log-observed abundances
 # from vignette("ANCOMBC")
 
