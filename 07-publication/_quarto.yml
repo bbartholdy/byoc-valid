@@ -5,16 +5,36 @@ project:
   pre-render: _bib.R
 execute: 
   freeze: true
-title: TBD
+title: Assessing the validity of a mineralised oral biofilm model as a suitable proxy for dental calculus
 author: 
-  -name: B.P. Bartholdy
-  -name: I. Velsko
-  -name: S. Gur-Arieh
-  -name: Z. Fagernäs
-  -name: S. Seng
-  -name: A.G. Henry
-citation-location: document
+  - name: Bjørn Peare Bartholdy
+    orcid: 0000-0003-3985-1016
+    corresponding: true
+    affiliations:
+    - ref: leiden
+  - name: Irina M. Velsko
+    affiliations:
+    - ref: mpi
+  - name: Shira Gur-Arieh
+    affiliations: Haifa University
+  - name: Zandra Fagernäs
+    affiliations:
+    - ref: mpi
+  - name: Sophie Seng
+    affiliations:
+    - ref: mpi
+  - name: Amanda G. Henry
+    affiliations:
+    - ref: leiden
+affiliations:
+  - id: leiden
+    name: Leiden University
+    city: Leiden
+  - id: mpi
+    name: Max Planck Institute for Evolutionary Anthropology
+    city: Leipzig
 bibliography: references.bib
+csl: apa.csl
 abstract-title: Abstract
 abstract: |
   This is the abstract for the paper.
@@ -24,3 +44,11 @@ format:
   pdf:
     keep-tex: true
     documentclass: article
+    geometry:
+      - top=30mm
+      - left=30mm
+      - heightrounded
+    include-in-header: 
+      text: |
+        \usepackage{lineno}
+        \linenumbers

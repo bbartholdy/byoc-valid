@@ -71,3 +71,8 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
 # Discussion
 
 {{< include disc.qmd >}}
+
+# References {-}
+
+::: {#refs}
+:::

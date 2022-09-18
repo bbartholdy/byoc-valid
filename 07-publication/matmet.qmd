@@ -78,11 +78,17 @@ detect starch contamination.
 ## Metagenomics
 
 ```{r sample-data}
-dna_samples <- dna_metadata %>%
-  filter(Study == "this_study") %>%
-  dplyr::select(`#SampleID`, Env)
-dna_samples %>%
-  knitr::kable()
+dna_samples <- dna_experiment_metadata %>%
+  #filter(Study == "this_study") %>%
+  dplyr::select(`#SampleID`, Env, day) #%>%
+# dna_samples %>%
+#   knitr::kable(col.names = c("Sample ID", "Sample type", "Sampling day"))
+
+dna_experiment_metadata %>%
+  group_by(Env, day) %>%
+  count() %>%
+  arrange(day, desc(Env)) %>% 
+  knitr::kable(col.names = c("Sample type", "Sampling day", "n"))
 ```
 
 

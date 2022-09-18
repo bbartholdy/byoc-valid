@@ -42,6 +42,20 @@ species_properties <- bac_properties %>%
     ) %>%
   ungroup()
 
+no_match <- bac_properties %>%
+  right_join(species_counts_long, by = "species") %>%
+  filter(is.na(`Oxygen tolerance`)) %>%
+  .$species %>%
+  unique()
+
+# summary of species counts
+byoc_summ <- species_counts_long %>%
+  filter(str_detect(sample, "SYN"),
+         count > 0) %>%
+  group_by(sample) %>%
+  count(species) %>%
+  summarise(count = sum(n))
+
 # convert alpha diversity data to long format
 alpha_div_long <- alpha_div %>%
   pivot_longer(cols = where(is.numeric), names_to = "index") %>%
@@ -173,6 +187,10 @@ alpha_div_long %>%
 ```
 
 <!-- species diversity -->
+After contamination removal, samples consisted of
+`r paste(range(byoc_summ$count), collapse = " and ")`
+with a mean of
+`r paste(round(mean(byoc_summ$count), 2))`.
 We used the Shannon Index to assess the species diversity and richness in our
 samples over the course of the experiment. Samples were grouped into sampling
 categories due to low sample sizes on sampling days (inoc = days 0, 3, 5; treatm =
@@ -259,7 +277,8 @@ byoc_comp_2 #+ plot_layout(guides = "collect", ncol = 2) + plot_annotation(tag_l
 The species profiles of the saliva inoculate used in our experiment were
 distinct from both medium and model calculus samples. Most of the separation
 is on PC1 of the sPCA, with minimal separation on PC2. Most of the model
-calculus samples also cluster separately from the medium samples on PC2.
+calculus samples also cluster separately from the medium samples on PC2, but
+maintaining some overlap with more mature medium samples.
 The largest negative loadings on PC1, separating inoculate from other samples, are an
 abundance of aerobes and facultative anaerobes in the inoculate, especially
 *Rothia* and *Neisseria* spp. Conversely, positive loadings consist mainly of
@@ -300,8 +319,9 @@ byoc_logf_full %>%
 
 Species enriched in saliva compared to model calculus are largely aerobic or
 facultative anaerobic, while
-species enriched in model calculus compared to saliva are mainly anaerobes
-[@fig-diffabund-byoc].
+species enriched in model calculus compared to saliva are mainly anaerobes.
+Compared to saliva, species differences between medium and model calculus are
+less pronounced [@fig-diffabund-byoc].
 
 ### Lower diversity in artificial samples than oral references
 
@@ -630,7 +650,6 @@ ftir_data %>%
     scale_x_reverse()
 ```
 
-<!-- needs to be condensed!! -->
 Day 7 spectra have large O--H and amide A absorbance bands in stretching mode
 around 3400 cm$^{-1}$, as well as three marked CH~3~ and CH$_2$ stretching
 vibrations at 2960, 2920, and 2850 cm$^{-1}$. There is a clear amide I peak at
@@ -703,7 +722,7 @@ CH~3~ bands at 3000-2900 cm$^{-1}$.
 ### Similar crystallinity and order compared to reference calculus
 
 ```{r message=FALSE, warning=FALSE}
-#| label: fig-grind-curve-inset
+#| label: fig-grind-curve
 #| fig-cap: "(A) Grinding curves of multiple materials; and (B) calculus-only materials, including biofilm samples from three days, and an archaeological calclulus sample."
 # produce plot with grind curve for all samples
 grind_all_plot <- ftir_grind_data %>%
