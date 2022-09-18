@@ -76,6 +76,11 @@ Brief summary descriptions of the main folders are as follows ([more details her
 - `06-reports`: Contains presentations, summary notebooks of particular stages or packages of the project. Used for informing the final publication.
 - `07-publication`: Contains main text, figures, supplementary files and data. Optionally can formatted with bookdown for pretty online rendering with direct links to intermediate files in `04-analysis`.
 
+
+```bash
+tree -I renv
+```
+
 ```bash
 README.md
 conda_environment.yml

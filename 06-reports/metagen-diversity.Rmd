@@ -498,7 +498,7 @@ row_side_colours <- analysis_colours %>%
 cim(spca_species, cutoff = 0.5, row.sideColors = row_side_colours$env_col)
 ```
 
-Time-lag plot of Bray-Curtis data
+Time-lag plot of Bray-Curtis data (under construction)
 
 ```{r}
 # comm_matrix <- byoc_otu_matrix %>%

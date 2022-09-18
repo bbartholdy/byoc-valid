@@ -33,6 +33,7 @@ list_of_contaminants <- read_tsv(here("04-analysis/decontam/list-of-contaminants
 oral_taxa <- cuperdec_database_ex %>%
   filter(isolation_source == "oral")
 bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
+genus_oxytol <- read_tsv(here("01-documentation/genus-O2tolerance.tsv"))
 kraken_otu <- read_tsv(here("04-analysis/OTUfilter_table.tsv"))
 otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
@@ -58,8 +59,17 @@ genus_counts_long <- species_counts_long %>%
   ungroup()
 
 # join species counts and bacterial properties (oxygen tolerance and ABS)
+  # genus oxygen tolerance used in cases where no information exists at species level
 species_properties <- bac_properties %>%
   right_join(species_counts_long, by = "species") %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  left_join(
+    rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
+    ) %>%
+  mutate(`Oxygen tolerance` = case_when(
+    is.na(`Oxygen tolerance`) ~ genus_oxytol, # if no species-level info available
+    TRUE ~ `Oxygen tolerance`)
+    ) %>%
   group_by(sample) %>%
   mutate(
     abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
@@ -305,7 +315,7 @@ oral_plot <- all_data_long %>%
   ggplot(aes(y = SampleID, x = count, fill = oral_source)) +
     geom_col(position = "fill") +
     scale_y_discrete(limits = day_order$`#SampleID`) +  
-    scale_fill_viridis_d(option = "C") +
+    scale_fill_viridis_d(option = "D") +
     theme_minimal() +
     theme(
       panel.grid.major.y = element_blank(),
@@ -477,14 +487,18 @@ spca_compar <- spca_species$x %>% # comparative samples
 # loadings of species
 exp_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
   as_tibble(rownames = "species") %>%
-  left_join(bac_properties, by = "species") %>% 
+  #left_join(bac_properties, by = "species") %>% 
+  left_join(species_properties, by = "species") %>% 
   dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
-  arrange(desc(abs(PC1)))
+  arrange(desc(abs(PC1))) %>%
+  distinct(species, .keep_all = T)
+
 comp_pca_loadings <- spca_species$rotation %>% # comparative samples
   as_tibble(rownames = "species") %>%
-  left_join(bac_properties, by = "species") %>% 
+  left_join(species_properties, by = "species") %>% 
   dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
-  arrange(desc(abs(PC1)))
+  arrange(desc(abs(PC1))) %>% 
+  distinct(species, .keep_all = T)
 #exp_pca_loadings
 ```
 
@@ -508,7 +522,8 @@ Information on the oxygen tolerance of bacterial species was downloaded from
 A total of **`r length(no_match)`** out of
 **`r length(unique(species_counts_long$species))`**
 (`r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`)
-species did not have a match on BacDive.
+species did not have a match on BacDive. These were assigned oxygen tolerance
+based on the most common occurrence within the genus they belong.
 
 A list of amylase-binding streptococci (ABS) was created based on
 @nikitkovaStarchBiofilms2013.
@@ -675,6 +690,60 @@ driver of differences between early and late samples seems to be that earlier
 samples are enriched with aerobes and facultative anaerobes, while later samples
 are dominated by anaerobes.
 
+```{r}
+# trend of top diff abund species over duration of experiment
+  # Select species with highest 'drop-off' btw medium and calculus
+
+top_da_species <- byoc_logf_full %>%
+  filter(abn == "medium") %>%
+  arrange(desc(lfc)) %>%
+  distinct(species) %>%
+  slice_head(n = 15) %>%
+  .$species
+
+clr_byoc_long %>%
+  right_join(experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% top_da_species) %>%
+  ggplot(aes(x = day, y = clr_count, col = species)) +
+    geom_jitter(width = 0.2) +
+    facet_wrap(~ species)
+
+# seems to be a gradual decline rather than a sharp dropoff, supporting that
+  # differences btw medium and calculus are related to maturation stage of biofilm (Velsko et al. 2019)
+
+# trend with bacteria with highest increase in model calculus
+
+top_da_species2 <- byoc_logf_full %>%
+  filter(abn == "byoc_calculus" |
+           str_detect(species, "Enterococcus")) %>%
+  arrange(desc(lfc)) %>%
+  distinct(species) %>%
+  slice_head(n = 15) %>%
+  .$species
+
+top_species_counts <- clr_byoc_long %>%
+  arrange(desc(clr_count)) %>%
+  distinct(species) %>%
+  slice_head(n = 15) %>%
+  .$species
+
+clr_byoc_long %>%
+  right_join(experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% top_species_counts) %>%
+  ggplot(aes(x = day, y = clr_count, col = species)) +
+  geom_jitter(width = 0.2) +
+  facet_wrap(~ species)
+
+clr_byoc_long %>%
+  right_join(experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% top_da_species2) %>%
+  ggplot(aes(x = day, y = clr_count, col = species, shape = Env)) +
+  geom_jitter(width = 0.2) +
+  facet_wrap(~ species)
+
+```
+
+
 #### Comparative samples
 
 The core microbiome of plaque and calculus samples.
@@ -689,11 +758,14 @@ genus_counts_long %>%
   summarise(rel_abund = mean(rel_abund)) %>%
   mutate(#rel_abund = count / sum(count),
          genus = case_when(rel_abund < 0.06 ~ NA_character_,
-                             TRUE ~ genus)) %>%
+                             TRUE ~ genus),
+         label = str_extract(genus, "\\w{2}")
+           ) %>%
   #filter(rel_abund > 0.05) %>% 
-  ggplot(aes(x = "", y = rel_abund, fill = genus)) +
-    geom_col() +
+  ggplot(aes(x = "", y = rel_abund, fill = genus, label = label)) +
+    geom_col(col = "grey50") +
     coord_polar(theta = "y", start = 0) +
+    geom_label(position = position_stack(vjust = 0.5), col = "white", show.legend = F) +
     facet_wrap(~ Env) +
     theme_void() +
     #scale_fill_manual(viridisLite::viridis())) 
@@ -701,8 +773,8 @@ genus_counts_long %>%
 ```
 
 The main overlap between the model calculus and oral comparative
-samples are the high relative abundance of *Streptococcus* and
-*Veillonella*. Model calculus is consists mostly of *Enterococcus*
+samples are the high relative abundance of *Streptococcus*.
+Model calculus consists mostly of *Enterococcus*
 and *Veillonella* spp., while oral comparative samples are more
 diverse (consistent with results from alpha diversity).
 
@@ -1075,7 +1147,7 @@ plaque_logf_pc2 <- plaque_logf_full %>%
 
 ```{r}
 #| label: fig-diffabund-plaque2
-#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, squares are enriched in saliva, and triangles in medium. Plot shows the top 30 species in PC1 (A) and PC2 (B) between model calculus and other sample types. Bars represent standard error."
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, triangles in modern calculus, diamonds are enriched in subgingival plaque, and squares in supragingival plaque. Plot shows the top 30 species in PC1 (A) and PC2 (B) between model calculus and other sample types. Bars represent standard error."
 
 plaque_logf_pc1 / plaque_logf_pc2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
 ```
@@ -1110,9 +1182,12 @@ model biofilm studies, but more comparative studies are needed to confirm
 (both this study and comparative).
 Very few aerobes made it into the model. Apart from the donated saliva, very few
 aerobes were detected in any of the experimental samples. *Rothia* spp. disappeared
-between saliva and medium samples. We may need to increase the frequency of
-medium replacement (e.g. every two days instead of three) to help promote the
-growth of aerobes. *Capnocytophaga* and *Actinomyces* spp. are predominantly
+between saliva and medium samples. We may need to reduce the frequency of
+medium replacement (currently every three days) to help promote the
+growth of slower growing organisms.
+
+*Capnocytophaga* and *Actinomyces* spp. are
+predominantly
 (facultative) anaerobes, so their deficiency must be attributed to different
 reasons. Both *Capnocytophaga* and *Neisseria* spp. are fastidious and
 require an atmosphere with at least 5% carbon dioxide to thrive, so the model
