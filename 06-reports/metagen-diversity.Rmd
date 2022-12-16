@@ -25,6 +25,17 @@ bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"
 treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
 env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
 
+alpha_div_long <- alpha_div %>%
+  pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+  left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
+  mutate(day_grouped = case_when( # group days to increase sample size
+    day < 6 ~ "inoc",
+    day > 6 & day < 24 ~ "treatm",
+    day == 24 ~ "final"),
+    day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "final"))
+    )
+
 experiment_colours <- experiment_metadata %>%
   arrange(desc(day)) %>% 
   mutate(treat_col = case_when(
@@ -135,22 +146,41 @@ experiment_metadata_ext <- experiment_metadata %>%
                                day == 24 ~ "final")
          )
 
-alpha_div %>% 
+# alpha_div %>% 
+#   #as_tibble(rownames = "sample") %>%
+#   #rename("#SampleID" = sample) %>% 
+#   left_join(experiment_metadata_ext, by = c("sample" = "#SampleID")) %>% 
+#   mutate(day = as_factor(day)) %>% 
+#   filter(!is.na(day)) %>% 
+#   ggplot(aes(x = day_group, y = shannon, col = day_group)) +
+#     geom_boxplot(outlier.colour = NA) +
+#     geom_jitter(width = 0.2) +
+#     scale_colour_viridis_d(option = "D") +
+#     theme_minimal() +
+#     theme(legend.position = "none",
+#           panel.grid.major.x = element_blank(),
+#           panel.grid.minor.y = element_blank(),
+#           axis.title.x = element_blank()) +
+#     scale_x_discrete(limits = c("inoc", "treatm", "final"))
+
+alpha_div_long %>% 
   #as_tibble(rownames = "sample") %>%
   #rename("#SampleID" = sample) %>% 
-  left_join(experiment_metadata_ext, by = c("sample" = "#SampleID")) %>% 
+  #left_join(experiment_metadata, by = c("sample" = "#SampleID")) #%>% 
   mutate(day = as_factor(day)) %>% 
   filter(!is.na(day)) %>% 
-  ggplot(aes(x = day_group, y = shannon, col = day_group)) +
+  ggplot(aes(x = day_grouped, y = value, col = day_grouped)) +
     geom_boxplot(outlier.colour = NA) +
     geom_jitter(width = 0.2) +
+    facet_wrap(~ index, scales = "free_y") +
     scale_colour_viridis_d(option = "D") +
     theme_minimal() +
     theme(legend.position = "none",
           panel.grid.major.x = element_blank(),
           panel.grid.minor.y = element_blank(),
-          axis.title.x = element_blank()) +
-    scale_x_discrete(limits = c("inoc", "treatm", "final"))
+          axis.title.x = element_blank()) #+
+    #scale_x_discrete(limits = c("inoc", "treatm", "final"))
+
 ```
 
 Slight decrease in Shannon diversity over the course of the experiment.

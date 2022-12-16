@@ -3,6 +3,8 @@ library(vegan)
 library(dplyr)
 library(tibble)
 library(here)
+library(purrr)
+library(readr)
 
 otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 metadata <- read_tsv(here("01-documentation/metadata.tsv"))
@@ -36,6 +38,13 @@ comp_metadata <- analysis_metadata %>%
     #Env != "modern_calculus"
   )
 
+comp_ext_metadata <- analysis_metadata %>%
+  filter(
+    Env != "skin", 
+    Env != "indoor_air"
+    #Env != "modern_calculus"
+  )
+
 sample_metadata <- experiment_metadata %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 
@@ -55,6 +64,9 @@ byoc_otu_matrix <- species_otu_matrix %>%
 comp_otu_matrix <- species_otu_matrix %>%
   subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
 
+comp_ext_otu_matrix <- species_otu_matrix %>%
+  subset(rownames(species_otu_matrix) %in% comp_ext_metadata$`#SampleID`)
+
 comp_matrix_genus <- genus_otu_matrix %>%
   subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
 
@@ -68,26 +80,41 @@ alpha_div_unb <- simpson.unb(species_otu_matrix,inverse = T)
 species_rich <- specnumber(species_otu_matrix)
 pilou_even <- alpha_div_shan/log(species_rich)
 
-alpha_div <- 
-  as_tibble(
-    alpha_div_shan, rownames = "sample"
-    ) %>%
-  full_join(
-    as_tibble(alpha_div_inv, rownames = "sample"),
-    by = "sample"
-    ) %>%
-  full_join(
-    as_tibble(alpha_div_unb, rownames = "sample"),
-    by = "sample"
-  ) %>%
-  full_join(
-    as_tibble(pilou_even, rownames = "sample"),
-    by = "sample"
-  ) %>%
-  rename(shannon = value.x,
-         simp_inv = value.y,
-         simp_unb = value.x.x,
-         pilou_even = value.y.y)
+alpha_div_list <- list(
+  alpha_div_shan, alpha_div_inv, alpha_div_unb, pilou_even, species_rich
+  )
+
+alpha_div <- lapply(alpha_div_list, as_tibble, rownames = "sample") %>%
+  reduce(full_join, by = "sample") %>%
+  rename(
+    shannon = value.x,
+    simp_inv = value.y,
+    simp_unb = value.x.x,
+    pilou_even = value.y.y,
+    richness = value
+  )
+
+
+# alpha_div <- 
+#   as_tibble(
+#     alpha_div_shan, rownames = "sample"
+#     ) %>%
+#   full_join(
+#     as_tibble(alpha_div_inv, rownames = "sample"),
+#     by = "sample"
+#     ) %>%
+#   full_join(
+#     as_tibble(alpha_div_unb, rownames = "sample"),
+#     by = "sample"
+#   ) %>%
+#   full_join(
+#     as_tibble(pilou_even, rownames = "sample"),
+#     by = "sample"
+#   ) %>%
+#   rename(shannon = value.x,
+#          simp_inv = value.y,
+#          simp_unb = value.x.x,
+#          pilou_even = value.y.y)
   
 
 write_tsv(alpha_div, here("05-results/alpha-diversity.tsv"))
@@ -119,11 +146,15 @@ write_tsv(exp_pca_loadings, here("05-results/experiment-pca-loadings.tsv"))
 # Comparative samples
 
 clr_species <- logratio.transfo(comp_otu_matrix, "CLR", 1)
+clr_species_ext <- logratio.transfo(comp_ext_otu_matrix, "CLR", 1)
 clr_genus <- logratio.transfo(comp_matrix_genus, "CLR", 1)
 
 # convert from clr to data frame
 clr_species_copy <- clr_species
 class(clr_species_copy) <- "matrix"
+
+clr_species_ext_copy <- clr_species_ext
+class(clr_species_ext_copy) <- "matrix"
 
 clr_genus_copy <- clr_genus
 class(clr_genus_copy) <- "matrix"
@@ -131,12 +162,17 @@ class(clr_genus_copy) <- "matrix"
 clr_species_datf <- clr_species_copy %>%
   as_tibble(rownames = "sample")
 
+clr_species_ext_datf <- clr_species_ext_copy %>%
+  as_tibble(rownames = "sample")
+
 clr_genus_datf <- clr_genus_copy %>%
   as_tibble(rownames = "sample")
 
 write_tsv(clr_species_datf, "05-results/clr-compar.tsv")
+write_tsv(clr_species_ext_datf, "05-results/clr-compar-extended.tsv")
 
 spca_species <- spca(clr_species, ncomp = 10, scale = F)
+spca_species_ext <- spca(clr_species_ext, ncomp = 10, scale = F)
 spca_genus <- spca(clr_genus, ncomp = 10, scale = F)
 
 spca_compar <- spca_species$x %>%
@@ -148,17 +184,31 @@ pca_loadings <- spca_species$rotation %>%
   dplyr::select(species, PC1, PC2, PC3) %>%
   arrange(desc(abs(PC1)))
 
-Y <- tibble("#SampleID" = rownames(clr_species)) %>%
-  left_join(
-    comp_metadata,
-    by = "#SampleID"
-    ) %>%
-  .$Env
-species_splsda <- splsda(clr_species, Y)
-plotIndiv(species_splsda, group = Y, ind.names = F, legend = T)
+spca_compar_ext <- spca_species_ext$x %>%
+  as_tibble(rownames = "sample")
+compar_ext_explain_var <- spca_species_ext$prop_expl_var$X
 
-genus_splsda <- splsda(clr_genus, Y)
-plotIndiv(genus_splsda, group = Y, ind.names = F, legend = T)
+pca_loadings_ext <- spca_species_ext$rotation %>%
+  as_tibble(rownames = "species") %>% 
+  dplyr::select(species, PC1, PC2, PC3) %>%
+  arrange(desc(abs(PC1)))
+
+# Y <- tibble("#SampleID" = rownames(clr_species)) %>%
+#   left_join(
+#     comp_metadata,
+#     by = "#SampleID"
+#     ) %>%
+#   .$Env
+# species_splsda <- splsda(clr_species, Y)
+# plotIndiv(species_splsda, group = Y, ind.names = F, legend = T)
+# 
+# genus_splsda <- splsda(clr_genus, Y)
+# plotIndiv(genus_splsda, group = Y, ind.names = F, legend = T)
+
+save(spca_species, file = here("05-results/spca_species.rda"))
+save(spca_species_ext, file = here("05-results/spca_species_ext.rda"))
+write_tsv(pca_loadings, here("05-results/all-pca-loadings.tsv"))
+write_tsv(pca_loadings_ext, here("05-results/all-pca-loadings_ext.tsv"))
 
 # Bray-Curtis
 
@@ -176,7 +226,3 @@ byoc_braydist %>%
   mutate(day = if_else(day.y > day.x, day.y, day.x)) %>%
   ggplot(aes(x = day, y = value)) +
     geom_line()
-
-save(spca_species, file = here("05-results/spca_species.rda"))
-write_tsv(pca_loadings, here("05-results/all-pca-loadings.tsv"))
-write_tsv(clr_byoc_datf, "05-results/clr-byoc.tsv")

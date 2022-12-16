@@ -1,8 +1,5 @@
 # authentication of samples
 
-# see https://github.com/ZandraFagernas/unified_protocol/blob/master/UP_supp_figures_cleaned.Rmd
-# https://benjjneb.github.io/DecontamManuscript/Analyses/oral_contamination.html
-
 library(decontam)
 library(cuperdec)
 library(dplyr)
@@ -47,7 +44,6 @@ sourcetracker2_long <- sourcetracker2 %>%
 
 
 # contributions in problematic samples
-
 problem_samples <- sourcetracker2_long %>%
   filter(source == "indoor_air",
          proportion > 0.2) %>%
