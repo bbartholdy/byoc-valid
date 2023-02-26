@@ -14,6 +14,7 @@ library(here)
 
 load(here("05-results/spca_byoc.rda"))
 load(here("05-results/spca_species.rda"))
+load(here("05-results/spca_species_ext.rda"))
 
 alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
 metadata <- read_tsv(here("01-documentation/metadata.tsv"))
@@ -531,13 +532,46 @@ row_side_colours <- analysis_colours %>%
 cim(spca_species, cutoff = 0.5, row.sideColors = row_side_colours$env_col)
 ```
 
-Time-lag plot of Bray-Curtis data (under construction)
-
 ```{r}
-# comm_matrix <- byoc_otu_matrix %>%
-#   as_tibble(rownames = "sample") %>%
-#   left_join(dplyr::select(experiment_metadata, c(`#SampleID`, day)), by = c("sample" = "#SampleID"))
+spca_compar_ext <- spca_species_ext$x %>%
+  as_tibble(rownames = "sample") %>%
+  left_join(metadata, by = c("sample" = "#SampleID"))
+compar_ext_explain_var <- spca_species_ext$prop_expl_var$X
+
+spca_compar_ext %>%
+  ggplot(aes(x = PC1, y = PC2, col = Env, shape = Env)) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    theme_bw() +
+    labs(x = paste(
+      "PC1", scales::percent(compar_ext_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC2", scales::percent(compar_ext_explain_var[[2]], accuracy = 0.1)
+      )
+    ) +
+  scale_colour_viridis_d(option = "C") +
+  scale_shape_manual(values = 1:length(levels(as.factor(spca_compar_ext$Env))))
+
+spca_compar_ext %>%
+  ggplot(aes(x = PC1, y = PC3, col = Env, shape = Env)) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    theme_bw() +
+    labs(x = paste(
+      "PC1", scales::percent(compar_ext_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC3", scales::percent(compar_ext_explain_var[[3]], accuracy = 0.1)
+      )
+    ) +
+  scale_colour_viridis_d(option = "C") +
+  scale_shape_manual(values = 1:length(levels(as.factor(spca_compar_ext$Env)))) +
+  labs(col = "Env", shape = "Env")
 ```
+
 
 # Discussion
 
