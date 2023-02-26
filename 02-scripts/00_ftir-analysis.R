@@ -27,69 +27,6 @@ clean_ftir <- function(x, normalise = FALSE) {
   }
 }
 
-# function to isolate locate peaks (maxima) and label them on plots
-
-test_spectrum <- readr::read_csv("04-analysis/FTIR/ArchDC_MB11_grind_c.CSV", col_names = c("wavenumber", "abs"))
-x <- clean_ftir(test_spectrum)
-x <- filter(x, wavenumber < 700 & wavenumber >500)
-# need to ignore region 2000-1700
-
-#' @param n integer. If given, only returns the highest n peaks.
-#' @param abs_cutoff numeric. peak height cutoff. A value is given as the minimum
-#' height from a peak to the adjacent valley, for the peak to be considered as a true peak.
-#' @param range vector or list of vectors containing two values to indicate a range to identify peaks. 
-peak_finder <- function(x, n, abs_cutoff = 0.1, range){
-  # could pmax function be useful?
-  # useful ranges:
-  range1 <- c(3800,2800)
-  range2 <- c(1700,1300)
-  range3 <- c(1300,1100)
-  range4 <- c(1100, 900)
-  range5 <- c(900, 700)
-  range6 <- c(700,500)
-  ignore_range <- c(2000,1700)
-  
-  abs <- x$abs
-  # abs
-  # diff(sign(diff(round(abs,3))), differences = 2)
-  # sign(diff(abs, differences = 1))
-  # peaks <- which(diff(sign(diff(abs))) == -2)
-  # valleys <- which(diff(sign(diff(abs))) == 2)
-  # which(diff(sign(diff(abs, differences = 1)), differences = 4) == -6)
-  
-  abs_signs <- c(0, sign(diff(abs))) # vector of signs associated with each abs value
-  peaks <- which(diff(sign(diff(abs))) == -2)
-  valleys <- which(diff(sign(diff(abs))) == 2)
-    
-  x$signs <- abs_signs
-  x$peak <- x$abs
-  x$peak[peaks] <- TRUE
-  x$peak <- ifelse(x$peak == TRUE, TRUE, FALSE)
-  x$valley <- x$abs
-  x$valley[valleys] <- TRUE
-  x$valley <- ifelse(x$valley == TRUE, TRUE, FALSE)
-  x$wavenumber[peaks]
-  peak_abs <- x$abs[peaks]
-  
-  peak_define <- x %>%
-    filter(peaks == T | valleys == T) %>%
-    mutate(
-      diff = c(
-        0, sapply(2:nrow(.), 
-                  function(x) .$abs[x] + .$abs[x-1]
-               )
-        )
-      ) %>%
-    filter(diff > abs_cutoff)
-  
-  if (!is.null(n)){
-    n_peaks <- peak_define %>%
-      arrange(desc(abs)) %>% 
-      slice_head(n)
-  }
-  
-  return(peak_define)
-}
 
 # Upload data -------------------------------------------------------------
 
@@ -137,20 +74,20 @@ grind_sample_order <- c(
   "Artificial calculus day 16",
   "Artificial calculus day 20",
   "Artificial calculus day 24",
-  "Archaeological bone",
-  "Bone-Dentine",
-  "Bone-Dentine_2",
+  #"Archaeological bone",
+  #"Bone-Dentine",
+  #"Bone-Dentine_2",
   "Enamel",
   "Enamel_2",
   "Enamel_3")
 
 grind_data <- grind_data_raw %>%
-  filter(Sample != "Synthetic") %>%
+  filter(Sample != "Synthetic") %>% # not sure what 'Synthetic' refers to...
   mutate(day = stringr::str_extract(Sample, "(?<=F)[0-9]+"),
          grind = stringr::str_extract(Sample, "[a-f]$"),
          Sample = case_when(
-           Sample == "Bone +Dentine" ~ "Bone-Dentine",
-           Sample == "Bone +Dentine_2" ~ "Bone-Dentine_2",
+           #Sample == "Bone +Dentine" ~ "Bone-Dentine",
+           #Sample == "Bone +Dentine_2" ~ "Bone-Dentine_2",
            str_detect(Sample, "F") ~ "Artificial calculus", 
            str_detect(Sample, "MB11") ~ "Archaeological calculus",
            TRUE ~ Sample),

@@ -498,3 +498,17 @@ Overall, the spectra of the artificial calculus show an increase in the
 inorganic component and a decrease in the organic component over time.
 The grinding curves for days 16, 20, and 24 were very similar, suggesting
 that the CPMU solution (introduced on day 16) may not have much of an effect.
+
+The archaeological and modern reference spectra are largely indistinguishable and
+consist of a broad O–H absorbance band (3400 cm$^{-1}$) related to hydroxyl group,
+weak CH3 bands (3000–2900 cm$^{-1}$) , carbonate (1420, 1458-1450, 875-870 cm$^{-1}$),
+amide I band (1650 cm$^{-1}$) which is related to the protein content, and phosphates
+(1036-1040, 602-4, 563-566 cm$^{-1}$) which together withthe hydroxyl and the carbonate
+can be identified as derived from carbonate hydroxyapatite, the main mineral found
+in mature dental calculus (Hayashizaki et al., 2008; [@jinSupragingivalCalculus2002]).
+The model
+calculus samples from the end of the experiment are similar to both the modern and
+archaeological reference samples. The main difference is a lower organic component
+in reference samples seen as a reduced amide I peak at around 1637 compared to the
+carbonate peak at around 1420, and an absence of amide II and III. Also a reduction
+in CH3 bands at 3000-2900 cm$^{-1}$.
