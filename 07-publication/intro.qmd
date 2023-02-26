@@ -1,43 +1,63 @@
-<!-- basic introduction to the field, comprehensible to a scientist in any discipline -->
-
+<!-- basic introduction to the field, comprehensible to a scientist in any discipline - what is ancient dental calculus and why is it interesting?-->
 Dental calculus is quickly becoming the go-to substance for exploring health and
-diet in past populations. Studies using archaeological dental calculus span a wide
+diet in past populations [@warinnerNewEra2015].
+During life, dental plaque undergoes periodic mineralisation, trapping biomolecules and
+microfossils that are embedded within the dental plaque biofilm in the newly-formed
+dental calculus. This process
+is repeated as new plaque is deposited and subsequently mineralises, resulting in
+a layered structure representing a temporal record of biofilm growth and development
+[@warinnerPathogensHost2014].
+The calculus then serves as a protective casing for the entrapped biomolecules and
+microfossils, preserving
+them for thousands of years after death and burial [@yatesOralMicrobiome2021].
+Studies using archaeological dental calculus span a wide
 range of topics in different regions and time periods. These include characterisation
 of the oral microbiome and its evolution in past populations
 [@velskoMicrobialDifferences2019; @adlerSequencingAncient2013; @warinnerPathogensHost2014; @kazarinaPostmedievalMicrobial2021; @yatesOralMicrobiome2021],
 extraction of microbotanical remains
-[@henryCalculusSyria2008; @hardyStarchGranulesDental2009;@mickleburghNewInsights2012;@maHumanDiet2022]
-and other residues to infer dietary patterns and nicotine-use
-[@buckleyDentalCalculus2014; @hendyProteomicCalculus2018; @eerkensDentalCalculus2018].
+[@henryCalculusSyria2008; @hardyStarchGranulesDental2009;@mickleburghNewInsights2012; @maHumanDiet2022]
+and other residues to infer dietary patterns and nicotine use
+[@buckleyDentalCalculus2014; @hendyProteomicCalculus2018; @eerkensDentalCalculus2018]<!--middenbeemster uhplc-->.
+<!-- expand arch applications of DC -->
+<!-- what are current limitations of DC? hint at why we need this study -->
+Dental calculus has already provided a unique and valuable insight into the past,
+but the exact mechanism of the incorporation, retention, and preservation of
+microfossils and biomolecules exogenous to the microbial biofilm is largely unknown;
+even the process of plaque mineralisation
+is not fully understood [@omelonReviewPhosphate2013; @jinSupragingivalCalculus2002].
+This means that there may be hidden biases affecting our
+interpretations of dietary/activity patterns extrapolated from ancient dental calculus.
+These biases have been explored archaeologically
+[@fagernasMicrobialBiogeography2022; @trompEDTACalculus2017] as well as in
+contemporary humans [@leonardDentalCalculus2015] and non-human primates
+[@powerChimpCalculus2015] but not experimentally.
+<!-- why are biofilm models valuable? maybe move to biofilm paragraph -->
 
 <!-- more detailed background, comprehensible to scientists in related disciplines -->
-<!-- dental plaque/calculus formation and calculus composition -->
-Dental calculus is formed by the mineralisation of dental plaque.
+<!-- How does calculus form? -->
 Dental plaque is an oral biofilm and is part of the normal state of the oral
 cavity; however, if left unchecked, plaque can lead to infections such as
 dental caries and periodontitis [@marshDentalPlaque2006].
-Shortly after teeth are cleaned (whether mechanically or otherwise), a salivary
-pellicle adsorbs to the surface of the tooth, in most cases enamel, forming the acquired
-dental pellicle. The pellicle is
-comprised mainly of proteins and, in addition to protecting the tooth against mechanical
-and chemical decay, provides a viable surface for bacterial attachment [@yaoIdentificationProtein2003].
-Shortly after adsorbing to the enamel, early-coloniser species, such as those within genus *Streptococcus* and
-*Actinomyces*, adhere to the pellicle through reversible long-range physicochemical forces and
-irreversible short range cell-host<!--check--> interactions [@marshDentalPlaque2006]. Once the surface
-has been populated by the specialists in surface-attachment, other species of bacteria
-can attach to their surface through cell-cell interactions, allowing adhesion of species
-that are not otherwise capable of adhering to a surface. After accumulation and multiplication
-of bacteria, this, now, diverse community of is able
-to secrete polysaccharides, proteins, lipids, and nucleic acids, into their immediate
-environment to form a biofilm matrix [@flemmingBiofilmsEmergent2016].
-The matrix provides an adaptive advantage
-to the organisms within through resistance to antibiotics and mechanical
-removal, as well as transporting nutrients from outside the biofilm and facilitating
-distribution of resources between bacterial communities within the biofilm
-[@petersonViscoelasticityBiofilms2015; @jainIsolationCharacterization2013].
-
-The composition of a biofilm matrix is largely water (around 90%), with the
-remaining content consisting of microbes, extracellular polysaccharides (EPS),
+Shortly after teeth are cleaned (whether mechanically or otherwise), salivary
+components adsorb to the crown or root and form the acquired dental pellicle.
+The pellicle is
+composed mainly of proteins and, in addition to protecting the tooth against
+mechanical and chemical decay, provides a viable surface for bacterial attachment
+[@yaoIdentificationProtein2003].
+Early-coloniser species, such as those
+within genus *Streptococcus* and *Actinomyces*, adhere to the pellicle through
+reversible long-range physicochemical forces and
+irreversible short range cell-host interactions [@marshDentalPlaque2006]. Once
+the tooth surface has been populated by specialists in surface-attachment, other
+species of bacteria can attach to their surface through cell-cell interactions,
+allowing adhesion of species that are not otherwise capable of adhering to a surface.
+During the proces of accumulation and multiplication of bacteria, a diverse community
+forms that is able to secrete polysaccharides, proteins, lipids, and nucleic acids,
+into their immediate environment to form a biofilm matrix [@flemmingBiofilmsEmergent2016].
+<!-- composition of plaque and DC -->
+The composition of a biofilm matrix is largely water (around 90% by weight), with
+the remaining content consisting of cellular components, including extracellular
+polysaccharides,
 DNA, RNA, and proteins [@bergerOralBiofilms2018]. Biofilms can become susceptible to
 calcification under certain microenvironmental conditions. These
 include an increased concentration of salts and a decrease in statherin
@@ -48,80 +68,108 @@ precipitation and decreased dissolution of calcium phosphate salts within saliva
 and the plaque biofilm.
 The resulting supersaturation of calcium phosphate salts are the main
 drivers of biofilm mineralisation [@jinSupragingivalCalculus2002].
-Mineralisation
-generally starts from within the biofilm matrix as a result of nucleation, followed
-by mineralisation of the matrix and, subsequently, bacterial cells.
-The susceptibility of crystallisation in bacteria depends on the composition
-and concentration of membrane-associated components, such as proteolipids and
-phospholipids [@jinSupragingivalCalculus2002; @whiteDentalCalculus1997].
-Binding of calcium to bacterial membranes is facilitated by phospholipid molecules
-within the cell membrane,
-followed by association of phosphates with the bound calcium to form calcium
-phosphate complexes. These complexes are active in promoting the formation and
-deposition of hydroxyapatite within biofilms [@jinSupragingivalCalculus2002].
-
 The primary minerals in dental calculus are hydroxyapatite (HAP),
 octacalcium phosphate (OCP), whitlockite (WHT), and brushite (BHT). During initial
 mineralisation the main mineral component is BHT, which shifts to HAP in more
 mature dental calculus [@jinSupragingivalCalculus2002; @hayashizakiSiteSpecific2008].
-The exact elemental composition of dental calculus varies by individual due to
+The exact elemental composition of dental calculus varies among individuals due to
 various factors, including diet [@hayashizakiSiteSpecific2008; @jiFluorideMagnesium2000].
 
-The role of bacteria in dental
-calculus formation is still not clear, and dental calculus formation has been
-induced in bacteria-free rodents [@glasBiophysicalStudies1962].
-However, given the abundance of bacteria present
-within human dental plaque, the structure of calculus will reflect the presence of bacteria
-with human dental calculus containing a heterogenous mineral composition across the biofilm
-due to the differing mineralisation properties in bacteria, and also directly influences the
-porosity of calculus [@omelonReviewPhosphate2013; @rohanizadehUltrastructuralStudy2005]. <!-- rephrase: need to emphasise the importance of bacteria in human dental calculus - better proxy -->
-<!-- biofilm maturation and mineralisation -->
-<!-- dental calculus composition and distribution -->
-The different susceptibility of certain bacteria to mineralise may explain differences
-in bacterial profiles in plaque and dental calculus [@velskoMicrobialDifferences2019]
-
-Attachment of dental calculus to enamel is further solidified by fusion of dental calculus
-with enamel rods [@rohanizadehUltrastructuralStudy2005; @whiteDentalCalculus1997].
-
-The organic component of dental calculus consists of proteins and lipids,
-likely incorporated from bacteria, saliva, and food [@whiteDentalCalculus1997].
-Calculus forming above the gumline (supragingival) has a lower inorganic content
-than calculus forming below the gumline (subgingival) [@jinSupragingivalCalculus2002].
-
-<!-- oral biofilm models. History, types, etc. -->
-Oral biofilm models are commonly used in dental research to assess the efficacy
-of certain treatments on dental pathogens [@filochePlaqueMicrocosm2007; @extercateAAA2010].
-These are often short-term models grown over a few days, but there also exist longer
-term models used to develop dental calculus
+Dental plaque can also be grown *in vitro*, and these oral biofilm models are
+commonly used in dental research to assess the efficacy
+of certain treatments on dental pathogens [@filochePlaqueMicrocosm2007; @extercateAAA2010]
+without the ethical issues of inducing plaque accumulation and the complexity
+of access and sampling; issues that are compounded with increasing experimental
+duration [@sissonsArtificialPlaque1997].
+Oral biofilm models are often short-term models grown over a few days, but there
+also exist longer term models (up to six weeks) used to develop mature plaque or
+dental calculus
 [@middletonVitroCalculus1965; @sissonsMultistationPlaque1991; @wongCalciumPhosphate2002]. 
-There are multiple different types of models ranging from simplistic agar plate or
-multiwell-plate models [@ceriCalgaryBiofilm1999; @extercateAAA2010],
-to more complex setups like the constant depth film fermenter (CDFF) [@petersConstantDepth1988]
-and the multi-station artificial mouth (MAM) [@sissonsMultistationPlaque1991]. The more
-complex models have the benefit of a continuous flow of saliva or saliva-like medium
-and control over the environment, while the multiwell-plate models offer the advantage
-of generating more samples over the same amount of time [@mcbainBiofilmModels2009].
-Simplistic models restricted to a select subset of oral bacteria are often more
-reproducible than models using whole saliva, while the latter are more representative
-of the *in vivo* oral microbiome complexity [@roderStudyingBacterial2016; @mcbainBiofilmModels2009].
+The more
+complex models, such as the constant-depth film fermentor [@petersConstantDepth1988]
+and multi-station dental plaque microcosm [@sissonsMultistationPlaque1991], have
+the benefit of a continuous flow of saliva or saliva-like medium
 
-<!-- clearly stating the general problem being addressed by this particular study -->
+and more control over the environment, while the simpler models using a static
+nutrient reservoir
+
+offer the advantage of increased reproducibility and generating more samples over
+the same amount of time [@mcbainBiofilmModels2009].
+<!-- oral biofilm models. Why are they valuable and what are limitations of current models? -->
+<!-- limitations of current models -->
+A well-known limitation of biofilm models is the difficulty in capturing the
+diversity and complexity of baterial communities and metabolic dependencies,
+micro-environments, nutrient availability, and host immune-responses in the natural
+oral biome
+[@edlundUncoveringComplex2018; @bjarnsholtVivoBiofilm2013].
+These limitations can be overcome by complex experimental setups, but at the cost
+of lower throughput and increased requirements for laboratory facilities.
+While *in vivo* research on dental calculus offers a more realistic
+setting for addressing certain questions, it suffers from a lack of control.
+There are many variables involved in dental calculus formation and accurate dietary
+intake, such as intra- and inter-individual variation in salivary flow, oral pH,
+and amylase activity. These can be hard to tease apart *in situ*. Oral biofilm models
+provide a controlled environment to explore the effect of any number of variables
+on the outcome, and can be a beneficial complement to *in vivo* studies.
+
+Despite the success of their application
+in dental research, oral biofilm models have yet to be widely adopted in archaeological
+research, perhaps because the scope of research is very different and the facilities
+for performing microbiological experiments are specialised.
+In some cases we can draw on the previous research conducted in clinical dentistry,
+but often we are asking different questions in archaeology. We are interested in
+learning
+more about how dietary residues and microremains become trapped in calculus, and
+how the methods we use may inadvertently bias our interpretations
+[@radiniDirtyTeeth2022], whereas clinically the main goal is advances in dental
+health and treatment. Both lines of research can benefit from using oral biofilm
+models, but the application of the models is to some extent mutually exclusive.
+
+<!-- What did we do and why?
+clearly stating the general problem being addressed by this particular study 
+Justify the methods we chose and how they relate to the questions we're asking about
+the model and what questions we want to ask with the model-->
 
 We present an oral biofilm model that can serve as a viable proxy for dental
-calculus,
-and provide a method for fundamental research on dental calculus in the past.
-The need for such a model is warranted by the different questions that are asked by
-archaeologists compared to clinical dentistry. We are interested in learning
-more about how dietary residues and microremains become trapped in calculus,
-and how the methods we use may inadvertently bias our interpretations; questions
-that are best addressed in a lab using a model.
-We used FTIR to verify the mineral composition, and metagenomic classification
-to characterise the bacterial composition, and compared our results against
-modern and archaeological human dental calculus. We found that
-the mineral and organic components mimic that of the modern reference calculus
-used for comparison, while the bacterial classification revealed a similar
-but distinct community structure.<!--The bacterial composition -->
+calculus for archaeological research questions.
+It is a multispecies biofilm using whole saliva as the inoculate, and different
+nutrient conditions, including wheat and potato starch, and sucrose. We use a
+simple multiwell plate
+setup that is accessible even to smaller lab budgets and those with limited
+facilities for microbiology work.  
+We used next-generation sequencing and metagenomic classification
+to characterise the bacterial composition of our model dental calculus. This was
+done to ensure that the model microbiome is predominantly oral and not overgrown
+by environmental contaminants, as well as testing for
+contamination during the biofilm growth period. We compare our results to
+oral reference samples, including saliva, buccal mucose, plaque, and modern human
+dental calculus.
+We then determined the composition of the model dental calculus using Fourier
+transform infrared (FTIR) spectroscopy to verify the presence of calculus-specific
+mineral phases and functional groups, and perform a qualitative comparison with
+modern and archaeological reference calculus. 
+
+Overall the model calculus is chemically similar to natural calculus, and has
+an oral core microbiome.
+The microbial diversity and richness within the model samples were lower than
+oral reference samples, suggesting that the model samples are not as well-balanced
+in species composition and abundances as the natural samples. The main differences
+seem to be related to oxygen tolerance of the species present, with model calculus
+having higher abundance of (facultative) anaerobic species.
+The microbial composition also differs from natural samples, as they grouped
+separately from
+natural calculus and other oral reference samples, while grouping more closely
+with *in vitro* reference samples from @edlundUncoveringComplex2018.
+The mineral composition closely resembled modern and archaeological reference
+calculus, predominantly comprised of carbonate HAP with a similar level of
+crystallinity and order.  
+As such, the model dental calculus presented here is a viable proxy to natural
+dental calculus and can be used to explore many of the currently unexplained
+processes we see in the archaeological material, when working within the
+limitations of an oral biofilm model.
 In addition to the benefit of increased control over parameters involved in
 calculus formation and dietary incorporation, our method also provides unlimited
-material for experimentation, rather than using the limited archaeological material
-currently available.
+material for experimentation, rather than using limited archaeological material.
+It is not meant to replace studies conducted on archaeological and
+natural dental calculus, rather balance limitations of each method and serve as
+a complementary approach to expand our toolkit.
