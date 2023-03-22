@@ -1,0 +1,920 @@
+## Metagenomic analysis
+
+```{r}
+#| label: results-metagen-setup
+#| include: false
+
+removed_samples <- dna_metadata %>%
+  mutate(rm = if_else(`#SampleID` %in% dna_analysis_metadata$`#SampleID`, F, T),
+         col = case_when(rm == T ~ "red",
+                         rm == F ~ "black")) %>% # colour coded names if needed
+  mutate(sample = `#SampleID`)
+
+# convert species table to long format
+species_counts_long <- otu_table %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count") %>%
+  rename(species = `#OTU ID`) %>%
+  filter(sample %in% dna_analysis_metadata$`#SampleID`)
+
+# collapse species counts into genus counts
+genus_counts_long <- species_counts_long %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  group_by(sample, genus) %>%
+  summarise(count = sum(count)) %>% 
+  group_by(sample) %>%
+  mutate(rel_abund = count / sum(count)) %>%
+  ungroup()
+
+# table containing the oxygen tolerance of species
+species_properties <- bac_properties %>%
+  right_join(species_counts_long, by = "species") %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  left_join(
+    rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
+    ) %>%
+  mutate(`Oxygen tolerance` = case_when(
+    is.na(`Oxygen tolerance`) ~ genus_oxytol, # if no species-level info available
+    TRUE ~ `Oxygen tolerance`)
+    ) %>%
+  group_by(sample) %>%
+  mutate(
+    abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
+    rel_abund = count / sum(count)
+    ) %>%
+  ungroup()
+
+no_match <- bac_properties %>%
+  right_join(species_counts_long, by = "species") %>%
+  filter(is.na(`Oxygen tolerance`)) %>%
+  .$species %>%
+  unique()
+
+# summary of species counts
+byoc_summ <- species_counts_long %>%
+  filter(str_detect(sample, "SYN"),
+         count > 0) %>%
+  group_by(sample) %>%
+  count(species) %>%
+  summarise(count = sum(n))
+
+# convert alpha diversity data to long format
+alpha_div_long <- alpha_div %>%
+  pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+  left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
+  mutate(day_grouped = case_when( # group days to increase sample size
+    day < 6 ~ "inoc",
+    day > 6 & day < 24 ~ "treatm",
+    day == 24 ~ "model"),
+    day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "model"))
+    )
+
+# summary stats for alpha diversity in experiment
+alpha_summ_byoc <- alpha_div_long %>%
+  filter(
+    str_detect(sample, "SYN") # isolate samples from this study
+    ) %>%
+  group_by(index, day_grouped) %>% # group by sample type
+  summarise(mean = mean(value),
+            sd = sd(value))
+
+
+# summary stats for grouped samples by Env
+alpha_summ_all <- alpha_div_long %>%
+  filter(
+    Env != "skin",
+    Env != "sediment",
+    Env != "stool",
+    Env != "indoor_air") %>%
+  group_by(index, Env) %>%
+  summarise(mean = mean(value),
+            sd = sd(value))
+
+# sPCA analyses
+
+byoc_explain_var <- spca_byoc$prop_expl_var$X # experiment samples
+# projection of samples onto PCs
+byoc_princomp <- spca_byoc$x %>% # experiment samples
+  as_tibble(rownames = "sample") %>%
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID"))
+# loadings of species
+byoc_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
+  as_tibble(rownames = "species") %>%
+  #left_join(bac_properties, by = "species") %>% 
+  left_join(species_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1))) %>%
+  distinct(species, .keep_all = T)
+
+compar_explain_var <- spca_species$prop_expl_var$X # comparative samples
+# projection of samples onto PCs
+compar_princomp <- spca_species$x %>% # comparative samples
+  as_tibble(rownames = "sample") %>%
+  left_join(dna_metadata, by = c("sample" = "#SampleID"))
+compar_pca_loadings <- spca_species$rotation %>% # comparative samples
+  as_tibble(rownames = "species") %>%
+  left_join(species_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1))) %>% 
+  distinct(species, .keep_all = T)
+
+# byoc-spca-plot-setup
+# set common ggplot theme for loading plots
+loading_theme_pc1 <-  
+  theme_minimal() +
+  theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.ticks.x.bottom = element_line(size = 1),
+      axis.text.y = element_text(),
+      axis.text.x = element_text(size = 8, vjust = 0),
+      axis.line.x = element_line(),
+      legend.position = "right"
+          )
+
+loading_theme_pc2 <-  
+  theme_minimal() +
+  theme(
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.x = element_blank(),
+      axis.ticks.x.bottom = element_line(size = 1),
+      axis.text.y = element_text(),
+      axis.text.x.top = element_text(size = 8, angle = 90, vjust = 0, hjust = 0),
+      axis.line.y = element_line(),
+      legend.position = "none"
+      )
+
+
+# helper objects to set x-axis limits
+min_byoc_PC1 <- min(byoc_pca_loadings$PC1)
+min_byoc_PC2 <- min(byoc_pca_loadings$PC2)
+max_byoc_PC1 <- max(byoc_pca_loadings$PC1)
+max_byoc_PC2 <- max(byoc_pca_loadings$PC2)
+min_comp_PC1 <- min(compar_pca_loadings$PC1)
+min_comp_PC2 <- min(compar_pca_loadings$PC2)
+max_comp_PC1 <- max(compar_pca_loadings$PC1)
+max_comp_PC2 <- max(compar_pca_loadings$PC2)
+
+options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
+        ggplot2.discrete.fill = function() scale_fill_viridis_d())
+# differential abundance
+```
+
+### Sample authentication
+
+<!-- SourceTracker -->
+The sources of taxa were estimated using SourceTracker2 [@knightsSourceTracker2011].
+Results suggest that the majority of taxa across samples have an oral microbial
+signature. We compared SourceTracker2 results to a database of oral taxa from
+the **cuperdec** R package [@yatesOralMicrobiome2021] to prevent removal of samples
+where oral taxa were assigned to a non-oral source, as some similar taxa with a
+signature from multiple sources are often classified as "Unknown"
+[@velskoMicrobialDifferences2019]. We included several oral sources, so this is
+likely to occur. Samples suspected of containing a large proportion of environmental
+contamination were removed (see Supp mat). The removed                              <!-- supp mat references -->
+samples were predominantly medium samples from later in the experiment, and a few
+model calculus samples (see Supp mat).
+
+### Decrease in community diversity across experiment
+
+```{r}
+shan_byoc <- alpha_summ_byoc %>% 
+  filter(index == "shannon") # isolate shannon index values
+```
+
+
+```{r}
+#| label: fig-diversity-byoc
+#| fig-cap: "Plot of Pielou evenness index, species richness, and Shannon index across experiment samples grouped by sampling time. inoc = samples from days 0-5; treatm = samples from days 6-23; model = model calculus samples from day 24."
+alpha_div_long %>%
+  filter(
+    str_detect(sample, "SYN"),
+    index == "shannon" | index == "pilou_even" | index == "richness"
+  ) %>%
+  #mutate(day = as.factor(day)) %>%
+  ggplot(aes(x = day_grouped, y = value)) +
+    geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
+    geom_boxplot(width = 0.12) +
+  facet_wrap(~ index, scales = "free_y") +
+    #facet_wrap(~ index, scales = "free_y") +
+    theme_bw() +
+    theme(
+      #axis.title = element_blank(),
+      #axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.position = "none"
+    ) +
+    labs(
+      y = "Value",
+      x = "Sampling time"
+    )
+```
+
+<!-- species diversity -->
+After contamination removal, samples consisted of between
+`r paste(range(byoc_summ$count), collapse = " and ")`
+species with a mean of
+`r paste(round(mean(byoc_summ$count)))`.
+We used the Shannon Index to assess the species diversity and richness in our
+samples over the course of the experiment. Samples were grouped into sampling
+categories due to low sample sizes on sampling days (inoc = days 0, 3, 5; treatm =
+days 7, 9, 12, 15; model = day 24). There was a slight decrease in mean
+alpha diversity between inoculation
+(mean [M] = `r signif(filter(shan_byoc, day_grouped == "inoc")$mean, 3)` $\pm$ `r signif(filter(shan_byoc, day_grouped == "inoc")$sd, 3)`)
+and treatment and model calculus samples
+(M = `r signif(filter(shan_byoc, day_grouped == "treatm")$mean, 3)`
+$\pm$ `r signif(filter(shan_byoc, day_grouped == "treatm")$sd, 3)`;
+M = `r signif(filter(shan_byoc, day_grouped == "model")$mean, 3)`
+$\pm$ `r signif(filter(shan_byoc, day_grouped == "model")$sd, 3)`),
+as well as a decrease in variance within samples types (@fig-diversity-byoc).
+
+### Medium and model calculus samples are distinct from the inoculate
+
+```{r}
+#| label: byoc-spca-fig-setup
+byoc_spca_plot <- byoc_princomp %>%
+  ggplot(aes(x = PC1, y = PC2, col = as_factor(day), shape = Env)) +
+    geom_point(size = 4, stroke = 1) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    labs(
+      x = paste(
+        "PC1", 
+        scales::percent(byoc_explain_var[[1]], accuracy = 0.1)),
+      y = paste(
+        "PC2", 
+        scales::percent(byoc_explain_var[[2]], accuracy = 0.1)),
+      col = "Sampling day",
+      shape = "Sample type"
+      ) +
+    theme_bw() +
+    theme(
+      legend.position = "left"
+    ) +
+    scale_x_continuous(position = "top") +
+    #scale_y_continuous(position = "right") +
+    scale_shape_discrete(solid = F) +
+    scale_colour_viridis_d()
+
+byoc_comp_1 <- byoc_pca_loadings %>%
+  arrange(desc(PC1)) %>% 
+  mutate(species = fct_reorder(species, desc(PC1))) %>%
+   slice(c(
+    1:20,
+    seq(from = nrow(byoc_pca_loadings)-19, to = nrow(byoc_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    #scale_x_continuous(limits = c(min_byoc_PC1,max_byoc_PC1)) +
+  #scale_y_discrete(position = "right") +
+    scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(x = "", y = "") +
+    loading_theme_pc1
+
+byoc_comp_2 <- byoc_pca_loadings %>%
+  arrange(desc(PC2)) %>%
+  mutate(species = fct_reorder(species, desc(PC2))) %>%
+   slice(c(
+    1:20,
+    seq(from = nrow(byoc_pca_loadings)-19, to = nrow(byoc_pca_loadings))
+    )) %>%
+  ggplot(aes(y = PC2, x = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_y_continuous(limits = c(min_byoc_PC2,max_byoc_PC2), position = "right") +
+    scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    scale_x_discrete(position = "top") +
+    labs(x = "", y = "") +
+    loading_theme_pc2
+```
+
+```{r}
+#| label: fig-spca-byoc
+#| fig-cap: "sPCA on species-level counts and oxygen tolerance in samples from this study only. Figure shows the species loadings from PC2 (A), the main sPCA plot (B), and species loadings on PC1 (C)."
+#| fig-width: 12
+#| fig-height: 9
+# align PC1 and PC2 loading plots with (0,0) on the PC1 and PC2 of the sPCA plot
+ggdraw() +
+    draw_plot(byoc_spca_plot, width = 0.55, height = 0.5, x = 0.01, y = 0.45) +
+    draw_plot(byoc_comp_2, width = 0.42, height = 0.48, x = 0.56, y = 0.50) +
+    draw_plot(byoc_comp_1, width = 0.63, height = 0.45, x = 0.08, y = 0.01) +
+    draw_figure_label("A") +
+    draw_figure_label("B", position = "top.right") +
+    draw_figure_label("C", position = "bottom.left")
+
+# ggdraw(byoc_spca_plot, xlim = c(1,1), ylim = c(2,2)) +
+#     draw_plot(byoc_comp_1, width = 1, height = 1, x = 0.4, y = 0.1) +
+#     draw_plot(byoc_comp_2, width = 0.5, height = 0.5, x = 0.1, y = 0.4)
+
+#(byoc_comp_2 + byoc_spca_plot + byoc_comp_1) + 
+#  plot_layout(design = plot_design, guides = "auto", widths = c(1,0.2,1), heights = c(1,0.2,1)) + plot_annotation(tag_levels = "A")
+```
+
+<!-- Set up your analysis by framing them in the context of your whole project. Something like this, that will lead your readers into what you did and why. They won't be thinking about it like you are, and why you do each experiment won't be obvious to them-->
+
+We next examined whether there is a change in the species composition over
+time in our samples by assessing the beta-diversity in a PCA.
+The species profiles of the saliva inoculate used in our experiment were
+distinct from both medium and model calculus samples. Most of the separation
+of saliva from model calculus is on PC1 of the sPCA, where
+most of the positive species loadings are driven by anaerobic species,
+especially *Selenomonas* spp, and
+negative loadings are predominantly facultative anaerobes and some aerobes,
+such as *Rothia* and *Neisseria* spp.
+Medium and saliva are separated mostly on PC2.
+Model
+calculus samples also cluster separately from the medium samples on PC2,
+with some overlap between
+the more mature medium samples and model calculus.
+Positive and negative species loadings on PC2 are more varied in aerotolerance
+than PC1. Most of the negative loadings separating saliva and model calculus
+from medium samples are dominated by *Actinomyces* spp., while positive species
+loadings are more diverse (@fig-spca-byoc).
+
+```{r}
+byoc_da_pca <- byoc_logf_full %>%
+  inner_join(byoc_pca_loadings, by = "species")
+```
+
+
+```{r}
+#| label: fig-diffabund-byoc
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, squares are enriched in saliva, and triangles in medium. Lines are standard error. Plot shows the top 30 absolute log-fold changes between model calculus and saliva."
+byoc_logf_full %>% 
+  group_by(env) %>% 
+  arrange(desc(abs(lfc))) %>%
+  slice_head(n = 30) %>% # causes loss of some env values
+  ungroup() %>%
+  arrange(desc(abs(lfc))) %>%
+  slice_head(n = 30) %>% # extract top 20 lfc from modern_calculus
+  bind_rows(filter( # recombine with other env values so all are included in plot
+    byoc_logf_full, 
+    env != "saliva",
+    species %in% .$species
+    )
+  ) %>%
+  left_join(bac_properties, by = "species") %>% 
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point(size = 1.2) +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +
+    theme_bw() +
+    scale_shape_manual(values = c(1,2,5)) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50") +
+    labs(x = "Log fold change", y = "Species", shape = "Sample type")
+
+```
+
+Species enriched in saliva compared to model calculus are largely aerobic or
+facultatively anaerobic, while
+species enriched in model calculus compared to saliva are mainly anaerobes.
+Compared to saliva, species differences between medium and model calculus are
+less pronounced (@fig-diffabund-byoc).
+
+### Lower diversity in artificial samples than oral references
+
+```{r}
+shan_compar <- alpha_summ_all %>% 
+  filter(index == "shannon") # isolate shannon index values
+
+shan_model <- shan_compar %>%
+  filter(Env == "model_calculus" |
+           Env == "medium" |
+           Env == "vitro_biofilm")
+  
+shan_oral <- shan_compar %>%
+  filter(Env != "model_calculus",
+           Env != "medium",
+           Env != "vitro_biofilm")
+
+shan_saliva <- alpha_div_long %>%
+  filter(Env == "saliva",
+         index == "shannon") %>%
+  group_by(Study) %>%
+  summarise(mean = mean(value, na.rm = T))
+```
+
+<!-- alpha diversity -->
+```{r}
+#| label: fig-shannon-compar
+#| fig-cap: "Shannon index for model calculus and medium samples, as well as oral reference samples and comparative *in vitro* study."
+alpha_div_long %>%
+  filter(!Env %in% env_controls,
+         index == "shannon") %>%
+  mutate(Env = case_when(str_detect(Env, "plaque") ~ "plaque",
+                         TRUE ~ Env),
+         Study = case_when(
+           is.na(Study) ~ "other",
+           TRUE ~ Study
+         )) %>%
+  ggplot(aes(x = Env, y = value)) +
+    geom_violin(aes(col = Env, fill = Env), alpha = 0.5) +
+    geom_boxplot(width = 0.1) +
+    geom_jitter(aes(shape = Study), width = 0.1, alpha = 0.6) +
+    #facet_wrap(~ index, scales = "free_y") +
+    theme_bw() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+      axis.ticks.x = element_blank(),
+      panel.grid.major.x = element_blank(),
+      legend.position = "top"
+    ) +
+    labs(y = "Shannon index") +
+    guides(fill = "none", col = "none")
+
+```
+
+We used the Shannon Index to see if alpha-diversity in our model is similar
+to reference samples. The mean Shannon index of model
+samples---AS, model calculus, reference *in vitro* biofilm
+(`r paste0("M = ", signif(shan_model$mean, 3), ", sd = ", signif(shan_model$sd, 3), collapse = "; ")`)
+were consistently lower than the means of oral reference samples---mucosa,
+modern reference dental calculus, saliva, and subgingival and subgingival plaque
+(`r paste0("M = ", signif(shan_oral$mean, 3), ", sd = ", signif(shan_oral$sd, 3), collapse = "; ")`).
+The Pielou species evenness index has a similar
+distribution, although the comparative biofilm samples have a higher mean
+than biofilm samples from this study (Supp. Mat.).                               <!--link to supp mat-->
+Saliva inoculate samples from this study
+(M = `r signif(filter(shan_saliva, Study == "this_study")$mean, 3)`)
+have a lower mean Shannon index than reference samples
+(M = `r signif(filter(shan_saliva, Study == "HMP")$mean, 3)`).
+
+### Model calculus is distinct from dental calculus and other oral samples
+
+```{r}
+#| label: fig-core-microbiome
+#| fig-cap: "Core genera within the different types of samples represented as mean relative abundances at the genus level. Other = other genera present in lower than 5% relative abundance."
+
+genus_counts_short <- genus_counts_long %>%
+  left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(str_detect(Env, "plaque|calculus")) %>%
+  group_by(Env, genus) %>%
+  summarise(rel_abund = mean(rel_abund)) %>% # mean relative abundance in each sample type
+  mutate(
+    genus = case_when(rel_abund <= 0.05 ~ NA_character_,
+                      TRUE ~ genus),
+    label = str_extract(genus, "\\w{2}") # create 2-letter abbreviation for labels
+    ) #%>% 
+  #mutate(genus = as.factor(genus))
+genus_names <- sort(unique(genus_counts_short$genus)[-1])
+#genus_cols <- viridisLite::viridis(length(genus_names))
+#names(genus_cols) <- genus_names
+  #filter(rel_abund > 0.05) %>% 
+genus_counts_short %>% 
+  ggplot(aes(x = "", y = rel_abund, fill = genus, label = label)) +
+    geom_col(col = "grey50") +
+    coord_polar(theta = "y", start = 0) +
+    geom_label(position = position_stack(vjust = 0.5), col = "white", show.legend = F) +
+    facet_wrap(~ Env) +
+    theme_void() +
+    scale_fill_viridis_d(na.value = "grey50", labels = c(genus_names, "Other")) # janky solution...
+```
+
+The main overlap between the model calculus and oral comparative
+samples are the high relative abundance of *Streptococcus*.
+Model calculus consists mostly of *Enterococcus* and
+*Veillonella* spp., while oral comparative samples are more
+diverse (@fig-core-microbiome), which is consistent with the
+calculated Shannon Index.
+
+```{r}
+#| label: compar-spca-fig-setup
+# sPCA plot of PCs 1 and 2
+compar_spca_plot <- compar_princomp %>%
+  mutate(Study = case_when(
+    Study != "this_study" | is.na(Study) ~ "other",
+    TRUE ~ Study
+  )) %>% 
+  ggplot(aes(x = PC1, y = PC2, col = Study, shape = Env)) +
+    geom_point(size = 3) +
+    geom_vline(xintercept = 0, size = 0.2) +
+    geom_hline(yintercept = 0, size = 0.2) +
+    scale_x_continuous(position = "top") +
+    #scale_y_continuous(position = "right") +
+    theme_bw() +
+    theme(
+      legend.position = "left"
+    ) +
+    labs(
+      x = paste(
+        "PC1", scales::percent(compar_explain_var[[1]], accuracy = 0.1)
+      ),
+      y = paste(
+        "PC2", scales::percent(compar_explain_var[[2]], accuracy = 0.1)
+      )
+    ) +
+    scale_colour_viridis_d(option = "C") +
+    scale_shape_manual(values = 1:length(levels(as.factor(compar_princomp$Env))))
+
+# loading plot PC1
+compar_comp_1 <- compar_pca_loadings %>%
+  arrange(desc(PC1)) %>% 
+  mutate(species = fct_reorder(species, desc(PC1))) %>%
+  slice(c(
+    1:20,
+    seq(from = nrow(compar_pca_loadings)-19, to = nrow(compar_pca_loadings))
+    )) %>%
+  ggplot(aes(x = PC1, y = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_x_continuous(position = "bottom", limits = c(min_comp_PC1,max_comp_PC1)) +
+  scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(x = "", y = "") +
+    loading_theme_pc1
+
+# loading plot PC2
+compar_comp_2 <- compar_pca_loadings %>%
+  arrange(desc(PC2)) %>%
+  mutate(species = fct_reorder(species, desc(PC2))) %>%
+  slice(c(
+    1:20,
+    seq(from = nrow(compar_pca_loadings)-19, to = nrow(compar_pca_loadings))
+    )) %>%
+  ggplot(aes(y = PC2, x = species, fill = `Oxygen tolerance`)) +
+    geom_bar(stat = "identity", width = 0.8) +
+    scale_y_continuous(limits = c(min_comp_PC2,max_comp_PC2), position = "right") +
+    scale_x_discrete(position = "top") +
+    scale_fill_manual(
+      values = viridisLite::turbo(
+        n = length(levels(as.factor(bac_properties$`Oxygen tolerance`)))
+        )
+      ) +
+    labs(x = "", y = "") +
+    loading_theme_pc2
+```
+
+```{r}
+#| label: fig-spca-compar
+#| fig-cap: "sPCA on species-level counts from model calculus and reference samples. Figure shows the species loadings from PC2 (A), the main sPCA plot (B), and species loadings on PC1 (C)."
+#| fig-width: 12
+#| fig-height: 9
+# align PC1 and PC2 loading plots with (0,0) on the PC1 and PC2 of the sPCA plot
+ggdraw() +
+    draw_plot(compar_spca_plot, width = 0.55, height = 0.46, x = 0.01, y = 0.47) +
+    draw_plot(compar_comp_2, width = 0.46, height = 0.48, x = 0.56, y = 0.52) +
+    draw_plot(compar_comp_1, width = 0.68, height = 0.46, x = 0.02, y = 0.01) +
+    draw_figure_label("A") +
+    draw_figure_label("B", position = "top.right") +
+    draw_figure_label("C", position = "bottom.left")
+```
+
+Model calculus samples are distinct from both the oral reference samples and
+the biofilm model reference samples. They are separated from oral reference samples
+mainly on PC1, and from biofilm model reference samples (and, to some extent, oral samples)
+on PC2. The highest
+negative contributions are a mix of all types of aerotolerance, while the
+positive contributions are mostly (facultative) anaerobes, with *Enterococcus* spp.
+as the top three positive contributors to PC1. Top negative contributors are
+*Capnocytophaga* spp as well as the aerobes *Corynebacterium matruchotii* and
+*Rothia dentocariosa*. The top positive contributors to PC2 are all anaerobes,
+mainly from the genus *Selenomonas*. Top negative contributors to PC2 are a mix of
+aerotolerances, with many *Streptococcus* spp.
+
+```{r}
+#| label: comp-diffabund-fig-setup
+compar_da_pca <- plaque_logf_full %>%
+  inner_join(compar_pca_loadings, by = "species")
+
+ compar_logf <- compar_da_pca %>%
+   arrange(desc(abs(lfc))) %>%
+   slice_head(n = 90) %>%
+   ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +  
+    theme_bw() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_blank()
+          ) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50")
+
+compar_logf_pc1 <- compar_da_pca %>%
+  arrange(desc(abs(PC1))) %>% # order by absolute value of loadings
+  slice_head(n = 90) %>% # show top 30 species (3 groups * 30 = 90)
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point(size = 1.4) +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +  
+    theme_bw() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_blank()
+          ) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50", drop = FALSE) +
+    labs(x = "Log fold change", y = "Species", shape = "Sample type")
+
+
+compar_logf_pc2 <- compar_da_pca %>%
+  arrange(desc(abs(PC2))) %>%
+  slice_head(n = 90) %>% 
+  mutate(`Oxygen tolerance` = factor(
+    `Oxygen tolerance`, levels = c("aerobe", "anaerobe", "facultative anaerobe"))
+    ) %>%
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point(size = 1.4) +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    theme_bw() +
+    facet_wrap(~ env) +
+    theme(axis.title.y = element_blank()) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_x_continuous(limits = layer_scales(compar_logf_pc1)$x$get_limits()) +
+    scale_colour_viridis_d(option = "H", na.value = "grey50", drop = FALSE) +
+    labs(x = "Log fold change", y = "Species", shape = "Sample type")
+```
+
+```{r}
+#| label: fig-diffabund-comp
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, triangles in modern calculus, diamonds are enriched in subgingival plaque, and squares in supragingival plaque. Plot shows the top 30 loadings (absolute value) in PC1 (A) and PC2 (B) between model calculus and other sample types, ordered by decreasing log-fold change. Bars represent standard error."
+#| fig-width: 11
+#| fig-height: 9
+
+compar_logf_pc1 / compar_logf_pc2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
+```
+
+Based on the differential abundance analysis on the top loadings from PC1,
+the main differences between model
+calculus and oral reference samples, are that the oral reference samples are
+enriched with species with a diverse oxygen tolerance from a wide range of genera,
+while the model calculus is enriched with *Enterococcus* spp. The largest
+differences occur in *Corynebacterium matruchotii*, *Rothia dentocariosa*, and
+*Capnocytophaga gingivalis* ([@fig-diffabund-comp]A).
+This is echoed in the differential abundance analysis on top loadings from PC2,
+where most of the species are enriched in model calculus, all of which are
+anaerobes, and the largest differences occurring in *Cryptobacterium curtum*,
+*Eggerthella lenta*, and *Mogibacterium diversum* ([@fig-diffabund-comp]B).
+
+## Samples show an increased mineralisation over the course of the experiment
+
+```{r}
+#| label: results-ftir-setup
+#| include: false
+grind_sample_order <- c( # make sure the grind samples are ordered correctly in plots
+  "Archaeological calculus",
+  "Artificial calculus day 16",
+  "Artificial calculus day 20",
+  "Artificial calculus day 24",
+  "Archaeological bone",
+  "Bone-Dentine",
+  "Bone-Dentine_2",
+  "Enamel",
+  "Enamel_2",
+  "Enamel_3")
+
+asscher_enamel_1 <- function(x) {-0.018 * x + 6.0} #y = -0.018x + 6.0 #Qesem   
+asscher_enamel_2 <- function(x) {-0.021 * x + 6.1} #y = -0.021x + 6.1 #Ateret 
+asscher_enamel_3 <- function(x) {-0.017 * x + 5.5} #y = -0.017x + 5.5 #Neve-Yarak
+asscher_enamel_4 <- function(x) {-0.015 * x + 5.2} #y = -0.015x + 5.2 #Modern
+
+ftir_data_id <- ftir_data_raw %>% 
+  rename(analysis_id = sample) %>% 
+  mutate(
+    sample = str_extract(analysis_id, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
+    sample = case_when(
+      str_detect(analysis_id, "modern-ref") ~ analysis_id, # re-separate modern ref samples
+      TRUE ~ sample
+        )
+    )
+
+ftir_data <- ftir_metadata %>%
+  separate_longer_delim(analysis_id, delim = ";") %>% 
+  right_join(ftir_data_raw, by = c("analysis_id" = "sample"))
+
+#ftir_data <- left_join(ftir_metadata, ftir_data_id, by = c("sample_id" = "sample"))
+
+#ftir_data_long <- inner_join(ftir_metadata, ftir_data, by = c("analysis_id" = "sample"))
+```
+
+```{r}
+#| label: experiment-spectra-setup
+# day 7
+ftir_day7 <- ftir_data %>%
+  filter(
+    #day == 7,
+    #sample_id == "F7.1A6",
+    #sample_id != "F7",
+    analysis_id == "F7.1A6_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 12
+ftir_day12 <- ftir_data %>%
+  filter(
+    day == 12,
+    analysis_id != "F7",
+    analysis_id != "F7.1A6_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 16
+ftir_day16 <- ftir_data %>%
+  filter(
+    #day == 16,
+    #grind == FALSE,
+    analysis_id == "F16.1A2" |
+    analysis_id == "F16.1C6" |
+    analysis_id == "F16.2B2" |
+    analysis_id == "F16.2D2_b"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+# day 24 (final product)
+ftir_day24 <- ftir_data %>%
+  filter(
+    #day == 24,
+    #is.na(grind),
+    #str_detect(sample, "[_]", negate = T),
+    analysis_id == "F24.1A3" |
+    analysis_id == "F24.1C2" |
+    analysis_id == "F24.1D3" |
+    analysis_id == "F24.2B4"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = sample_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+calc_compar <- ftir_data %>%
+  filter(
+    str_detect(analysis_id, "MB11_grind_c") | analysis_id == "F24.1A3" | 
+      analysis_id == "modern-ref_1"
+    ) %>%
+  mutate(
+    abs = case_when(analysis_id == "F24.1A3" ~ abs + 0.45,
+                         TRUE ~ abs)
+    ) %>% 
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    # scale_x_continuous(
+    #   n.breaks = length(as.character(seq(500, 4000, by = 500)))
+    # ) +
+    scale_x_reverse() +
+    theme(axis.text.y = element_blank(),
+          axis.ticks.y = element_blank()
+    )
+```
+
+To determine whether the model dental calculus is comparable to natural dental calculus,
+both modern and archaeological dental calculus were analysed with FTIR spectroscopy to
+ascertain their composition.
+The archaeological and modern reference spectra are largely indistinguishable and
+consist of a broad O–H absorbance band (3400 cm$^{-1}$) related to amid a and hydroxyl
+group, weak CH3 bands (3000–2900 cm$^{-1}$), amide I band (1650 cm$^{-1}$) which is
+related to the protein content, carbonate (1420, 1458-1450, 875-870 cm$^{-1}$),
+and phosphates (1036-1040, 602-4, 563-566 cm$^{-1}$) which, together with the hydroxyl
+and the carbonate, can be identified as derived from carbonate hydroxyapatite,
+the main mineral found in mature dental calculus
+[@hayashizakiSiteSpecific2008; @jinSupragingivalCalculus2002].
+Comparing the development of the model calculus to the reference samples, it is
+evident that between days 7 and 24 there is a decrease of the protein components
+and increse of the inorganic mineral carbonate hydroxyapatite. The model calculus samples
+from the end of the experiment are similar to both the modern and archaeological
+reference samples. The main difference is a lower organic component in reference
+samples seen as a reduced amide I peak at around 1637 compared to the carbonate
+peak at around 1420, and an absence of amide II and III. Also a reduction in CH3
+bands at 3000-2900 cm$^{-1}$ [@fig-ftir-spectra].
+
+Sample spectra from day 7 are charecterised by a high content of proteins as evident
+by the strong amide I absorbance band at 1650, a less pronounced amide II band
+at 1545 cm$^{-1}$, and the small amide III band at 1237 cm$^{-1}$. Also related
+to the organic component of the samples are the three marked CH~3~ and CH~2~
+stretching vibrations at 2960, 2920, and 2850 cm$^{-1}$ wavenumbers. The presence
+of mineral component is evident from the presence of C--O$^{2-}_3$ absorbance
+bands at 1450 and 1400 cm$^{-1}$ wavenumbers typical of carbonates, and
+P--O$^{3-}_4$ absorbance band at 1080 and 1056 cm$^{-1}$ which are related to
+phosphate minerals. A possible brushite absorbance band can be seen at 527
+cm$^{-1}$ in sample F7.1A6 and minor absorption bands of the phosphate doublet
+around 605 cm$^{-1}$ and 560 cm$^{-1}$ in sample F7.2D1, as well as what may be
+minor contamination of quartz. The exact composition of the phosphate mineral is
+hard to determine at this stage, possibly due to the presence of several phosphate
+minerals including amorphous phases. The relative absorbance of O–H and Amide I
+and II bands are higher than the phosphate bands, representing a relatively higher
+content of lipids and proteins than inorganic content. There is a large variation
+between the spectra, possibly indicating different formation rates of the different
+components in the samples ([@fig-ftir-spectra]A).
+
+Day 12, amide I and II continue to be the dominant peaks, and a higher ratio
+of amide and O--H to PO~4~ v~3~ absorbance bands is maintained. Reduced variation
+between the spectra ([@fig-ftir-spectra]B).
+
+In day 16 spectra, the ratio of amides to PO~4~ has shifted, with
+the main peak shifting to the PO~4~ v~3~ absorbance band at 1039--1040 cm$^{-1}$
+(except in sample F16.1A2). A well-defined PO~4~ doublet at 600 and 560 is
+present. Small CO$_3^{2-}$ asymmetric stretching at 1450 cm$^{-1}$ and 1415 cm$^{-1}$,
+and stretching vibrations at 875-870 cm$^{-1}$ indicate that the carbonate minerals
+component is also becoming more crystallised. There is a decreased variability
+between the spectra, with most spectra exhibiting a higher
+phosphate-to-protein/lipid ratio ([@fig-ftir-spectra]C).
+
+For day 24, although the amide I and II are still present, the main component of
+the samples is the carbonate hydroxyapatite with strong absorbance band at 1039--1040
+cm$^{-1}$, well-defined PO~4~ doublet at 604/605--564/566 cm$^{-1}$ and carbonate
+bands at 1413--1420 and 1445--1460 cm$^{-1}$. There is little variation between
+all of the spectra  ([@fig-ftir-spectra]D).
+
+```{r}
+#| label: fig-ftir-spectra
+#| fig-cap: "Select spectra from all experiment sampling days; (A) day 7, (B) day 12, (C) day 16, and (D) day 24. Absorbance bands in stretching mode around 3400 cm−1 typical of the hydroxyl group."
+#| fig-width: 12
+#| fig-height: 8
+
+(ftir_day7 + (ftir_day12) + theme(axis.title.y = element_blank())) / (ftir_day16 + ftir_day24 + theme(axis.title.y = element_blank())) / calc_compar +
+  plot_layout(nrow = 3) + plot_annotation(tag_levels = "A")
+```
+
+### Samples show similar crystallinity and order to reference calculus
+
+<!-- FTIR spectra comparison of artificial and reference dental calculus -->
+We determined the level of crystallinity and order of the carbonate hydroxyapatite
+as an indication for its maturity by using the grinding curves method
+presented by @asscherAtomicDisorder2011 and @asscherVariationsAtomic2011. 
+
+```{r message=FALSE, warning=FALSE}
+#| label: fig-grind-curve
+#| fig-cap: "(A) Grinding curves of multiple materials from our study and from @asscherVariationsAtomic2011; and (B) calculus-only materials, including biofilm samples from three days, and an archaeological calclulus sample."
+# produce plot with grind curve for all samples
+grind_all_plot <- ftir_grind_data %>%
+  mutate(
+    Sample_day = factor(Sample_day, levels = grind_sample_order)) %>%
+  group_by(day, Sample) %>%
+    ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = F) +
+    geom_function(fun = asscher_enamel_1, xlim = c(75,200), col = "grey60", alpha = 0.2) + #Qesem   
+    geom_function(fun = asscher_enamel_2, xlim = c(75,200), col = "grey60", alpha = 0.2) + #Ateret
+    #geom_function(fun = asscher_enamel_3, col = "grey60") + #Neve-Yarak
+    geom_function(fun = asscher_enamel_4, xlim = c(75,200), col = "grey60", alpha = 0.2) + #Modern
+    #stat_function(fun = asscher_enamel_1, col = "grey60", xlim = c(100,200)) +
+    theme_minimal() +
+    scale_x_continuous(limits = c(75,250)) +
+    scale_y_continuous(limits = c(2,7)) +
+    labs(
+      col = "Sample", shape = "Sample",
+      x = "FWHM of the 1035 peak",
+      y = "Splitting factor"
+    )
+
+# isolate calculus samples to see diffs between days and the 'real deal'
+grind_calc_plot <- ftir_grind_data %>%
+  filter(Sample == "Artificial calculus" | Sample == "Archaeological calculus") %>%
+  ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
+    geom_point(size = 2, alpha = 0.6) +
+    geom_smooth(method = "lm", se = F) +
+    labs(col = "Sample", shape = "Sample",
+         x = "FWHM of the 1035 peak",
+         y = "Splitting factor") +
+    theme_minimal() +
+    theme(
+      axis.text = element_blank(),
+      axis.title = element_blank(),
+      axis.ticks = element_blank(),
+      legend.position = "none",
+      panel.border = element_rect(
+        colour = "grey", 
+        fill = "transparent", size = 1),
+      panel.background = element_rect(fill = "white")
+      ) +
+    #scale_colour_viridis_d(end = 0.4)
+    scale_colour_viridis_d()
+
+grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.52, right = 1, top = 1.03) + 
+  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+```
+
+Samples were compared to published data [@asscherVariationsAtomic2011], and the
+slopes of the trend lines and their position in the plot, indicating the level
+of order/disorder and crystal size of the mineral
+for our model calculus, are similar to those of fresh bone and
+dentin which are relatively disordered when compared to enamel and archaeological
+bone. No appreciable differences between days 16, 20, and 24 were detected.
+The archaeological dental calculus shows a slightly increased slope compared to
+model calculus from the three sampling days used in the grind curve
+(@fig-grind-curve), possibly indicating larger crystal size due to more complete
+crystalisation.
