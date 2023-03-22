@@ -68,9 +68,10 @@ precipitation and decreased dissolution of calcium phosphate salts within saliva
 and the plaque biofilm.
 The resulting supersaturation of calcium phosphate salts are the main
 drivers of biofilm mineralisation [@jinSupragingivalCalculus2002].
-The primary minerals in dental calculus are hydroxyapatite (HAP),
-octacalcium phosphate (OCP), whitlockite (WHT), and brushite (BHT). During initial
-mineralisation the main mineral component is BHT, which shifts to HAP in more
+The primary minerals in dental calculus are hydroxyapatite,
+octacalcium phosphate, whitlockite, and brushite. During initial
+mineralisation the main mineral component is brushite, which shifts to hydroxyapatite
+in more
 mature dental calculus [@jinSupragingivalCalculus2002; @hayashizakiSiteSpecific2008].
 The exact elemental composition of dental calculus varies among individuals due to
 various factors, including diet [@hayashizakiSiteSpecific2008; @jiFluorideMagnesium2000].
@@ -161,7 +162,7 @@ separately from
 natural calculus and other oral reference samples, while grouping more closely
 with *in vitro* reference samples from @edlundUncoveringComplex2018.
 The mineral composition closely resembled modern and archaeological reference
-calculus, predominantly comprised of carbonate HAP with a similar level of
+calculus, predominantly comprised of carbonate hydroxyapatite with a similar level of
 crystallinity and order.  
 As such, the model dental calculus presented here is a viable proxy to natural
 dental calculus and can be used to explore many of the currently unexplained
