@@ -40,7 +40,6 @@ vignettes/*.pdf
 *.knit.md
 
 # Output created by Quarto
-07-publication/_output/
 /.quarto/
 
 # R Environment Variables
@@ -52,6 +51,8 @@ vignettes/*.pdf
 
 #03-data/
 #04-analysis/
+07-publication/_archive/
+#07-publication/_output/
 **/*.bam
 **/*.sam.gz
 **/*.sam
