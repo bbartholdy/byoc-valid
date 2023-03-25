@@ -1,19 +1,24 @@
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = FALSE,
-  warning = FALSE,
-  message = FALSE,
-  fig.path = "figures/",
-  fig.align = "center")
-library(tidyr)
-library(readr)
+```{r}
+#| label: setup
+#| include: false
+#| cache: false
+# knitr::opts_chunk$set(
+#   echo = FALSE,
+#   warning = FALSE,
+#   message = FALSE,
+#   fig.path = "figures/",
+#   fig.align = "center")
+
 library(dplyr)
-library(forcats)
-library(stringr)
+library(tidyr)
 library(ggplot2)
-library(here)
+library(stringr)
 library(patchwork)
+library(forcats)
+library(cowplot)
+library(readr)
+library(here)
 #source(here("02-scripts/authentication.R"))
 # upload data
 dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
@@ -30,7 +35,7 @@ plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
 
 # FTIR
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
+ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
 ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 
 # Materials and methods setup
@@ -58,19 +63,30 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
 
 # Introduction
 
-{{< include intro.qmd >}}
+{{< include 01-intro.qmd >}}
 
 # Materials and Methods
 
-{{< include matmet.qmd >}}
+{{< include 02-matmet.qmd >}}
 
 # Results
 
-{{< include results.qmd >}}
+{{< include 03-results.qmd >}}
 
 # Discussion
 
-{{< include disc.qmd >}}
+{{< include 04-disc.qmd >}}
+
+# Acknowledgements {-}
+
+We would like to thank the nf-core/eager community for assistance with the
+EAGER pipeline, especially Dr. James Fellows Yates. We also thank Sophie Seng
+for involvement in the DNA extraction. This work was performed using the compute
+resources from the Academic Leiden Interdisciplinary Cluster Environment (ALICE)
+provided by Leiden University, with special thanks to Dr. Robert Schulz.
+The FTIR analysis was conducted at the Laboratory for Sedimentary Archaeology,
+Haifa University, courtesy of Prof. Ruth Shahack-Gross. We also thank Dr. Yotam
+Asscher for providing the raw data of bone mineral grinding curves.<!-- Raw data not provided -->
 
 # References {-}
 

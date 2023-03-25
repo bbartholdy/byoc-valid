@@ -11,9 +11,11 @@ To determine the composition of microbial communities, we sampled the medium
 from the biofilm wells over the course of the experiment and sequenced the DNA
 to identify species that are present in the model, and whether these mimic
 natural oral communities. During a separate experimental run, under the same
-conditions, we sampled biofilms on multiple days and determined the mineral
-composition using FTIR, and compared the spectra to those of natural
-dental calculus, both modern and archaeological.
+conditions, we directly sampled the biofilms on multiple days and determined the
+mineral composition using FTIR, and compared the spectra to those of natural
+dental calculus, both modern and archaeological. Samples were taken on both controls
+and starch treatments, but differences between these samples were not explored
+in this study.
 
 ## Biofilm growth
 
@@ -35,7 +37,8 @@ Shellis [-@shellisSyntheticSaliva1978]. The setup comprises a polypropylene
 24 deepwell PCR plate (KingFisher 97003510) with a lid containing 24 pegs (substrata),
 which are autoclaved at 120&deg;C, 1 bar overpressure, for 20 mins.
 
-The artificial saliva (AS) is a modified version of the basal medium mucin (BMM)
+The artificial saliva (hereafter referred to as medium) is a modified version of
+the basal medium mucin (BMM)
 described by Sissons and colleagues [-@sissonsMultistationPlaque1991].
 It is a complex medium containing 2.5 g/l partially purified mucin from porcine
 stomach (Type III, Sigma M1778),
@@ -56,13 +59,13 @@ nylon cloth to remove particulates.
 Substrata were inoculated with 1 ml/well of a two-fold dilution of WS in sterilised
 20% glycerine for four hours at 36&deg;C, to allow attachment of the
 salivary pellicle and plaque-forming bacteria. After initial inoculation, the
-substrata were transferred to a new plate containing 1 ml/well AS and incubated
+substrata were transferred to a new plate containing 1 ml/well medium and incubated
 at 36&deg;C, with gentle motion at 30 rpm. The inoculation process was repeated
 on days 3 and 5 by transferring the samples to a new plate with inoculate.
-AS was partially refreshed once per day, by topping up the wells to the original
-volume with more AS, and fully refreshed every three days,
+medium was partially refreshed once per day, by topping up the wells to the original
+volume with more medium, and fully refreshed every three days,
 throughout the experiment, by transferring the substrata to a new plate containing
-AS. To feed the bacteria, the substrata were transferred to a new plate, containing
+medium. To feed the bacteria, the substrata were transferred to a new plate, containing
 5% (w/v) sucrose, for six minutes twice daily, except on inoculation days
 (days 0, 3, and 5), where the samples only received one sucrose treatment after
 inoculation.
@@ -80,11 +83,10 @@ and during treatments, the rpm was increased to 60.
 The purpose of starch treatments is to explore the incorporation
 of starch granules into the model calculus.
 Starch treatments were initiated on day 9 (@fig-protocol) to avoid starch granule
-counts being
-affected by $\alpha$-amylase hydrolysis from the inoculation saliva. An
-$\alpha$-amylase
-assay conducted on samples from days 3, 6, 8, 9, 10, 12, and 14 confirmed the
-absence of $\alpha$-amylase activity in the system.
+counts being affected by $\alpha$-amylase hydrolysis from the inoculation saliva.
+An $\alpha$-amylase
+assay conducted on samples from days 3, 6, 8, 9, 10, 12, and 14 also showed that
+there is no host salivary $\alpha$-amylase activity in the system.
 The results of the starch incorporation and $\alpha$-amylase activity assay have
 been reported in a separate article [@bartholdyInvestigatingBiases2022].
 
@@ -196,14 +198,15 @@ Relative abundances of communities were calculated at the species- and genus-lev
 as recommended for compositional data [@gloorMicrobiomeDatasets2017].
 Shannon index and Pileou's evenness index was calculated on species OTU tables of all
 model and oral reference
-samples using the **vegan** `r packageVersion("vegan")` R package [@Rvegan]. Shannon index
+samples using the **vegan** v`r packageVersion("vegan")` R package [@Rvegan]. Shannon index
 was calculated on all experimental samples to see if there is an overall loss or gain in
 diversity and richness across the experiment.
 Sparse principal component analysis (sPCA) was performed on model biofilm
 samples to assess microbial composition between samples within the experiment,
 and a separate sPCA analysis was performed on model calculus and oral
-reference samples. The sPCA analysis was conducted using the **mixOmics** R package
-`r packageVersion("mixOmics")` [@RmixOmics].  
+reference samples. The sPCA analysis was conducted using the **mixOmics**
+v`r packageVersion("mixOmics")`
+R package [@RmixOmics].  
 The core microbiome was calculated by taking the mean genus-level relative abundance
 within each sample type for model calculus, modern reference calculus,
 sub- and supragingival plaque. Genera present at lower than 5% relative
@@ -218,11 +221,14 @@ tolerance, the most common oxygen tolerance at the genus level was applied.
 
 Differential abundance of species is calculated using the Analysis of Compositions
 of Microbiomes with Bias Correction (ANCOM-BC) method from the
-**ANCOMBC** R package [@linANCOMBC2020], with species-level OTU as input. Results
+**ANCOMBC** R package v`r packageVersion("ANCOMBC")` [@linANCOMBC2020], with species-level OTU as input. Results
 are presented as the log fold change of species between paired sample types with
 95% confidence intervals. P-values are adjusted using the false
 discovery rate (FDR) method. Samples are grouped by sample type (i.e. saliva,
-plaque, modern calculus, model calculus).
+plaque, modern calculus, model calculus). To supplement the sPCA analyses, we
+plot the log fold change of the top 30 species in each of principal components 1
+and 2, allowing us to see which species are enriched in the different samples and
+causing clustering in the sPCA.
 
 ## FTIR
 

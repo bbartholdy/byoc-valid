@@ -165,7 +165,7 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
 ### Sample authentication
 
 <!-- SourceTracker -->
-The sources of taxa were estimated using SourceTracker2 [@knightsSourceTracker2011].
+The sources of taxa were estimated using SourceTracker2 [@knightsSourceTracker2011]. <!-- supp. mat. figure -->
 Results suggest that the majority of taxa across samples have an oral microbial
 signature. We compared SourceTracker2 results to a database of oral taxa from
 the **cuperdec** R package [@yatesOralMicrobiome2021] to prevent removal of samples
@@ -173,9 +173,15 @@ where oral taxa were assigned to a non-oral source, as some similar taxa with a
 signature from multiple sources are often classified as "Unknown"
 [@velskoMicrobialDifferences2019]. We included several oral sources, so this is
 likely to occur. Samples suspected of containing a large proportion of environmental
-contamination were removed (see Supp mat). The removed                              <!-- supp mat references -->
+contamination were removed<!--(see Supp mat)-->. The removed                              <!-- supp mat references -->
 samples were predominantly medium samples from later in the experiment, and a few
-model calculus samples (see Supp mat).
+model calculus samples (see Supp mat). After contaminated samples were removed,
+suspected contaminant-species were removed from the remaining samples using the
+**decontam** R package [@Rdecontam].
+After contamination removal, samples consisted of between
+`r paste(range(byoc_summ$count), collapse = " and ")`
+species with a mean of
+`r paste(round(mean(byoc_summ$count)))`.
 
 ### Decrease in community diversity across experiment
 
@@ -213,15 +219,12 @@ alpha_div_long %>%
 ```
 
 <!-- species diversity -->
-After contamination removal, samples consisted of between
-`r paste(range(byoc_summ$count), collapse = " and ")`
-species with a mean of
-`r paste(round(mean(byoc_summ$count)))`.
-We used the Shannon Index to assess the species diversity and richness in our
-samples over the course of the experiment. Samples were grouped into sampling
-categories due to low sample sizes on sampling days (inoc = days 0, 3, 5; treatm =
-days 7, 9, 12, 15; model = day 24). There was a slight decrease in mean
-alpha diversity between inoculation
+To monitor the development of microbial communities in our samples over the
+course of the experiment, we used the Shannon Index to assess the species
+diversity and richness at various stages of our protocol. Samples were grouped
+into sampling categories due to low sample sizes on sampling days
+(inoc = days 0, 3, 5; treatm = days 7, 9, 12, 15; model = day 24).
+There was a slight decrease in mean alpha diversity between inoculation
 (mean [M] = `r signif(filter(shan_byoc, day_grouped == "inoc")$mean, 3)` $\pm$ `r signif(filter(shan_byoc, day_grouped == "inoc")$sd, 3)`)
 and treatment and model calculus samples
 (M = `r signif(filter(shan_byoc, day_grouped == "treatm")$mean, 3)`
@@ -319,8 +322,6 @@ ggdraw() +
 #  plot_layout(design = plot_design, guides = "auto", widths = c(1,0.2,1), heights = c(1,0.2,1)) + plot_annotation(tag_levels = "A")
 ```
 
-<!-- Set up your analysis by framing them in the context of your whole project. Something like this, that will lead your readers into what you did and why. They won't be thinking about it like you are, and why you do each experiment won't be obvious to them-->
-
 We next examined whether there is a change in the species composition over
 time in our samples by assessing the beta-diversity in a PCA.
 The species profiles of the saliva inoculate used in our experiment were
@@ -330,7 +331,8 @@ most of the positive species loadings are driven by anaerobic species,
 especially *Selenomonas* spp, and
 negative loadings are predominantly facultative anaerobes and some aerobes,
 such as *Rothia* and *Neisseria* spp.
-Medium and saliva are separated mostly on PC2.
+Medium and saliva are separated mostly on PC2, with medium samples located
+between saliva and model calculus samples.
 Model
 calculus samples also cluster separately from the medium samples on PC2,
 with some overlap between
@@ -375,6 +377,9 @@ byoc_logf_full %>%
 
 ```
 
+Differential abundance analysis using **ANCOMBC** R package [@linANCOMBC2020]
+allows us to see which species are enriched in the different sample types, giving
+us an idea of how the biofilm develops under our experimental conditions.
 Species enriched in saliva compared to model calculus are largely aerobic or
 facultatively anaerobic, while
 species enriched in model calculus compared to saliva are mainly anaerobes.
@@ -436,8 +441,8 @@ alpha_div_long %>%
 ```
 
 We used the Shannon Index to see if alpha-diversity in our model is similar
-to reference samples. The mean Shannon index of model
-samples---AS, model calculus, reference *in vitro* biofilm
+to oral reference samples. The mean Shannon index of model
+samples---medium, model calculus, reference *in vitro* biofilm
 (`r paste0("M = ", signif(shan_model$mean, 3), ", sd = ", signif(shan_model$sd, 3), collapse = "; ")`)
 were consistently lower than the means of oral reference samples---mucosa,
 modern reference dental calculus, saliva, and subgingival and subgingival plaque
@@ -572,10 +577,13 @@ ggdraw() +
     draw_figure_label("C", position = "bottom.left")
 ```
 
+To directly compare the beta-diversity of our model calculus with oral reference
+samples, including modern dental calculus, we used an sPCA including only
+our model calculus and reference samples.
 Model calculus samples are distinct from both the oral reference samples and
 the biofilm model reference samples. They are separated from oral reference samples
-mainly on PC1, and from biofilm model reference samples (and, to some extent, oral samples)
-on PC2. The highest
+mainly on PC1, and from biofilm model reference samples (and, to some extent, oral
+samples) on PC2. The highest
 negative contributions are a mix of all types of aerotolerance, while the
 positive contributions are mostly (facultative) anaerobes, with *Enterococcus* spp.
 as the top three positive contributors to PC1. Top negative contributors are
@@ -648,7 +656,12 @@ compar_logf_pc2 <- compar_da_pca %>%
 
 compar_logf_pc1 / compar_logf_pc2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
 ```
-
+<!-- ou should set up that there are known differences in the species composition of saliva and calculus, so you want to see if your calculus samples are enriched in species that are enriched in natural calculus-->
+We perfomed differential abundance analysis using **ANCOMBC** R package [@linANCOMBC2020] again, this time on our model calculus samples, modern dental
+calculus, and sub- and supragingival plaque.
+This allows us to see which species are enriched in the different sample types,
+and compare the final product of our model with naturally occurring plaque and
+calculus samples.
 Based on the differential abundance analysis on the top loadings from PC1,
 the main differences between model
 calculus and oral reference samples, are that the oral reference samples are
@@ -712,7 +725,7 @@ ftir_day7 <- ftir_data %>%
     #sample_id != "F7",
     analysis_id == "F7.1A6_b"
     ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample_id)) +
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
     theme_classic() +
     scale_x_reverse()
@@ -722,7 +735,8 @@ ftir_day12 <- ftir_data %>%
   filter(
     day == 12,
     analysis_id != "F7",
-    analysis_id != "F7.1A6_b"
+    analysis_id != "F7.1A6_b",
+    analysis_id != "F12.1A5+F12.B1"
     ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
@@ -736,7 +750,6 @@ ftir_day16 <- ftir_data %>%
     #grind == FALSE,
     analysis_id == "F16.1A2" |
     analysis_id == "F16.1C6" |
-    analysis_id == "F16.2B2" |
     analysis_id == "F16.2D2_b"
     ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
@@ -752,10 +765,9 @@ ftir_day24 <- ftir_data %>%
     #str_detect(sample, "[_]", negate = T),
     analysis_id == "F24.1A3" |
     analysis_id == "F24.1C2" |
-    analysis_id == "F24.1D3" |
-    analysis_id == "F24.2B4"
+    analysis_id == "F24.1D3"
     ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample_id)) +
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
     theme_classic() +
     scale_x_reverse()
@@ -874,7 +886,7 @@ grind_all_plot <- ftir_grind_data %>%
     #stat_function(fun = asscher_enamel_1, col = "grey60", xlim = c(100,200)) +
     theme_minimal() +
     scale_x_continuous(limits = c(75,250)) +
-    scale_y_continuous(limits = c(2,7)) +
+    scale_y_continuous(limits = c(2,6)) +
     labs(
       col = "Sample", shape = "Sample",
       x = "FWHM of the 1035 peak",
@@ -904,7 +916,7 @@ grind_calc_plot <- ftir_grind_data %>%
     #scale_colour_viridis_d(end = 0.4)
     scale_colour_viridis_d()
 
-grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.52, right = 1, top = 1.03) + 
+grind_all_plot + inset_element(grind_calc_plot, left = 0.4, bottom = 0.48, right = 1, top = 1.03) + 
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 ```
 

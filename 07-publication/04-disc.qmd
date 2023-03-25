@@ -42,8 +42,10 @@ Especially *Enterococcus* spp. seemed to thrive later in the experiment, at the
 expense of more fastidious species like *Capnocytophaga* and *Neisseria* spp.,
 which require an environment with at least 5% carbon dioxide to thrive
 [@tonjumNeisseria2017]. Our biofilm was grown under atmospheric carbon
-dioxide levels, which does not mimic *in vivo* oral carbon levels.
-Early colonisers,
+dioxide levels outside of our control.
+*Enterococcus* spp. are also known environmental contaminants, and we cannot
+exclude environmental contamination as a possible source for these species in our
+model. Early colonisers,
 including the aforementioned *Capnocytophaga* and *Neisseria* spp., as well as
 *Actinomyces*, were dominant in oral reference samples and deficient in model
 calculus samples, as well as the comparative *in vitro* model.
@@ -53,7 +55,7 @@ most are either anaerobes or facultative anaerobes, predominantly Gram-negative
 *Veillonella* and *Prevotella*, and Gram-positive *Enterococcus*.
 Species within predominantly aerobic genera, such as *Neisseria*, *Rothia*, and
 *Ottowia*, are deficient in the model compared to the donated saliva
-and other oral samples (@fig-spca-compar), suggesting a shift from a largely
+and other oral samples, suggesting a shift from a largely
 aerotolerant profile to an anaerobic profile during the experiment.<!-- Discuss the stable vs shaken oxygenation levels of media - the level of shaking that you used are too low to maintain atmospheric oxygen levels?-->
 While our model is not set up as an anaerobic system, the anaerobes seem to
 have outcompeted aerobes and, to some extent, facultative anaerobes.
@@ -61,14 +63,14 @@ This is likely a result of communities of bacteria within the biofilm creating
 favourable microenvironments facilitated by the protective properties of the
 biofilm matrix [@flemmingBiofilmsEmergent2016; @edlundUncoveringComplex2018].
 *Capnocytophaga* and *Actinomyces* spp. are predominantly (facultative) anaerobes,
-so their deficiency must be attributed to different reasons.
+so their deficiency must be attributed to different reasons, such as nutrient
+availability or being out-competed by other species.
 Species-level aerotolerance was collected from BacDive [@reimerBacDive2022]
 and, at the time of writing,
 `r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`
 species were missing aerotolerance values. This was mitigated by aggregating genus-level
-tolerances to species with missing values, and may have some errors (although unlikely
-to make any significant difference).
-
+tolerances to species with missing values, and may have some errors (although
+unlikely to make any significant difference).
 The highest log-fold changes
 between model calculus and other samples were seen in *E. faecalis*, *E. durans*,
 and *E. casseliflavus*, and contributed
@@ -77,8 +79,7 @@ samples.
 *E. faecalis* was also abundant in the comparative *in vitro* biofilm study.
 *Enterococcus* spp. out-competing other species may be a problem in
 model biofilm studies, but more comparative studies are needed to confirm
-(and there are limited WGS studies to use as a comparison). *E. faecalis* is also
-a known environmental contaminant
+(and there are limited WGS studies to use as a comparison).
 
 Species related to dental caries, such as *Steptococcus mutans* and members of
 the *Lactobacillus* genus, were deficient in both model calculus samples
@@ -89,17 +90,18 @@ not unexpected in a calculus model
 
 Model calculus and the modern reference calculus clustered separately in the sPCA
 analysis. This may be due to human variation, as there can be large differences
-in the oral microbiome of two individuals. Modern reference samples were taken
-from a single geographical origin, as was the donor saliva for the model, which
-was taken from a different geographical origin. One of the main drivers of
-differences in species profiles has been previously shown to be individual
-variation, even more so than pathological condition
-[@velskoAncientDental2022a; @fagernasMicrobialBiogeography2022].
-Whether or not distinct microbial profiles will affect the retention of
+in the oral microbiome of two individuals at the species level due to variations
+in age, sex, and
+other demographic factors, as well as how and when saliva samples were collected
+[@burchamPatternsOral2020; @nearingAssessingVariation2020]. Modern and model
+calculus samples are mostly separated on PC1, so this may also be caused by
+the introduction of *Enterococcus* contaminants in our model.
+Whether or not distinct microbial profiles, and the extracellular matrix they
+produce, will affect the retention of
 dietary particles in plaque remains to be seen, and likely depends on the role
-bacteria play in the incorporation and retention of dietary compounds and
-microremains within a biofilm. Samples within the experiment were quite
-consistent in terms of bacterial composition, making it possible for future
+bacteria and the matrix play in the incorporation and retention of dietary
+compounds and microremains within a biofilm. Samples within the experiment were
+quite consistent in terms of bacterial composition, making it possible for future
 studies to explore the role of bacteria in starch retention.
 Overall the majority of model calculus samples
 contained a distinctly oral signature, and is a promising starting point for
@@ -114,9 +116,9 @@ Samples taken early in the experiment, on day 7 and 12, had a high lipid and
 protein content consistent with the presence of bacterial cells and
 a matrix of extracellular polysaccharides [@jainIsolationCharacterization2013].
 The high water content, indicated by
-the O--H stretch, is also consistent with a biofilm, which is around 90%
-water [@bergerOralBiofilms2018]. As the samples mature over the course of the
-experiment, the ratio of proteins
+the O--H stretch, is also consistent with the high water content (up to 97%)
+of a biofilm matrix [@sutherlandBiofilmMatrix2001; @zhangMeasurementPolysaccharides1998].
+As the samples mature over the course of the experiment, the ratio of proteins
 and lipids to phosphates shifts from predominantly organic content to
 predominantly inorganic content in the form of carbonated hydroxyapatite.
 
@@ -133,11 +135,15 @@ single archaeological sample, and more modern and archaeological samples are
 needed to see if the higher level of crystallinity is consistent in archaeological
 calculus, and if the level of crystallinity of the model calculus is more comparable
 to modern reference samples. It may also be due to the short duration of model
-calculus growth over 24 days, compared to *in vivo* growth which may be a lifetime
-(with possible disruptions/dislodgement).
-The grinding curves for days 16, 20, and 24 were very similar, suggesting
+calculus growth over 24 days, compared to *in vivo* growth which may be a lifetime.
+The constant disruptions in growth of *in vivo* dental plaque/calculus will contain
+multiple stages of calcium phosphates, whereas our model will be more uniform.
+<!--The grinding curves for days 16, 20, and 24 were very similar, suggesting
 that the CPMU solution, which is introduced on day 16 to promote mineralisation,
 may not have much of an effect.
+
+Could also be causing the uniformity in crystal structure...
+-->
 
 There were differences in species profiles between modern and model
 calculus; perhaps most notably a lower abundance of *Corynebacterium matruchotii*,
@@ -145,27 +151,29 @@ one of the most well-known biomineralisers
 [@enneverCharacterizationBacterionema1978; @takazoeCalciumHydroxyapatite1970],
 in our model calculus compared to modern
 reference calculus. However, the mineral composition of the end results were similar,
-reinforcing the idea that, under the right circumstances, most bacteria will
-mineralise [@moorerCalcificationCariogenic1993].
-It may also suggest that, while bacteria are integral in the formation of dental
-calculus, and inevitably serve as part of the structure that dental calculus is
-built upon [@rohanizadehUltrastructuralStudy2005],
-the species composition of the biofilm communities may be less important. And that
-mineralisation may largely be a chemical process (catalysed by biological factors)
-[@omelonReviewPhosphate2013].
+reinforcing the idea that, under the right circumstances, biofilms with a range
+of microbial profiles can facilitate mineralisation
+[@moorerCalcificationCariogenic1993].
+Bacteria and their ability to secrete an extracellular matrix are integral in the
+formation of dental calculus, and inevitably serve as part of the structure that
+dental calculus is built upon [@rohanizadehUltrastructuralStudy2005], while the
+exact species composition of the biofilm communities may be less important. Our
+model calculus had a distinct mucrobial profile from modern reference calculus,
+but ultimately resulted in a similar mineral composition.
 
 ## Replicability
 
 Model calculus displayed similar species diversity and microbial profiles
 across all samples, indicating a high level of replicability between samples
-in the experimental run (@fig-diversity-byoc and @fig-spca-byoc).
+in the experimental run.
 It remains to be seen whether the replicability within the experiment
-also scales up to between-experiment replicability.
+also scales up to between-experiment replicability in our model, though others
+have shown that replicability in long-term models is possible when using the
+same inocula [@velskoConsistentReproducible2018].
 The variation in mineral composition was initially high in early model biofilm
 samples from days 7 and 12, but starting day 16 the variation decreased, and
 continued to decrease until day 24. The model calculus samples from day 24
-were largely similar in composition as observed in the FTIR spectra
-(@fig-ftir-spectra).
+were largely similar in composition as observed in the FTIR spectra.
 The use of a simple multiwell plate setup allows us to submit many samples
 to the same conditions, increasing replicability between samples [@extercateAAA2010].
 While the experimental conditions, including the dietary input, are kept constant,
@@ -186,7 +194,9 @@ from multiple individuals. However, having a single inoculum donor allows us to 
 the integrity of a native oral microbiome which may be lost when samples
 are pooled [@edlundBiofilmModel2013]. 
 It is also possible that the diversity was affected
-by the collection and storage methods we used<!--find citation?-->.  
+by the collection and storage methods we used. This has been shown to have
+minimal effect on microbial profiles at the genus level [@limSalivaMicrobiome2017],
+but some effect on beta diversity calculations [@omoriComparativeEvaluation2021].  
 Our current model does not contain serum, which may be
 contributing to the deficiency of slow-growing fastidious organisms and to
 biofilm growth and stabillity as a whole [@tianUsingDGGE2010; @ammannZurichBiofilm2012].
@@ -197,8 +207,7 @@ community or mineral composition.
 Biofilms were grown in a standard shaking bacterial growth incubator, rather than
 an incubator specific to cell cultures. The lack of complex environmental control
 may cause the model to deviate from its natural growth over the 24 days that the
-experiment
-is run, due to a lack of precise control over conditions such as
+experiment is run, due to a lack of precise control over conditions such as
 pH and salivary flow rates.
 
 There is also the possibility that contamination was introduced into the model during
@@ -209,8 +218,13 @@ medium samples collected after the introduction of CPMU on day 14 were removed b
 authentication step because the majority of species appeared to derive from
 environmental sources indicating external contamination.
 Going forward we recommend filter-sterilising solutions that are not autoclaved.  
-There is no $\alpha$-amylase activity present in our current setup
-(as shown in @bartholdyInvestigatingBiases2022).
+
+The absence of host salivary $\alpha$-amylase activity in our model
+(as shown in @bartholdyInvestigatingBiases2022) provides
+an opportunity to explore the effect of various amylase levels on the incorporation
+of dietary compounds, especially starches, in dental calculus. However, the
+absence in our current study may have affected the microbial composition of our
+biofilms.
 Our model has no renewable source for $\alpha$-amylase once the inoculations
 have been completed. There are streptococci present in the model, which are known
 for their ability to bind amylase [@nikitkovaStarchBiofilms2013; @haaseComparativeGenomics2017];
@@ -224,11 +238,11 @@ Frequent medium replacements may also be clearing out all of the unbound host sa
 amylase. We see this as more of a benefit since exogenous $\alpha$-amylase can be
 added to the model and thereby explored as a controlled variable.
 
-To avoid disturbing the growth and development of our biofilm, we took samples
-of media throughout the experiment from the bottom of the wells
-after three days of growth. The assumption is that these will reasonably reflect
-the composition of the biofilm, while not disrupting the biofilm itself with sampling.
-Going forward, however, we recommend sampling from the actual biofilm, as this is
+To avoid disturbing the growth and development of our biofilm, we took
+samples of media from the bottom of the wells after three days without full media
+replacement, careful not to disturb other plate-bound biofilms.
+The samples may therefore not fully reflect the composition of the biofilm itself.
+Going forward we recommend sampling from the actual biofilm, as this is
 the sample type under investigation.  
 
 <!-- How it will facilitate the specific topic of research (e.g. archaeology) -->
@@ -246,22 +260,19 @@ growth of slower growing organisms and limit generalists such as enterococci.
 More infrequent medium replacement would facilitate slow-growing bacteria in
 establishing their metabolic relationships, allowing the byproducts of some species
 to become abundant enough for others that depend on these to grow [@marshDentalPlaque2005].  
-
-Sucrose and raw starch treatments can be replaced with other dietary components
-of interest, such as cooked starches, whole plant extracts, and various proteins.
-
 An important question to address is what role bacteria play in the incorporation
 and retention of dietary microremains, and whether differing bacterial profiles
-affect the dietary incorporation and retention within the biofilm. 
-Finally, while we have shown that samples within our experimental run were highly
-consistent in mineral and bacterial composition, future work should test whether
-this also translates to inter-experimental replicability.
+affect the dietary incorporation and retention within the biofilm.  
+The model can also be used to explore limitations and biases of methods used to
+reconstruct past dietary patterns from dental calculus. To this end,
+sucrose and raw starch treatments can be replaced with other dietary components
+of interest, such as cooked starches, whole plant extracts, and various proteins.
 
 # Conclusions
 
-The bacterial profile of our model calculus was not an exact match to the natural
+The bacterial profile of our model calculus is not an exact match to the natural
 modern or archaeological reference calculus, but species richness and diversity
-fell within an expected range for an *in vitro* model, and the core genera
+falls within a similar range as the reference *in vitro* model, and the core genera
 are predominantly oral.
 The mineral composition of carbonate hydroxyapatite closely resembled the natural and
 archaeological reference samples in level of crystallinity and order, with a
@@ -269,14 +280,17 @@ slightly higher organic phase.
 Our model has many potential benefits within archaeological
 research, espcially since the setup does not require highly specialised equipment,
 making it accessible to many labs within the archaeological sciences.  
-It can be used to test many fundamental assumptions we have about
-the process of inclusion and subsequent extraction of various information about
-health and diet from archaeological dental calculus.
-For example, how our current methods for exploring diet and health may be biased.
-and how different methods of food processing in the past may modify the picture
-we get from the samples we analyse.
-This method can be used for a wide range of methods-testing (e.g. DNA, proteomics, etc.) 
-as well as training for various sampling methods, and testing decontamination protocols,
-without using up limited supplies of archaeological resources.
+It can be used to test many fundamental aspects of
+the process of incorporation, retention, and subsequent extraction of various dietary
+components from archaeological dental calculus.
+For example, we know that our current methods for exploring diet and health from dental
+calculus may be biased; however, with more fundamental experimentation we may also
+be able to find out more about how exactly they are biased.
+Using an oral biofilm model in a controlled environment with known dietary input, we
+can learn more about how different methods of food processing in the past may modify the
+picture we get from the samples we analyse, and how the methods we use may further distort
+this picture. Our method can be used to test methods (e.g. DNA, proteomics, etc.),
+decontamination protocols, as well as training on these methods and protocols without
+depleting limited archaeological resources.
 <!-- ultimately we are left with more questions than answers, but isn't that the 
 beauty of science? -->

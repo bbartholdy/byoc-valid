@@ -90,10 +90,8 @@ The more
 complex models, such as the constant-depth film fermentor [@petersConstantDepth1988]
 and multi-station dental plaque microcosm [@sissonsMultistationPlaque1991], have
 the benefit of a continuous flow of saliva or saliva-like medium
-
 and more control over the environment, while the simpler models using a static
 nutrient reservoir
-
 offer the advantage of increased reproducibility and generating more samples over
 the same amount of time [@mcbainBiofilmModels2009].
 <!-- oral biofilm models. Why are they valuable and what are limitations of current models? -->
@@ -133,12 +131,13 @@ the model and what questions we want to ask with the model-->
 
 We present an oral biofilm model that can serve as a viable proxy for dental
 calculus for archaeological research questions.
-It is a multispecies biofilm using whole saliva as the inoculate, and different
-nutrient conditions, including wheat and potato starch, and sucrose. We use a
-simple multiwell plate
-setup that is accessible even to smaller lab budgets and those with limited
-facilities for microbiology work.  
-We used next-generation sequencing and metagenomic classification
+It is a multispecies biofilm using whole saliva as the inoculate, with a simple
+multiwell plate setup that is accessible even to smaller lab budgets and those
+with limited facilities for microbiology work.
+Raw potato and wheat starch solutions were added during the biofilm growth to
+explore the biases involved in their incorporation and extraction from dental
+calculus. These results are presented in a separate article [@bartholdyInvestigatingBiases2022].
+Here, we used next-generation sequencing and metagenomic classification
 to characterise the bacterial composition of our model dental calculus. This was
 done to ensure that the model microbiome is predominantly oral and not overgrown
 by environmental contaminants, as well as testing for
