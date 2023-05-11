@@ -3,47 +3,20 @@ project:
   output-dir: _output
   execute-dir: project
   pre-render: _bib.R
-execute: 
-  freeze: true
-title: Assessing the validity of a mineralised oral biofilm model as a suitable proxy for dental calculus
-author: 
-  - name: Bjørn Peare Bartholdy
-    orcid: 0000-0003-3985-1016
-    corresponding: true
-    affiliations:
-    - ref: leiden
-  - name: Irina M. Velsko
-    affiliations:
-    - ref: mpi
-  - name: Shira Gur-Arieh
-    affiliations: Haifa University
-  - name: Zandra Fagernäs
-    affiliations:
-    - ref: mpi
-  - name: Sophie Seng
-    affiliations:
-    - ref: mpi
-  - name: Amanda G. Henry
-    affiliations:
-    - ref: leiden
-affiliations:
-  - id: leiden
-    name: Leiden University
-    city: Leiden
-  - id: mpi
-    name: Max Planck Institute for Evolutionary Anthropology
-    city: Leipzig
-bibliography: references.bib
-csl: apa.csl
-abstract-title: Abstract
-abstract: |
-  This is the abstract for the paper.
 format: 
+  arxiv-pdf:
+    output-file: "bioRxiv-manuscript-1"
+    keep-tex: true  
+    linenumbers: false
+    doublespacing: false
+    runninghead: "Validity of a calcifying oral biofilm model"
   html:
     keep-md: true
   pdf:
     keep-tex: true
+    output-file: "bioRxiv-manuscript-1"
     documentclass: article
+    link-citations: true
     geometry:
       - top=30mm
       - left=30mm
@@ -52,3 +25,96 @@ format:
       text: |
         \usepackage{lineno}
         \linenumbers
+        \setlength{\parindent}{15pt}
+  docx: 
+    output-file: "bioRxiv-manuscript-1"
+execute: 
+  freeze: auto
+  echo: false
+  warning: false
+knitr:
+  opts_chunk: 
+    message: false
+    fig.align: "center"
+title: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus
+author: 
+  - name: Bjørn Peare Bartholdy
+    email: b.p.bartholdy@arch.leidenuniv.nl
+    orcid: 0000-0003-3985-1016
+    corresponding: true
+    affiliations:
+      - ref: leiden
+  - name: Irina M. Velsko
+    affiliations:
+      - ref: mpi
+  - name: Shira Gur-Arieh
+    affiliations:
+      - ref: haifa
+  - name: Zandra Fagernäs
+    affiliations:
+      - ref: mpi
+      - ref: globe
+  - name: Amanda G. Henry
+    affiliations:
+      - ref: leiden
+affiliations:
+  - id: leiden
+    name: Leiden University
+    city: Leiden
+    country: The Netherlands
+  - id: mpi
+    name: Max Planck Institute for Evolutionary Anthropology
+    city: Leipzig
+    country: Germany
+  - id: globe
+    name: Globe Institute, University of Copenhagen
+    city: Copenhagen
+    country: Denmark
+  - id: haifa
+    name: University of Haifa
+    city: Haifa
+    country: Israel
+bibliography: references.bib
+csl: apa.csl
+abstract-title: Abstract
+abstract: |
+  Dental calculus is increasingly used by researchers to study dietary patterns
+  in past populations. The benefits of using dental calculus for this purpose
+  have been clearly demonstrated in previous studies, with dental calculus
+  harbouring a wealth of microremains and biomarkers for health and diet
+  within its mineral matrix.
+  Previous studies have demonstrated some of the limitations and
+  biases of how our methods of processing may overlook, or even remove,
+  some of the important information contained within the mineralised matrix.
+  However, there are many factors that are
+  impossible to account for *in vivo* and in archaeological material, such as
+  exact dietary intake, and individual factors such as pH and enzyme activity,
+  leaving some limitations that may not be addressed through these types of studies
+  and will require a different approach.  
+  
+  In this study we present a protocol for creating a calcifying oral biofilm model
+  that can be used to explore the biases and
+  limitations of dental calculus as a medium for paleodietary reconstructions.
+  We report the microbial and mineral composition of our model in an effort to
+  validate the model calculus as an appropriate proxy to natural dental calculus.
+  The microbial profile and species diversity of our model was determined using
+  metagenomic classification with the nf-core/eager pipeline and Kraken2, and
+  compared to various reference samples from oral sites, including
+  saliva, plaque, and dental calculus. We then
+  assessed whether our model calculus mineralises in a manner similar to natural
+  dental calculus using Fourier transform infrared (FTIR) spectroscopy.
+  The metagenomic classification showed a microbial
+  profile predominantly made up of (facultative) anaerobes, with a community
+  structure that was somewhat distinct from other oral reference samples.
+  The core genera of the model consisted of oral species, but clustered
+  separately from oral reference samples, with a higher abundance of anaerobes.  
+  Mineral and organic components of our model mimic that of the modern and archaeological
+  reference calculus that was used as a comparison. There was an overall increase
+  in the inorganic component relative to
+  organic over the course of the experiment, with carbonated hydroxyapatite as
+  the principal compound, consistent with natural human-derived calculus.
+  
+  We conclude that oral biofilm models, such as the one presented in this study,
+  have great potential to validate current methods used in the analysis of fossil
+  dental calculus, and should be used to complement, rather than replace current
+  *in vivo* studies.
