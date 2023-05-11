@@ -1,23 +1,468 @@
-# Supplementary Material
-
-## EAGER
-
-Software versions:
+---
+title: "Supplementary Material: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus"
+author: "B.P.Bartholdy, I.M.Velsko, S.Gur-Arieh, Z.Fagernäs, A.G.Henry"
+crossref: 
+  #fig-prefix: S
+  fig-title: Figure S
+  #fig-labels: roman
+  #labels: arabic
+format:
+  html: 
+    toc: true
+    code-fold: true
+    output-file: "supplementary-material.html"
+  pdf: 
+    toc: true
+    output-file: "supplementary-material.pdf"
+    fig-pos: "H"
+    knitr: 
+      opts_chunk: 
+        echo: false
+execute: 
+  warning: false
+knitr: 
+  opts_chunk: 
+    collapse: true
+    warning: false
+    fig-path: "figures/supp-"
+prefer-html: true
+editor_options: 
+  chunk_output_type: console
+---
 
 ```{r}
-readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("Software", "Version"))
+#| label: setup
+#| include: false
+library(here)
+library(dplyr)
+library(tidyr)
+library(forcats)
+library(readr)
+library(stringr)
+library(ggplot2)
+library(plotly)
+library(cuperdec)
+knitr::opts_knit$set(root.dir = here())
+#knitr::opts_chunk$set(fig.path = "figures/supp-")
+
+# upload ftir data
+
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+
+# upload dna data
+
+dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
+dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
+otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
+genus_oxytol <- read_tsv(here("01-documentation/genus-O2tolerance.tsv"))
+otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+load(here("05-results/spca_byoc.rda"))
+load(here("05-results/spca_species.rda"))
+alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
+sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
+all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
+clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
+#load(here("05-results/spca_byoc.rda"))
+#load(here("05-results/spca_species.rda"))
+
+source(here("02-scripts/functions.R"))
+source(here("02-scripts/99_setup-qmd.R"))
+source(here("02-scripts/99_ftir-figures.R"))
+source(here("02-scripts/99_metagen-figures.R"))
+
 ```
 
-### Kraken reference database
+## Samples
+
+Samples taken for DNA sequencing and FTIR analysis. Samples for DNA were collected
+from a seperate experimental run than samples for DNA, but experimental conditions
+were the same in each. Samples for DNA were medium collected from the bottom of
+each well after three days of growth (before medium was refreshed). Samples for
+FTIR were taken directly from the biofilm and dried prior to analysis.
+
+### DNA
+
+```{r}
+#| label: tbl-byoc-samples
+#| tbl-cap: "Table of biofilm samples from this study. Includes which day in the experiment the sample was taken, and sample type (Env)."
+dna_experiment_metadata %>% 
+  #filter(str_detect(`#SampleID`, "LIB|SYN", negate = F)) %>% 
+  select(c(`#SampleID`, day, Env)) %>% 
+  arrange(day, Env) %>% 
+  knitr::kable()
+```
+
+### FTIR
+
+```{r}
+#| label: tbl-ftir-samples
+#| tbl-cap: "Table of oral reference samples. Includes which day in the experiment the sample was taken, and sample type."
+ftir_metadata %>% 
+  #filter(str_detect(sample_id, "", negate = T)) %>% 
+  select(c(sample_id, day, sample_type)) %>% 
+  arrange(day) %>% 
+  knitr::kable()
+```
+
+
+## Reference database and sequences
 
 The reference database used in the EAGER pipeline was the Standard Kraken 2 database,
 downloaded from <https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20210517.tar.gz>
 
-## R
+```sh
+wget https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20210517.tar.gz
+```
 
-R packages:
+The human reference genome GRCh38 was downloaded on 2022-04-22.
+
+```sh
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/GRCh38_latest/refseq_identifiers/GRCh38_latest_genomic.fna.gz
+```
 
 ```{r}
-# load renv list
+#| label: tbl-oral-samples
+#| tbl-cap: "Table of oral reference samples. Includes sample type (Env), and associated project and study with DOI."
+dna_metadata %>% 
+  filter(
+   str_detect(`#SampleID`, "LIB|SYN", negate = T),
+    !Env %in% env_controls
+  ) %>% 
+  select(!c(SourceSink, download_link, Study)) %>% 
+  arrange(Env) %>% 
+  knitr::kable()
+```
+
+```{r}
+#| label: tbl-env-samples
+#| tbl-cap: "Table of environmental reference samples (contamination testing). Includes sample type (Env), and associated project and study with DOI."
+dna_metadata %>% 
+  filter(
+    str_detect(`#SampleID`, "LIB|SYN", negate = T),
+    Env %in% env_controls
+  ) %>% 
+  select(!c(SourceSink, download_link, Study)) %>% 
+  arrange(Env) %>% 
+  knitr::kable()
+```
+
+## Pre-processing
+
+### SourceTracker2
+
+Steps taken for SourceTracker analysis.
+
+OTU table was filtered for relative abundance. Percent abundance of each taxon
+across all samples was calculated and then taxa with lower than 0.001% abundance
+were filtered out.
+
+Installation of Qiime2 and dev version of SourceTracker via conda:
+
+```sh
+wget https://data.qiime2.org/distro/core/qiime2-2022.2-py38-linux-conda.yml
+conda env create -n qiime2-2022.2 --file qiime2-2022.2-py38-linux-conda.yml
+rm qiime2-2022.2-py38-linux-conda.yml # cleanup
+conda activate qiime2-2022.2
+pip install https://github.com/biota/sourcetracker2/archive/master.zip
+```
+
+Installation of Qiime1 to access filter_samples_from_otu_table.py
+
+```sh
+conda create -n qiime1 python=2.7 qiime -c bioconda
+```
+
+Convert OTU table from *.tsv* to *.biom*.
+
+```sh
+biom convert -i 04-analysis/OTUfilter_table.tsv -o 04-analysis/sourcetracker/OTUfilter-table-from-tsv_json.biom --table-type="OTU table" --to-json
+```
+
+Filter OTU table
+
+```sh
+filter_samples_from_otu_table.py \
+-i 04-analysis/sourcetracker/OTUfilter-table-from-tsv_json.biom \
+-o 04-analysis/sourcetracker/OTUs1000filter_table.biom \
+-n 1000
+```
+
+Table summary
+
+```sh
+biom summarize-table -i 04-analysis/sourcetracker/OTUs1000filter_table.biom > 04-analysis/sourcetracker/summary_OTUs1000filter-table.txt
+```
+
+Convert to TSV for use with the **decontam** package.
+
+```sh
+biom convert -i 04-analysis/sourcetracker/OTUs1000filter_table.biom -o 04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv --to-tsv
+```
+
+Run SourceTracker2 on the filtered OTU table with rarefaction depth of 1000
+for both source and samples. Samples and sources were mapped in the
+[ST_comb-plaque-map.txt](../04-analysis/sourcetracker/ST_comb-plaque-map.txt).
+The plaque source is a combination of supragingival and subgingival plaque.
+
+```sh
+conda activate qiime2-2022.2
+```
+
+```sh
+sourcetracker2 \
+    -i 04-analysis/sourcetracker/OTUs1000filter_table.biom \
+    -m 04-analysis/sourcetracker/ST_comb-plaque-map.txt \
+    --source_sink_column SourceSink  \
+    --source_column_value source \
+    --source_rarefaction_depth 1000 \
+    --sink_rarefaction_depth 1000 \
+    --sink_column_value sink \
+    --source_category_column Env \
+    -o 04-analysis/sourcetracker/sourcetracker2_output \
+    --jobs 2 \
+    --per_sink_feature_assignments
+```
+
+Plots were created of estimated contributions of various sources to the saliva,
+model calculus and medium samples. Samples are arranged from left to right by how
+late in the experiment they were sampled, with left being the earliest samples
+(@fig-sourcetracker2). The output from SourceTracker2 was compared to a dataset
+of known oral species (@fig-oral-sources).
+
+```{r}
+#| label: st2-plot-setup
+#| echo: false
+sourcetracker2_long <- sourcetracker2_longer()
+day_order <- dna_experiment_metadata %>%
+  mutate(Env = factor(
+    Env, levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
+    ) 
+  ) %>% 
+  group_by(Env) %>%
+  arrange(day, .by_group = T) %>%
+  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
+  mutate(rm = if_else(`#SampleID` %in% dna_analysis_metadata$`#SampleID`, F, T),
+         col = case_when(rm == T ~ "red", # excluded samples coloured red
+                         rm == F ~ "black"))
+```
+
+
+```{r}
+#| label: fig-sourcetracker2
+#| fig-cap: "Estimated proportion of source composition of the abundance-filtered oral biofilm model samples using SourceTracker2. Names of removed samples in red text."
+sourcetracker2_long %>% 
+  ggplot(aes(y = SampleID, x= proportion, fill = source)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = day_order$`#SampleID`) +
+    scale_fill_viridis_d(option = "C") +
+    theme(axis.title = element_blank(),
+          axis.text.y = element_text(vjust = 0.5, hjust = 0.5, colour = day_order$col))
+```
+
+```{r}
+#| label: fig-oral-sources
+#| fig-cap: "Estimated proportion of oral or other composition of the abundance-filtered oral biofilm model samples using the oral database from the cuperdec R package. Names of removed samples in red text."
+oral_taxa <- cuperdec_database_ex %>%
+  filter(isolation_source == "oral")
+all_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$species, "oral", "other")) %>%
+  ggplot(aes(y = SampleID, x = count, fill = oral_source)) +
+    geom_col(position = "fill") +
+    scale_fill_viridis_d(option = "C") +
+    theme_minimal() +
+    theme(axis.text.y = element_text(colour = day_order$col),
+          axis.title.y = element_blank()) +
+    scale_y_discrete(limits = day_order$`#SampleID`)
+```
+
+### decontam
+
+```{r}
+species_table_long <- otu_decontam %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
+
+byoc_table_long <- species_table_long %>% 
+  filter(str_detect(sample, "SYN"),
+         sample %in% dna_analysis_metadata$`#SampleID`,
+         count > 0)
+
+species_summ <- byoc_table_long %>%
+  group_by(sample) %>%
+  count(`#OTU ID`) %>%
+  summarise(count = sum(n))
+```
+
+After running `isContaminant()` and filtering out (non-oral) potential contaminants,
+the samples contained between
+`r paste(range(species_summ$count), collapse = " and ")`
+species with a mean of
+`r paste(round(mean(species_summ$count), 2))` (@fig-species-counts).
+
+```{r}
+#| label: fig-species-counts
+#| fig-cap: "Species counts after removal of contaminants for biofilm model samples."
+
+byoc_table_long %>% 
+  group_by(sample) %>%
+  count(`#OTU ID`) %>% 
+  ggplot(aes(y = sample, x = n), fill = viridisLite::magma(1, begin = 0.5)) +
+    geom_col() +
+  theme_minimal() +
+    theme(
+      axis.line.x = element_line(),
+      axis.title.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.title.y = element_blank())
+```
+
+
+## Species composition
+
+Counts from model biofilm and oral reference samples were transformed with a
+centered ratio log-transform and ordered by PC1 loading
+(@fig-species-pos1 & @fig-species-neg1).
+
+```{r}
+#| label: fig-species-pos1
+#| fig-cap: "Centered ratio log-transform abundance of the top 200 species with the highest positive loading on PC1."
+#| fig-height: 12
+#| fig-width: 9
+# top positive loadings on PC1
+species_pos_pc1 +
+    scale_fill_viridis_c() +
+    theme(
+      axis.title.y = element_blank(),
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(
+        angle = 90, size = 8, vjust = 0.5, hjust = 1
+        ),
+      axis.text.y = element_text(face = "italic")
+      )
+```
+
+```{r}
+#| label: fig-species-neg1
+#| fig-cap: "Centered ratio log-transform abundance of the top 200 species with the highest negative loading on PC1."
+#| fig-height: 12
+#| fig-width: 9
+# Top negative loadings on PC1
+species_neg_pc1 +
+  scale_fill_viridis_c() +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(
+      angle = 90, size = 8, vjust = 0.5, hjust = 1
+    ),
+    axis.text.y = element_text(face = "italic")
+  )
+```
+
+
+## FTIR spectra
+
+Select FTIR spectra not shown in the main manuscript (@fig-ftir-spectra).
+
+```{r}
+#| label: fig-ftir-spectra
+#| layout-ncol: 2
+#| fig-height: 2.3
+#| fig-cap: "FTIR spectra"
+#| fig-subcap: 
+#|   - "Day 7"
+#|   - "Day 7"
+#|   - "Day 12"
+#|   - "Day 12"
+ftir_spect_plot(ftir_data, "F7.2D1")
+ftir_spect_plot(ftir_data, "F7.1A6")
+ftir_spect_plot(ftir_data, "F12.1A5+F12.B1")
+ftir_spect_plot(ftir_data, "F12.1D1+F12.1D2")
+
+
+ftir_spect_plot(ftir_data, "F16.1B2")
+ftir_spect_plot(ftir_data, "F16.1D6")
+ftir_spect_plot(ftir_data, "F20.1A1")
+ftir_spect_plot(ftir_data, "F20.1B5")
+ftir_spect_plot(ftir_data, "F24.1B3")
+ftir_spect_plot(ftir_data, "F24.2A4")
+```
+
+::: {.content-visible when-format="pdf"}
+Interactive plots are available in the HTML output file.
+:::
+
+::: {.content-visible when-format="html:js"}
+
+Interactive plots to explore FTIR spectra.
+
+```{r eval=!knitr::is_latex_output()}
+#| label: fig-ftir-int7
+ftir_spect_plot(ftir_data, "F7.1A6_b") %>% 
+  ggplotly()
+```
+
+```{r eval=!knitr::is_latex_output()}
+#| label: fig-ftir-int12
+ftir_spect_plot(ftir_data, "F12.1A5+F12.B1_B") %>% 
+  ggplotly()
+```
+
+```{r eval=!knitr::is_latex_output()}
+#| label: fig-ftir-int16
+ ftir_spect_plot(ftir_data, "F16.1C6") %>% 
+  ggplotly()
+```
+
+```{r eval=!knitr::is_latex_output()}
+#| label: fig-ftir-int24
+ftir_spect_plot(ftir_data, "F24.1A3") %>% 
+  ggplotly()
+```
+
+:::
+
+<!-- host interactive plot somewhere online? -->
+
+## Software versions
+
+### EAGER
+
+Software versions:
+
+```{r}
+readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("Software", "Version")) %>%
+  knitr::kable()
+```
+
+### R
+
+#### Session
+
+```{r}
+print(sessionInfo(), locale = F)
+```
+
+#### Packages
+
+```{r}
+#| label: tbl-list-packages
+#| tbl-cap: "List of R packages and dependencies."
+renv_packages_list <- jsonlite::read_json(here("renv.lock"))
+do.call(rbind, renv_packages_list$Packages) %>% 
+  as.data.frame() %>%
+  select(Package, Version, Source) %>%
+  knitr::kable(row.names = F)
 ```
 

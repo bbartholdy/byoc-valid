@@ -1,21 +1,24 @@
-Our biofilm setup consists of whole saliva as the inoculate to better approach
+Our biofilm setup consists of whole saliva as the inoculate to approximate
 natural microbial communities within the human oral cavity, and a 24-well plate
 to generate multiple replicated conditions in a single experimental run
 (see @fig-protocol for an overview of the protocol).
 The biofilm
 is grown for 25 days to allow time for growth of larger deposits and mineralisation.
+Raw potato and wheat starch solutions were added during the biofilm growth to
+explore the biases involved in their incorporation and extraction from dental
+calculus. These results are presented in a separate article [@bartholdyInvestigatingBiases2022].
 
-![Overview of the protocol for biofilm growth.](figures/ExpL_protocol.png){#fig-protocol}
+![Overview of the protocol for biofilm growth. The samples for metagenomic analysis were grown in a separate experimental plate than the FTIR samples under the same experimental conditions. Biofilm (B) and calculus (C) samples were used for FTIR spectroscopy, and saliva (S) and artificial saliva (M) samples were used for metagenomic analysis.](figures/Exp_protocol.png){#fig-protocol}
 
 To determine the composition of microbial communities, we sampled the medium
 from the biofilm wells over the course of the experiment and sequenced the DNA
-to identify species that are present in the model, and whether these mimic
+to identify species that are present in the model, and assess whether these mimic
 natural oral communities. During a separate experimental run, under the same
 conditions, we directly sampled the biofilms on multiple days and determined the
 mineral composition using FTIR, and compared the spectra to those of natural
-dental calculus, both modern and archaeological. Samples were taken on both controls
-and starch treatments, but differences between these samples were not explored
-in this study.
+dental calculus, both modern and archaeological. Samples were taken from both
+controls and starch treatments, but differences between these samples were not
+explored in this study.
 
 ## Biofilm growth
 
@@ -29,13 +32,19 @@ library(magrittr)
 # env_summ <- metadata %>%
 #   group_by(Env) %>%
 #   count()
+
+no_match <- bac_properties %>%
+  right_join(species_counts_long, by = "species") %>%
+  filter(is.na(`Oxygen tolerance`)) %>%
+  .$species %>%
+  unique()
 ```
 
 We employ a multispecies oral biofilm model following a modified
 protocol from Sissons and colleagues [-@sissonsMultistationPlaque1991] and
 Shellis [-@shellisSyntheticSaliva1978]. The setup comprises a polypropylene
 24 deepwell PCR plate (KingFisher 97003510) with a lid containing 24 pegs (substrata),
-which are autoclaved at 120&deg;C, 1 bar overpressure, for 20 mins.
+which are autoclaved at 120$^{\circ}$C, 1 bar overpressure, for 20 mins.
 
 The artificial saliva (hereafter referred to as medium) is a modified version of
 the basal medium mucin (BMM)
@@ -46,7 +55,7 @@ stomach (Type III, Sigma M1778),
 5 g/l yeast extract (BD 211921), 2.5 g/l KCl, 0.35 g/l NaCl, 1.8 mmol/l CaCl~2~,
 5.2 mmol/l Na~2~HPO~4~ [@sissonsMultistationPlaque1991], 6.4 mmol/l NaHCO~3~
 [@shellisSyntheticSaliva1978], 2.5 mg/l haemin. This is subsequently
-adjusted to pH 7 with NaOH pellets and stirring, autoclaved (15 min, 120&deg;C,
+adjusted to pH 7 with NaOH pellets and stirring, autoclaved (15 min, 120$^{\circ}$C,
 1 bar overpressure), and supplemented with 5.8 \(mu\)mol/l menadione, 5 mmol/l urea,
 and 1 mmol/l arginine [@sissonsMultistationPlaque1991].
 
@@ -57,12 +66,12 @@ months prior to donation.
 Saliva was stimulated by chewing on parafilm, then filtered through a bleach-sterilised
 nylon cloth to remove particulates.
 Substrata were inoculated with 1 ml/well of a two-fold dilution of WS in sterilised
-20% glycerine for four hours at 36&deg;C, to allow attachment of the
+20% glycerine for four hours at 36$^{\circ}$C, to allow attachment of the
 salivary pellicle and plaque-forming bacteria. After initial inoculation, the
 substrata were transferred to a new plate containing 1 ml/well medium and incubated
-at 36&deg;C, with gentle motion at 30 rpm. The inoculation process was repeated
+at 36$^{\circ}$C, with gentle motion at 30 rpm. The inoculation process was repeated
 on days 3 and 5 by transferring the samples to a new plate with inoculate.
-medium was partially refreshed once per day, by topping up the wells to the original
+Medium was partially refreshed once per day, by topping up the wells to the original
 volume with more medium, and fully refreshed every three days,
 throughout the experiment, by transferring the substrata to a new plate containing
 medium. To feed the bacteria, the substrata were transferred to a new plate, containing
@@ -80,28 +89,28 @@ All starch solutions were created in a 5%
 (w/v) sucrose solution. Before transferring biofilm samples to the starch treatments,
 the starch plates were agitated to keep the starches in suspension in the solutions,
 and during treatments, the rpm was increased to 60.
-The purpose of starch treatments is to explore the incorporation
+The purpose of starch treatments was to explore the incorporation
 of starch granules into the model calculus.
 Starch treatments were initiated on day 9 (@fig-protocol) to avoid starch granule
 counts being affected by $\alpha$-amylase hydrolysis from the inoculation saliva.
 An $\alpha$-amylase
 assay conducted on samples from days 3, 6, 8, 9, 10, 12, and 14 also showed that
-there is no host salivary $\alpha$-amylase activity in the system.
+there was no host salivary $\alpha$-amylase activity in the system.
 The results of the starch incorporation and $\alpha$-amylase activity assay have
 been reported in a separate article [@bartholdyInvestigatingBiases2022].
 
 After 15 days, mineralisation was encouraged with a
 calcium phosphate monofluorophosphate urea (CPMU) solution containing
-20 mmol/l CaCl~2~, 12 mmol/l NaH~2~PO~4~, 5 mmol/l Na~2~PO~3~F, 500 mmol/l Urea
+20 mmol/l CaCl~2~, 12 mmol/l NaH~2~PO~4~, 5 mmol/l Na~2~PO~3~F, 500 mmol/l urea
 [@pearceConcomitantDeposition1987; @sissonsMultistationPlaque1991],
-and (0.04 g/l MgCl). The substrata were submerged in 1 ml/well CPMU five times daily,
+and 0.04 g/l MgCl. The substrata were submerged in 1 ml/well CPMU five times daily,
 every two hours, for six minutes, at 30 rpm. During the mineralisation period,
 starch treatments
 were reduced to once per day, two hours after the last CPMU treatment. This cycle
 was repeated
 for 10 days until the end of the experiment on day 24
-(@fig-protocol). A more detailed
-protocol is available at                                                        <!-- protocols.io -->.
+(@fig-protocol). More detailed protocols are available at
+<https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1>.
 
 All laboratory work was conducted in sterile conditions under a laminar flow hood
 to prevent starch and bacterial contamination. Starch-free control samples that
@@ -112,26 +121,16 @@ were only fed sucrose were included to detect starch contamination.
 ```{r}
 #| label: tbl-dna-samples
 #| tbl-cap: "Number of samples taken during the experiment, separated by sampling day and sample type."
-dna_samples <- dna_experiment_metadata %>%
-  #filter(Study == "this_study") %>%
-  dplyr::select(`#SampleID`, Env, day) #%>%
-# dna_samples %>%
-#   knitr::kable(col.names = c("Sample ID", "Sample type", "Sampling day"))
-
-dna_experiment_metadata %>%
-  mutate(Env = factor(Env, levels = c("saliva", "medium", "model_calculus"))) %>% 
-  group_by(Env, day) %>%
-  count() %>%
-  arrange(day, Env) %>% 
+dna_samples_table %>% 
   knitr::kable(col.names = c("Sample type", "Sampling day", "n"))
 ```
 
+<!-- move table to figure 1? or combine with FTIR samples? -->
 
-<!-- Samples sent to Jena -->
 A total of `r nrow(dna_samples)` samples were taken during the experiment from
 the donated saliva, artificial saliva, and from the
 biofilm end-product on day 24 (@tbl-dna-samples).
-DNA extraction was performed at the archaeogenetic facility at the Max Planck
+DNA extraction was performed at the Max Planck
 Institute for the Science of Human History (Jena, Germany), using the DNeasy
 PowerSoil Kit from QIAGEN. C2 inhibitor removal step skipped, going directly
 to C3 step.
@@ -140,29 +139,28 @@ The DNA was sheared to 500bp through sonication with a Covaris M220
 Focused-ultrasonicator. Double-stranded libraries were prepared [@aronHalfUDG2020]
 and dual indexed [@stahlDoublestrandedIndexing2019], with the indexing protocol
 being adapted for longer DNA fragments. Briefly, the modifications consisted of
-adding 3 μl of DMSO was added to the indexing reaction, and extending the
-amplification cycles to 95°C for 60 s, 58°C for 60 s, and 72°C for 90 s. The
-libraries were paired-end sequenced on a NextSeq 500 to 150bp.
+adding 3 μl of DMSO to the indexing reaction, and extending the
+amplification cycles to 95$^{\circ}$C for 60 s, 58$^{\circ}$C for 60 s, and
+72$^{\circ}$C for 90 s. The libraries were paired-end sequenced on a NextSeq 500
+to 150bp, and demultiplexed by an in-house script.
 
-<!-- EAGER settings -->
 ### Preprocessing
 
-Processing of the raw DNA reads was conducted using the
+The raw DNA reads were preprocessed using the
 `r paste(filter(software_versions, str_detect(software, "eager")))`
 pipeline [@yatesEAGER2020]. The pipeline included adapter removal and read merging
 using
 `r paste(filter(software_versions, str_detect(software, regex("adapterremoval", ignore_case = T))))`
 [@AdapterRemovalv2].
-Merged reads were mapped to the human reference genome (GRCh38 <!--link-->)
+Merged reads were mapped to the human reference genome (GRCh38<!--link-->)
 using
 `r paste(filter(software_versions, str_detect(software, regex("bwa", ignore_case = T))))`
-[@BWA] with ancient DNA settings (-n 0.01; -l 32), and
-unmapped reads were extracted using
+[@BWA] (-n 0.01; -l 32), and unmapped reads were extracted using
 `r paste(filter(software_versions, str_detect(software, regex("samtools", ignore_case = T))))`.
 The final step of the pipeline, metagenomic classification, was conducted in
 `r paste(filter(software_versions, str_detect(software, regex("kraken", ignore_case = T))))`
-[@kraken2]
-using the Standard 60GB database (https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20220926.tar.gz).
+[@kraken2] using the Standard 60GB database
+(<https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20220926.tar.gz>).
 
 Environmental reference samples were downloaded directly from ENA and from NCBI
 using the SRA Toolkit.                                                            <!-- reference supp. mat.-->
@@ -172,41 +170,43 @@ From the HMP data, only paired reads were processed, singletons were removed.
 *In vitro* biofilm model samples
 from @edlundUncoveringComplex2018 were used as a reference.
 Links to the specific
-sequences, including human-filtered reads from this study, are included in the
-metadata.                                                                       <!-- link to metadata file-->
+sequences are included in the metadata. Human-filtered reads produced in this study were uploaded to ENA under
+accession number PRJEB61886.
 
 ### Authentication
 
 Species with lower than 0.001% relative abundance across all samples were removed
 from the species table.
-**SourceTracker2** [@knightsSourceTracker2011] was used to estimate source composition
-of the abundance-filtered oral biofilm model samples using a Bayesian framework.
-Abundance-filtered
-samples were compared with oral and environmental controls to detect potential
-external contamination<!--(see Table S?)-->.
-The R package **decontam** v`r packageVersion("decontam")` [@Rdecontam] was used
+SourceTracker2 [@knightsSourceTracker2011] was used to estimate source composition
+of the abundance-filtered oral biofilm model samples using a Bayesian framework,
+and samples falling below 70% oral source were removed from downstream analyses.
+Well-preserved abundance-filtered
+samples were compared to oral and environmental controls to detect potential
+external contamination.
+The R package decontam v`r packageVersion("decontam")` [@Rdecontam] was used
 to identify potential contaminants in the abundance-filtered table
 using DNA concentrations with a probability threshold of 0.95
-and negative controls with a probability threshold of 0.05. Putative contaminants
-were filtered out of the OTU tables for all downstream analyses.
-Authentication methods are described in more
-detail in the Supplementary material.<!--../06-reports/metagen-authentication.Rmd-->
+and negative controls with a probability threshold of 0.05. Putative contaminant
+species were filtered out of the OTU tables for all downstream analyses.
+<!-- Authentication methods are described in more
+detail in 06-reports/metagen-authentication.Rmd-->
 
 ### Community composition
 
 Relative abundances of communities were calculated at the species- and genus-level,
 as recommended for compositional data [@gloorMicrobiomeDatasets2017].
-Shannon index and Pileou's evenness index was calculated on species OTU tables of all
+Shannon index and Pileou's evenness index were calculated on species-level OTU tables of all
 model and oral reference
-samples using the **vegan** v`r packageVersion("vegan")` R package [@Rvegan]. Shannon index
-was calculated on all experimental samples to see if there is an overall loss or gain in
+samples using the vegan v`r packageVersion("vegan")` R package [@Rvegan]. Shannon index
+was calculated for all experimental samples to see if there is an overall loss or gain in
 diversity and richness across the experiment.
 Sparse principal component analysis (sPCA) was performed on model biofilm
-samples to assess microbial composition between samples within the experiment,
+samples to assess differences in microbial composition between samples within the experiment,
 and a separate sPCA analysis was performed on model calculus and oral
-reference samples. The sPCA analysis was conducted using the **mixOmics**
-v`r packageVersion("mixOmics")`
-R package [@RmixOmics].  
+reference samples. The sPCA analysis was conducted using the mixOmics v
+`r packageVersion("mixOmics")`
+R package [@RmixOmics].
+
 The core microbiome was calculated by taking the mean genus-level relative abundance
 within each sample type for model calculus, modern reference calculus,
 sub- and supragingival plaque. Genera present at lower than 5% relative
@@ -214,25 +214,29 @@ abundance were grouped into the category 'other'.
 Information on the oxygen tolerance of bacterial species was downloaded from 
 BacDive [@reimerBacDive2022] and all variations of the major categories anaerobe,
 facultative anaerobe, and aerobe were combined into the appropriate major category.
-In species with no available information on oxygen
-tolerance, the most common oxygen tolerance at the genus level was applied.
+At the time of writing,
+`r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`
+species were missing aerotolerance values. This was mitigated by aggregating genus-level
+tolerances to species with missing values, and may have some errors (although
+unlikely to make any significant difference).
 
 ### Differential abundance
 
-Differential abundance of species is calculated using the Analysis of Compositions
+Differential abundance of species was calculated using the Analysis of Compositions
 of Microbiomes with Bias Correction (ANCOM-BC) method from the
-**ANCOMBC** R package v`r packageVersion("ANCOMBC")` [@linANCOMBC2020], with species-level OTU as input. Results
+ANCOMBC R package v`r packageVersion("ANCOMBC")` [@linANCOMBC2020], with a species-level
+OTU table as input. Results
 are presented as the log fold change of species between paired sample types with
 95% confidence intervals. P-values are adjusted using the false
 discovery rate (FDR) method. Samples are grouped by sample type (i.e. saliva,
 plaque, modern calculus, model calculus). To supplement the sPCA analyses, we
-plot the log fold change of the top 30 species in each of principal components 1
+visualised the log-fold change of the top 30 species in each of principal components 1
 and 2, allowing us to see which species are enriched in the different samples and
 causing clustering in the sPCA.
 
 ## FTIR
 
-```{r}
+```{r ftir-byoc-samples}
 byoc_ftir <- ftir_metadata %>%
   filter(source == "Artificial")
 ```
@@ -243,19 +247,30 @@ We compared the spectra of model dental calculus with spectra of archaeological
 and modern dental calculus and used a built-in Omnic search library for
 mineral identification
 [@weinerInfraredSpectroscopy2010;@mentzerDistributionAuthigenic2014]. 
-The archaeological dental calculus was sampled from an isolated permanent tooth<!--lower incisor???-->
+The archaeological dental calculus was sampled from an isolated permanent tooth
 from Middenbeemster, a rural, 19th century Dutch site [@lemmersMiddenbeemster2013].
 Samples were analysed at the Laboratory for Sedimentary Archaeology, Haifa University.
 The analysis was conducted with a Thermo Scientific Nicolet is5 spectrometer in
 transmission, at 4 cm$^{-1}$ resolution, with an average of 32 scans between 4000
 and 400 cm$^{-1}$ wavenumbers.
 
+```{r}
+#| label: tbl-ftir-byoc
+#| tbl-cap: "Summary of samples used in FTIR analysis, including type of sample, sampling day, number of samples (n), and mean weight in mg."
+knitr::kable(
+  ftir_samples_table, digits = 2, 
+  col.names = c("Sample type", "Sampling day", "n", "Weight (mg)")
+)
+```
+
+
+
 Analysis was conducted on `r nrow(byoc_ftir)` model calculus samples from days
-7, 12, 16, 20, and 24. Some samples from the same sampling day had to be
-combined to provide enough material for analysis. Samples analysed for FTIR
-were grown during a separate experimental run conducted at a different time from the
-experimental run growing the metagenomic samples, but following the same setup
-and protocol (as described above). Samples were analysed following the method
+7, 12, 16, 20, and 24 (@tbl-ftir-byoc). Some samples from the same sampling day
+had to be combined to provide enough material for analysis. Samples analysed with
+FTIR were grown during a separate experimental run from the samples sequenced for
+DNA, but following the same setup and protocol (as described above).
+Samples were analysed following the method
 presented in @asscherAtomicDisorder2011 and @asscherVariationsAtomic2011.
 A few $\mu$g of each sample were repeatedly ground together with KBr and pressed
 in a 7 mm die under two tons of pressure using a Specac mini-pellet press
@@ -289,6 +304,7 @@ represent lower levels of disorder in the mineral
 ## Statistics
 
 <!-- R packages used -->
-Statistical analysis was conducted in R Statistical Software `r version$version.string`
+Statistical analysis was conducted in `r version$version.string`
 (`r version$nickname`) [@Rbase]. Data cleaning and wrangling performed with packages from
-**tidyverse** [@tidyverse2019]. Plots were created using **ggplot2** [@ggplot2].
+tidyverse [@tidyverse2019]. Plots were created using ggplot2 
+v`r packageVersion("ggplot2")` [@ggplot2].

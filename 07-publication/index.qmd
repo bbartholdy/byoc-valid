@@ -19,32 +19,99 @@ library(forcats)
 library(cowplot)
 library(readr)
 library(here)
-#source(here("02-scripts/authentication.R"))
-# upload data
-dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
-dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
-dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
-bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
-genus_oxytol <- read_tsv(here("01-documentation/genus-O2tolerance.tsv"))
-otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
-load(here("05-results/spca_byoc.rda"))
-load(here("05-results/spca_species.rda"))
-alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
-byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
-plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
 
+source(here("02-scripts/99_setup-qmd.R"))
+source(here("02-scripts/99_metagen-figures.R"))
+
+# # Helper objects
+# env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove environmental controls
+# 
+# # convert species table to long format
+# species_counts_long <- otu_table %>%
+#   pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count") %>%
+#   rename(species = `#OTU ID`) %>%
+#   filter(sample %in% dna_analysis_metadata$`#SampleID`)
+# 
+# # collapse species counts into genus counts
+# genus_counts_long <- species_counts_long %>%
+#   mutate(genus = str_extract(species, "\\w+")) %>%
+#   group_by(sample, genus) %>%
+#   summarise(count = sum(count)) %>% 
+#   group_by(sample) %>%
+#   mutate(rel_abund = count / sum(count)) %>%
+#   ungroup()
+# 
+# 
+# # convert alpha diversity data to long format
+# 
+# alpha_div_long <- alpha_div %>%
+#   pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+#   left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
+#   left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
+#   mutate(day_grouped = case_when( # group days to increase sample size
+#     day < 6 ~ "inoc",
+#     day > 6 & day < 24 ~ "treatm",
+#     day == 24 ~ "model"),
+#     day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "model"))
+#     )
+# 
+# # table containing the oxygen tolerance of species
+# species_properties <- bac_properties %>%
+#   right_join(species_counts_long, by = "species") %>%
+#   mutate(genus = str_extract(species, "\\w+")) %>%
+#   left_join(
+#     rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
+#     ) %>%
+#   mutate(`Oxygen tolerance` = case_when(
+#     is.na(`Oxygen tolerance`) ~ genus_oxytol, # if no species-level info available
+#     TRUE ~ `Oxygen tolerance`)
+#     ) %>%
+#   group_by(sample) %>%
+#   mutate(
+#     abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
+#     rel_abund = count / sum(count)
+#     ) %>%
+#   ungroup()
+# 
+# # sPCA analyses
+# 
+# byoc_explain_var <- spca_byoc$prop_expl_var$X # experiment samples
+# # projection of samples onto PCs
+# byoc_princomp <- spca_byoc$x %>% # experiment samples
+#   as_tibble(rownames = "sample") %>%
+#   left_join(dna_experiment_metadata, by = c("sample" = "#SampleID"))
+# # loadings of species
+# byoc_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
+#   as_tibble(rownames = "species") %>%
+#   #left_join(bac_properties, by = "species") %>% 
+#   left_join(species_properties, by = "species") %>% 
+#   dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
+#   arrange(desc(abs(PC1))) %>%
+#   distinct(species, .keep_all = T)
+# 
+# compar_explain_var <- spca_species$prop_expl_var$X # comparative samples
+# # projection of samples onto PCs
+# compar_princomp <- spca_species$x %>% # comparative samples
+#   as_tibble(rownames = "sample") %>%
+#   left_join(dna_metadata, by = c("sample" = "#SampleID"))
+# compar_pca_loadings <- spca_species$rotation %>% # comparative samples
+#   as_tibble(rownames = "species") %>%
+#   left_join(species_properties, by = "species") %>% 
+#   dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
+#   arrange(desc(abs(PC1))) %>% 
+#   distinct(species, .keep_all = T)
+# 
 # FTIR
-ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
-ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
-
-# Materials and methods setup
-
-# upload names and versions of software used
-software_versions <- readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
-
-# Helper objects
-env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove environmental controls
+# ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+# ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
+# ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+# 
+# source(here("02-scripts/99_tables.R"))
+# #source(here("02-scripts/99_figures.R"))
+# source(here("02-scripts/99_ftir-figures.R"))
+# 
+# # upload names and versions of software used
+# software_versions <- readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
 
 # set ggplot theme options
 options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
@@ -85,8 +152,24 @@ for involvement in the DNA extraction. This work was performed using the compute
 resources from the Academic Leiden Interdisciplinary Cluster Environment (ALICE)
 provided by Leiden University, with special thanks to Dr. Robert Schulz.
 The FTIR analysis was conducted at the Laboratory for Sedimentary Archaeology,
-Haifa University, courtesy of Prof. Ruth Shahack-Gross. We also thank Dr. Yotam
-Asscher for providing the raw data of bone mineral grinding curves.<!-- Raw data not provided -->
+Haifa University, courtesy of Prof. Ruth Shahack-Gross, with additional help from
+Dr. Yotam Asscher.
+
+This research has received funding from the European Research Council under the
+European Union’s Horizon 2020 research and innovation program, grant agreement
+number STG–677576 ("HARVEST", funding BPB and AGH), as well as STG-948365 ("PROSPER", funding ZF).
+
+# Data Availability Statement {-}
+
+Human-filtered DNA sequencing data have been deposited in the ENA database under
+accession PRJEB61886.
+Analysis scripts and source code for the manuscript and supplementary materials
+are available on GitHub (<https://github.com/bbartholdy/byoc-valid>)
+and archived on 4TU.ResearchData ([10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0](https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0)).
+FTIR data and spectra are available on 4TU.ResearchData
+([10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b](https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b)).
+Detailed protocols for growing the oral biofilm are available on protocols.io
+([10.17504/protocols.io.dm6gpj9rdgzp/v1](https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1)).
 
 # References {-}
 
