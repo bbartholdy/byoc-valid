@@ -52,7 +52,7 @@ vignettes/*.pdf
 05-results/ftir/
 #04-analysis/
 07-publication/_archive/
-#07-publication/_output/
+07-publication/_output/
 **/*.bam
 **/*.sam.gz
 **/*.sam
