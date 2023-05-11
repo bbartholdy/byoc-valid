@@ -1,122 +1,122 @@
 #SampleID	Env	SourceSink	Project	download_link	Study	study_doi
-LIB030.A0117	library control	sink	TBD	NA	this_study	TBD
-SYN001.A0101	saliva	sink	TBD	NA	this_study	TBD
-SYN002.A0101	saliva	sink	TBD	NA	this_study	TBD
-SYN003.A0101	saliva	sink	TBD	NA	this_study	TBD
-SYN014.A0101	medium	sink	TBD	NA	this_study	TBD
-SYN014.C0101	medium	sink	TBD	NA	this_study	TBD
-SYN015.B0101	medium	sink	TBD	NA	this_study	TBD
-SYN015.D0101	medium	sink	TBD	NA	this_study	TBD
-SYN015.E0101	medium	sink	TBD	NA	this_study	TBD
-SYN015.F0101	medium	sink	TBD	NA	this_study	TBD
-SYN015.G0101	medium	sink	TBD	NA	this_study	TBD
-SYN015.H0101	medium	sink	TBD	NA	this_study	TBD
-SYN017.A0101	medium	sink	TBD	NA	this_study	TBD
-SYN017.B0101	medium	sink	TBD	NA	this_study	TBD
-SYN017.D0101	medium	sink	TBD	NA	this_study	TBD
-SYN017.E0101	medium	sink	TBD	NA	this_study	TBD
-SYN017.F0101	medium	sink	TBD	NA	this_study	TBD
-SYN017.G0101	medium	sink	TBD	NA	this_study	TBD
-SYN018.C0101	medium	sink	TBD	NA	this_study	TBD
-SYN018.H0101	medium	sink	TBD	NA	this_study	TBD
-SYN005.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN006.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN008.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN009.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN012.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN013.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN015.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN016.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN018.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN019.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN021.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN022.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN023.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN025.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN026.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SYN028.I0101	byoc_calculus	sink	TBD	NA	this_study	TBD
-SRS014477	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014477.tar.bz2	NA	NA
-SRS063215	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS063215.tar.bz2	NA	NA
-SRS019129	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS019129.tar.bz2	NA	NA
-SRS019120	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS019120.tar.bz2	NA	NA
-SRS014468	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS014468.tar.bz2	NA	NA
-SRS015055	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS015055.tar.bz2	NA	NA
-SRS013950	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS013950.tar.bz2	NA	NA
-SRS014692	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS014692.tar.bz2	NA	NA
-SRS015064	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS015064.tar.bz2	NA	NA
-SRS019029	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS019029.tar.bz2	NA	NA
-SRS014107	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014107.tar.bz2	NA	NA
-SRS013942	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS013942.tar.bz2	NA	NA
-SRS014691	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014691.tar.bz2	NA	NA
-SRS021960	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS021960.tar.bz2	NA	NA
-SRS045313	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS045313.tar.bz2	NA	NA
-SRS047265	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS047265.tar.bz2	NA	NA
-SRS051378	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS051378.tar.bz2	NA	NA
-SRS015755	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS015755.tar.bz2	NA	NA
-SRS015378	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS015378.tar.bz2	NA	NA
-SRS022149	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS022149.tar.bz2	NA	NA
-SRS064493	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS064493.tar.bz2	NA	NA
-SRS052604	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS052604.tar.bz2	NA	NA
-SRS019333	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS019333.tar.bz2	NA	NA
-ERR1883419	sediment	source	NA	NA	NA	NA
-ERR1883420	sediment	source	NA	NA	NA	NA
-ERR1883421	sediment	source	NA	NA	NA	NA
-ERR1883422	sediment	source	NA	NA	NA	NA
-ERR1883423	sediment	source	NA	NA	NA	NA
-ERR1883424	sediment	source	NA	NA	NA	NA
-ERR1883430	sediment	source	NA	NA	NA	NA
-ERR1883436	sediment	source	NA	NA	NA	NA
-ERR1883438	sediment	source	NA	NA	NA	NA
-SRR1631060	skin	source	NA	NA	NA	NA
-SRR1631061	skin	source	NA	NA	NA	NA
-SRR1631063	skin	source	NA	NA	NA	NA
-SRR1631064	skin	source	NA	NA	NA	NA
-SRR1633008	skin	source	NA	NA	NA	NA
-SRR3184100	skin	source	NA	NA	NA	NA
-SRR3184876	skin	source	NA	NA	NA	NA
-SRR3189411	skin	source	NA	NA	NA	NA
-SRR3189416	skin	source	NA	NA	NA	NA
-SRR3189418	skin	source	NA	NA	NA	NA
-SRR059389	stool	source	NA	NA	NA	NA
-SRR059425	stool	source	NA	NA	NA	NA
-SRR059455	stool	source	NA	NA	NA	NA
-SRR059917	stool	source	NA	NA	NA	NA
-SRR060358	stool	source	NA	NA	NA	NA
-SRR1761677	stool	source	NA	NA	NA	NA
-SRR1761682	stool	source	NA	NA	NA	NA
-SRR1761688	stool	source	NA	NA	NA	NA
-SRR1761692	stool	source	NA	NA	NA	NA
-SRR1761697	stool	source	NA	NA	NA	NA
-SRR1761698	stool	source	NA	NA	NA	NA
-SRR1761705	stool	source	NA	NA	NA	NA
-SRR1761710	stool	source	NA	NA	NA	NA
-SRR1761718	stool	source	NA	NA	NA	NA
-SRR1761721	stool	source	NA	NA	NA	NA
-SRR1929408	stool	source	NA	NA	NA	NA
-SRR1930121	stool	source	NA	NA	NA	NA
-SRR1930123	stool	source	NA	NA	NA	NA
-SRR1930141	stool	source	NA	NA	NA	NA
-SRR1930145	stool	source	NA	NA	NA	NA
-JAE006.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE007.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE008.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE009.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE010.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE012.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE013.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE014.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE015.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-JAE016.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	https://doi.org/10.1186/s40168-019-0717-3
-SRS052668	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS052668.tar.bz2	NA	NA
-SRS011247	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS011247.tar.bz2	NA	NA
-SRS056892	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS056892.tar.bz2	NA	NA
-SRS011310	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS011310.tar.bz2	NA	NA
-SRS012281	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS012281.tar.bz2	NA	NA
-SRS013711	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS013711.tar.bz2	NA	NA
-SRS023591	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS023591.tar.bz2	NA	NA
-SRS058105	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS058105.tar.bz2	NA	NA
-SRS063478	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS063478.tar.bz2	NA	NA
-SRS075406	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS075406.tar.bz2	NA	NA
+LIB030.A0117	library control	sink	PRJEB61886	NA	this_study	TBD
+SYN001.A0101	saliva	sink	PRJEB61886	NA	this_study	TBD
+SYN002.A0101	saliva	sink	PRJEB61886	NA	this_study	TBD
+SYN003.A0101	saliva	sink	PRJEB61886	NA	this_study	TBD
+SYN014.A0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN014.C0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN015.B0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN015.D0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN015.E0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN015.F0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN015.G0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN015.H0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN017.A0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN017.B0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN017.D0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN017.E0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN017.F0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN017.G0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN018.C0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN018.H0101	medium	sink	PRJEB61886	NA	this_study	TBD
+SYN005.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN006.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN008.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN009.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN012.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN013.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN015.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN016.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN018.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN019.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN021.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN022.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN023.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN025.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN026.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SYN028.I0101	model_calculus	sink	PRJEB61886	NA	this_study	TBD
+SRS014477	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014477.tar.bz2	HMP	NA
+SRS063215	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS063215.tar.bz2	HMP	NA
+SRS019129	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS019129.tar.bz2	HMP	NA
+SRS019120	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS019120.tar.bz2	HMP	NA
+SRS014468	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS014468.tar.bz2	HMP	NA
+SRS015055	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS015055.tar.bz2	HMP	NA
+SRS013950	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS013950.tar.bz2	HMP	NA
+SRS014692	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS014692.tar.bz2	HMP	NA
+SRS015064	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS015064.tar.bz2	HMP	NA
+SRS019029	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS019029.tar.bz2	HMP	NA
+SRS014107	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014107.tar.bz2	HMP	NA
+SRS013942	saliva	source	HMP	http://downloads.hmpdacc.org/data/Illumina/saliva/SRS013942.tar.bz2	HMP	NA
+SRS014691	subgingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/subgingival_plaque/SRS014691.tar.bz2	HMP	NA
+SRS021960	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS021960.tar.bz2	HMP	NA
+SRS045313	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS045313.tar.bz2	HMP	NA
+SRS047265	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS047265.tar.bz2	HMP	NA
+SRS051378	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS051378.tar.bz2	HMP	NA
+SRS015755	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS015755.tar.bz2	HMP	NA
+SRS015378	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS015378.tar.bz2	HMP	NA
+SRS022149	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS022149.tar.bz2	HMP	NA
+SRS064493	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS064493.tar.bz2	HMP	NA
+SRS052604	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS052604.tar.bz2	HMP	NA
+SRS019333	supragingival_plaque	source	HMP	http://downloads.hmpdacc.org/data/Illumina/supragingival_plaque/SRS019333.tar.bz2	HMP	NA
+ERR1883419	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883420	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883421	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883422	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883423	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883424	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883430	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883436	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+ERR1883438	sediment	source	PRJEB18629	NA	NA	10.1126/science.aam9695
+SRR1631060	skin	source	PRJNA46333	NA	NA	NA
+SRR1631061	skin	source	PRJNA46333	NA	NA	NA
+SRR1631063	skin	source	PRJNA46333	NA	NA	NA
+SRR1631064	skin	source	PRJNA46333	NA	NA	NA
+SRR1633008	skin	source	PRJNA46333	NA	NA	NA
+SRR3184100	skin	source	PRJNA46333	NA	NA	NA
+SRR3184876	skin	source	PRJNA46333	NA	NA	NA
+SRR3189411	skin	source	PRJNA46333	NA	NA	NA
+SRR3189416	skin	source	PRJNA46333	NA	NA	NA
+SRR3189418	skin	source	PRJNA46333	NA	NA	NA
+SRR059389	stool	source	PRJNA48479	NA	NA	NA
+SRR059425	stool	source	PRJNA48479	NA	NA	NA
+SRR059455	stool	source	PRJNA48479	NA	NA	NA
+SRR059917	stool	source	PRJNA48479	NA	NA	NA
+SRR060358	stool	source	PRJNA48479	NA	NA	NA
+SRR1761677	stool	source	PRJNA268964	NA	NA	NA
+SRR1761682	stool	source	PRJNA268964	NA	NA	NA
+SRR1761688	stool	source	PRJNA268964	NA	NA	NA
+SRR1761692	stool	source	PRJNA268964	NA	NA	NA
+SRR1761697	stool	source	PRJNA268964	NA	NA	NA
+SRR1761698	stool	source	PRJNA268964	NA	NA	NA
+SRR1761705	stool	source	PRJNA268964	NA	NA	NA
+SRR1761710	stool	source	PRJNA268964	NA	NA	NA
+SRR1761718	stool	source	PRJNA268964	NA	NA	NA
+SRR1761721	stool	source	PRJNA268964	NA	NA	NA
+SRR1929408	stool	source	PRJNA278393	NA	NA	NA
+SRR1930121	stool	source	PRJNA278393	NA	NA	NA
+SRR1930123	stool	source	PRJNA278393	NA	NA	NA
+SRR1930141	stool	source	PRJNA278393	NA	NA	NA
+SRR1930145	stool	source	PRJNA278393	NA	NA	NA
+JAE006.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE007.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE008.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE009.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE010.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE012.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE013.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE014.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE015.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+JAE016.A0101	modern_calculus	source	PRJEB31185	NA	Velsko et al. 2019	10.1186/s40168-019-0717-3
+SRS052668	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS052668.tar.bz2	HMP	NA
+SRS011247	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS011247.tar.bz2	HMP	NA
+SRS056892	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS056892.tar.bz2	HMP	NA
+SRS011310	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS011310.tar.bz2	HMP	NA
+SRS012281	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS012281.tar.bz2	HMP	NA
+SRS013711	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS013711.tar.bz2	HMP	NA
+SRS023591	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS023591.tar.bz2	HMP	NA
+SRS058105	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS058105.tar.bz2	HMP	NA
+SRS063478	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS063478.tar.bz2	HMP	NA
+SRS075406	buccal_mucosa	source	HMP	http://downloads.hmpdacc.org/data/Illumina/buccal_mucosa/SRS075406.tar.bz2	HMP	NA
 SRR5420280	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/000/SRR5420280/SRR5420280_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/000/SRR5420280/SRR5420280_2.fastq.gz	NA	NA
 SRR5420282	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/002/SRR5420282/SRR5420282_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR542/002/SRR5420282/SRR5420282_2.fastq.gz	NA	NA
 SRR6129806	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/006/SRR6129806/SRR6129806_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/006/SRR6129806/SRR6129806_2.fastq.gz	NA	NA
@@ -125,17 +125,17 @@ SRR6129808	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR6
 SRR6129809	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/009/SRR6129809/SRR6129809_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/009/SRR6129809/SRR6129809_2.fastq.gz	NA	NA
 SRR6129810	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/000/SRR6129810/SRR6129810_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/000/SRR6129810/SRR6129810_2.fastq.gz	NA	NA
 SRR6129811	indoor_air	source	PRJNA422794	ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/001/SRR6129811/SRR6129811_1.fastq.gz;ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR612/001/SRR6129811/SRR6129811_2.fastq.gz	NA	NA
-SRR5975923	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/003/SRR5975923	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975924	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/004/SRR5975924	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975925	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/005/SRR5975925	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975926	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/006/SRR5975926	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975927	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/007/SRR5975927	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975928	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/008/SRR5975928	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975929	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/009/SRR5975929	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975930	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/000/SRR5975930	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975931	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/001/SRR5975931	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975932	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/002/SRR5975932	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975933	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/003/SRR5975933	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975934	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/004/SRR5975934	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975936	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/006/SRR5975936	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
-SRR5975937	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/007/SRR5975937	Edlund et al. 2018	https://doi.org/10.1186/s40168-018-0591-4
+SRR5975923	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/003/SRR5975923	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975924	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/004/SRR5975924	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975925	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/005/SRR5975925	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975926	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/006/SRR5975926	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975927	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/007/SRR5975927	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975928	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/008/SRR5975928	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975929	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/009/SRR5975929	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975930	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/000/SRR5975930	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975931	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/001/SRR5975931	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975932	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/002/SRR5975932	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975933	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/003/SRR5975933	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975934	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/004/SRR5975934	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975936	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/006/SRR5975936	Edlund et al. 2018	10.1186/s40168-018-0591-4
+SRR5975937	vitro_biofilm	source	PRJNA398963	ftp://ftp.sra.ebi.ac.uk/vol1/srr/SRR597/007/SRR5975937	Edlund et al. 2018	10.1186/s40168-018-0591-4
