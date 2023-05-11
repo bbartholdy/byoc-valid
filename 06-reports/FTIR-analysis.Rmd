@@ -11,7 +11,7 @@ output:
 ## Introduction
 
 ```{r}
-#| label: setup
+#| label: setup-ftir
 #| include: false
 knitr::opts_chunk$set(
   message = FALSE,
@@ -23,9 +23,12 @@ library(patchwork)
 library(stringr)
 library(here)
 library(plotly)
-ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
+library(readr)
+ftir_data <- read_csv(here("05-results/ftir-data.csv"))
 grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+source(here("02-scripts/functions.R"))
+source(here("02-scripts/99_ftir-figures.R"))
 ```
 
 ```{r}
@@ -33,10 +36,7 @@ ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 #| eval: false
 
 # Loading libraries and data
-library(dplyr)
-library(patchwork)
-library(here)
-ftir_data <- read_csv(here("05-results/ftir-data_long.csv"))
+ftir_data <- read_csv(here("05-results/ftir-data.csv"))
 grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 ```
@@ -52,15 +52,11 @@ was calculated using a macro script.
 
 ```{r}
 #| label: ftir-summ
-n_samples <- ftir_metadata %>%
-  filter(source == "Artificial") %>%
-  group_by(day) %>% 
-  summarise(
-    n = n(),
-    weight = mean(weight_mg, na.rm = T)
-    )
-
-knitr::kable(n_samples, digits = 2, caption = "Summary of FTIR samples used in analysis, including weight in mg. Only a portion of the samples were analysed, so the weight is not indicative of the amount of calculus analysed.")
+knitr::kable(
+  ftir_samples_table, digits = 2, 
+  col.names = c("Sample type", "Sampling day", "n", "Weight (mg)"),
+  caption = "Summary of FTIR samples used in analysis, including weight in mg. Only a portion of the samples were analysed, so the weight is not indicative of the amount of calculus analysed."
+)
 ```
 
 `r sum(n_samples$n)` model biofilm samples from days 7, 16, 20, and 24, were analysed.
@@ -76,11 +72,12 @@ form enough carbonated hydroxtapatite for analysis.
 ```{r}
 #| label: comb-data-summary
 ftir_metadata %>%
-  filter(!is.na(ftir_metadata$comb)) %>%
+  filter(str_detect(analysis_id, "\\+")) %>%
+  filter(str_detect(analysis_id, "grind", negate = T)) %>% 
   #group_by(day) #%>%
-  select(sample_id, day, comb) %>%
-  mutate(comb = str_remove(comb, "_grind_a")) %>%
-  distinct(comb, .keep_all = T)
+  select(sample_id, analysis_id, day) %>%
+  #mutate(comb = str_remove(comb, "_grind_a")) %>%
+  distinct(sample_id, .keep_all = T)
 ```
 
 Table: Summary of samples used in grinding curves.
@@ -123,79 +120,11 @@ grind_sample_order <- c(
   "Enamel_3")
 ```
 
-
-```{r}
-#| label: ind-spectra
-#| fig-cap: "Spectra from all experiment sampling days."
-#| warning: false
-# day 7
-ftir_data %>%
-  filter(
-    day == 7,
-    sample != "F7",
-    sample != "F7.1A6_b"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-# day 12
-ftir_data %>%
-  filter(
-    day == 12
-    #sample != "F7",
-    #sample != "F7.1A6_b"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-
-# day 16
-ftir_data %>%
-  filter(
-    day == 16,
-    is.na(grind),
-    sample != "F16.2D2",
-    sample != "F16.1D6",
-    sample != "F16.1B2"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-
-# day 24 (final product)
-ftir_data %>%
-  filter(
-    day == 24,
-    is.na(grind),
-    str_detect(sample, "[_]", negate = T),
-    sample != "F24.1B3",
-    sample != "F24.2C3",
-    sample != "F24.2D3",
-    sample != "F24.2A4",
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-```
-
 ### Day 7
 
 ```{r}
 #| label: int-plot-day7
 #| warning: false
-int_plot_7 <- ftir_data %>%
-  filter(
-    sample == "F7.1A6"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-
 plotly::ggplotly(int_plot_7)
 ```
 
@@ -216,22 +145,22 @@ stretching mode from aliphatic amines, but may also come from silicate contamina
 The relative absorbance of O--H and Amide I and II bands are higher than the
 phosphate bands, representing a relatively higher content of lipids and proteins
 than inorganic content. Large variation between spectra.
+A possible brushite absorbance band can be seen at 527
+cm$^{-1}$ in sample F7.1A6 and minor absorption bands of the phosphate doublet
+around 605 cm$^{-1}$ and 560 cm$^{-1}$ in sample F7.2D1, as well as what may be
+minor contamination of quartz. 
+The exact composition of the phosphate mineral is
+hard to determine at this stage, possibly due to the presence of several phosphate
+minerals including amorphous phases. The relative absorbance of O–H and Amide I
+and II bands are higher than the phosphate bands, representing a relatively higher
+content of lipids and proteins than inorganic content. 
 
 ### Day 12
 
 ```{r}
 #| label: int-plot-day12
 #| warning: false
-ftir_data %>%
-  filter(
-    sample == "F12.1D1+F12.1D2"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-
-ggplotly()
+ggplotly(int_plot_12)
 ```
 
 Day 12, amide I and II continue to be the dominant peaks, and a higher ratio
@@ -244,16 +173,7 @@ Three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
 ```{r}
 #| label: int-plot-day16
 #| warning: false
-ftir_data %>%
-  filter(
-    sample == "F16.2B2"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-
-ggplotly()
+ggplotly(int_plot_16)
 ```
 
 Day 16, the ratio of O--H and amides to PO~4~ has shifted, with
@@ -269,16 +189,7 @@ higher phosphate-to-protein/lipid ratio.
 ```{r}
 #| label: int-plot-day24
 #| warning: false
-ftir_data %>%
-  filter(
-    sample == "F24.1D3"
-    ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
-    geom_line() +
-    theme_classic() +
-    scale_x_reverse()
-
-ggplotly()
+ggplotly(int_plot_24)
 ```
 
 Day 24, large O--H and amide A absorbance bands in stretching mode around 3400 cm$^{-1}$,
@@ -288,6 +199,13 @@ Main peak of spectra is PO~4~ v~3~ at 1040
 cm$^{-1}$, well-defined PO~4~ doublet at 600-550 cm$^{-1}$. Amide I band,
 with small amide II and III bands. Carbonate peaks also present.
 Very little variation between all of the spectra.
+
+For day 24, although the amide I and II are still present, the main component of
+the samples is the carbonate hydroxyapatite with a strong absorbance band at 1039--1040
+cm$^{-1}$, well-defined PO~4~ doublet at 604/605--564/566 cm$^{-1}$, and carbonate
+bands at 1413--1420 and 1445--1460 cm$^{-1}$. There is little variation between
+the sample spectra  ([@fig-ftir-spectra]D).
+
 
 ## Across sampling days
 
@@ -349,7 +267,7 @@ OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
 #| fig-cap: "Two spectra from a single sample of archaeological calculus with different grinding levels (c and d)."
 ftir_data %>%
   filter(
-    sample == "ArchDC_MB11_grind_c" | str_detect(sample, "modern_ref1")
+    sample == "ArchDC_MB11_grind_c" | sample == "ArchDC_MB11_grind_d"
     ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = sample)) +
     geom_line() +
@@ -463,15 +381,18 @@ grind_calc_plot <- grind_data %>%
     panel.background = element_rect(fill = "white")
     ) +
   scale_colour_viridis_d(end = 0.4)
+
+grind_all_plot
 ```
 
-
+<!--
 ```{r message=FALSE, warning=FALSE}
 #| label: fig-grind-curve-inset
 #| fig-cap: "(A) Grinding curves of multiple materials; and (B) calculus-only materials, including biofilm samples from three days, and an archaeological calclulus sample."
 grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right = 1, top = 1) + 
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 ```
+-->
 
 ## Discussion
 

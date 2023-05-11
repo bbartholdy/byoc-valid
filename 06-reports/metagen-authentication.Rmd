@@ -4,7 +4,8 @@ output: html_notebook
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_knit$set(message = FALSE)
+library(here)
+knitr::opts_knit$set(message = FALSE, root.dir = here())
 ```
 
 Load necessary packages.
@@ -13,10 +14,11 @@ Load necessary packages.
 #| label: dependencies
 library(cuperdec)
 library(decontam)
-library(here)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(readr)
+library(stringr)
 ```
 
 Upload the data and metadata.
@@ -24,15 +26,14 @@ Upload the data and metadata.
 ```{r message=FALSE}
 #| label: data-upload
 # upload data
-lib_conc <- readr::read_tsv(here("01-documentation/SYN_DNA_concentrations.tsv")) # library concentrations
-metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
-experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv"))
-analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
-kraken_taxatab <- readr::read_tsv(here("04-analysis/OTUfilter_table.tsv"))
-sourcetracker2 <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
-sourcetracker2_stdevs <- readr::read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")) 
+experiment_metadata <- read_tsv("01-documentation/experiment-metadata.tsv")
+analysis_metadata <- read_tsv("01-documentation/analysis-metadata.tsv")
+kraken_taxatab <- read_tsv(here("04-analysis/OTUfilter_table.tsv"))
+sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
+sourcetracker2_stdevs <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")) 
 otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
+source("02-scripts/functions.R")
 ```
 
 ## SourceTracker
@@ -112,17 +113,7 @@ sourcetracker2 \
     --per_sink_feature_assignments
 ```
 
-The full results can be found in [04-analysis/sourcetracker/sourcetracker2_output](../04-analysis/sourcetracker/sourcetracker2_output/)
-
-```{r}
-# convert to long format
-sourcetracker2_long <- sourcetracker2 %>%
-  pivot_longer(cols = where(is.numeric), 
-               values_to = "proportion", 
-               names_to = "SampleID") %>%
-  rename(source = ...1)
-```
-
+The full results can be found in `04-analysis/sourcetracker/sourcetracker2_output`
 
 ### Visualisation of sources
 
@@ -150,6 +141,11 @@ day_order <- experiment_metadata %>%
 ```
 
 then visualised. Plot of estimated contributions of various sources to the artificial calculus and artificial saliva samples. Samples are arranged from left to right by how late in the experiment they were sampled, with left being the earliest samples.
+
+```{r}
+sourcetracker2_long <- sourcetracker2_longer()
+```
+
 
 ```{r}
 sourcetracker2_long %>% 

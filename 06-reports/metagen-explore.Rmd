@@ -429,14 +429,7 @@ Centered ratio log-transform abundance ordered by PC1 loadings.
 
 ```{r}
 # Top positive loadings on PC1
-clr_compar_long %>%
-  left_join(pca_loadings, by = "species") %>%
-  left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
-  left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
-  filter(species %in% arrange(pca_loadings, desc(PC1))$species[1:200]) %>%
-  #arrange(sample, PC1.y) %>%
-  ggplot(aes(x = reorder(sample, PC1.y), y = reorder(species, PC1.x), fill = clr_count)) +
-    geom_tile() +
+species_pos_pc1 +
     scale_fill_viridis_c() +
     theme(
       axis.title.y = element_blank(),
@@ -453,22 +446,14 @@ clr_compar_long %>%
       )
 
 # Top negative loadings on PC1
-clr_compar_long %>%
-  left_join(pca_loadings, by = "species") %>%
-  left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
-  #left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
-  #arrange(species, PC1.y) %>% # arrange by species loading (PC1.x)
-  filter(species %in% arrange(pca_loadings, PC1)$species[1:200]) %>%
-  arrange(sample, PC1.x) %>% # arrange by sample loading (PC1.y)
-  ggplot(aes(x = reorder(sample, PC1.y), y = reorder(species, PC1.x, decreasing = T), fill = clr_count)) +
-    geom_tile() +
-    scale_fill_viridis_c() +
-    theme(
-      axis.title.y = element_blank(),
-      axis.title.x = element_blank(),
-      axis.text.x = element_text(
-        angle = 90, size = 8, vjust = 0.5, hjust = 1,
-        colour = analysis_colours %>%
+species_neg_pc1 +
+  scale_fill_viridis_c() +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(
+      angle = 90, size = 8, vjust = 0.5, hjust = 1,
+      colour = analysis_colours %>%
           right_join(
             as_tibble(spca_species$x, rownames = "#SampleID"), 
             by = "#SampleID") %>%
