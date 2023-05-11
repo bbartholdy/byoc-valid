@@ -1,4 +1,4 @@
-library(tidyverse)
+library(dplyr)
 library(here)
 
 # Upload data -------------------------------------------------------------
@@ -172,3 +172,24 @@ source_input %>%
   mutate(test = str_detect(Sample_Name, "[ERR]+")) %>% view
 
 write_tsv(source_input, here("04-analysis/eager/source_input.tsv"))
+
+iv_biofilm <- readr::read_tsv("ivbiofilm_SRR.txt", col_names = F)
+
+iv_biofilm_r1 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", iv_biofilm$X1[1:15], "_1.fastq.gz")
+iv_biofilm_r2 <- paste0("/home/bartholdybp/data1/databases/refseq/source/", iv_biofilm$X1[1:15], "_2.fastq.gz")
+
+vitrobiofilms_input <- tibble::tibble(
+  "Sample_Name" = iv_biofilm$X1[1:15],
+  "Library_ID" = iv_biofilm$X1[1:15],
+  "Lane" = 1,
+  "Colour_Chemistry" = 4,
+  "SeqType" = "PE",
+  "Organism" = NA,
+  "Strandedness" = "double",
+  "UDG_Treatment" = "none",
+  "R1" = iv_biofilm_r1,
+  "R2" = iv_biofilm_r2,
+  "BAM" = NA
+)
+
+readr::write_tsv(vitrobiofilms_input, here::here("04-analysis/eager/vitro-biofilms_input.tsv"))

@@ -1,18 +1,19 @@
 # Bacterial properties
 
-library(BacDive)
+#library(BacDive)
 library(dplyr)
 library(tibble)
-
+library(stringr)
+library(readr)
 
 # Upload data -------------------------------------------------------------
 
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
 taxatable <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
 bacdive_oxytol <- readr::read_csv(
-  "03-data/2022-05-27_bacdive_oxytol-search.csv",
+  "03-data/2022-12-12_bacdive-oxytol-search.csv",
   skip = 2
-  )
+)
 # bacdive_halotol <- readr::read_csv(
 #   "03-data/2022-06-29_bacdive_halotol-search.csv",
 #   skip = 2
@@ -86,3 +87,14 @@ bac_properties <- sample_oxytol %>%
 write_tsv(as_tibble(all_species_names), "species-list-for-bacdive.txt", col_names = F)
 write_tsv(bac_properties, "01-documentation/species-properties.tsv")
 write_tsv(genus_oxytol, "01-documentation/genus-O2tolerance.tsv")
+
+# what genera are missing in the bacdive search?
+genus_in_bacdive <- bacdive_oxytol %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  .$genus %>%
+  unique()
+genus_in_samples <- taxatable %>% 
+  mutate(genus = str_extract(`#OTU ID`, "\\w+")) %>%
+  .$genus %>%
+  unique()
+genus_in_samples[!genus_in_samples %in% genus_in_bacdive]

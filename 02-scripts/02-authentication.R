@@ -7,6 +7,7 @@ library(tidyr)
 library(purrr)
 library(here)
 library(tibble)
+source("02-scripts/functions.R")
 
 # upload data
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
@@ -36,12 +37,7 @@ otu_comb_long <- otu_filtered_table %>%
 
 # SourceTracker -----------------------------------------------------------
 
-sourcetracker2_long <- sourcetracker2 %>%
-  pivot_longer(cols = where(is.numeric), 
-               values_to = "proportion", 
-               names_to = "SampleID") %>%
-  rename(source = ...1)
-
+sourcetracker2_long <- sourcetracker2_longer()
 
 # contributions in problematic samples
 problem_samples <- sourcetracker2_long %>%

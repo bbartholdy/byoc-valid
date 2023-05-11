@@ -1,5 +1,7 @@
 # Compare species abundance for biofilm samples and modern plaque/calculus
 library(dplyr)
+library(readr)
+library(stringr)
 library(tibble)
 library(tidyr)
 library(phyloseq)
@@ -102,7 +104,7 @@ byoc_logf_full <- as_tibble(byoc_da$res$lfc, rownames = "species") %>%
   mutate(upper = lfc + se,
          lower = lfc - se,
          name = str_remove(name, "^Env"),
-         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
+         abn = case_when(sign(lfc) == -1 ~ "model_calculus",
                          TRUE ~ name)) %>%
   rename(env = name)
 
@@ -129,7 +131,7 @@ plaque_logf_full <- plaque_logf_change %>%
   mutate(lower = lfc - se,
          upper = lfc + se,
          name = str_remove(name, "^Env"),
-         abn = case_when(sign(lfc) == -1 ~ "byoc_calculus",
+         abn = case_when(sign(lfc) == -1 ~ "model_calculus",
                          TRUE ~ name)) %>%
   rename(env = name)
 
@@ -137,115 +139,4 @@ write_tsv(byoc_logf_full, "05-results/byoc_logf-full.tsv")
 write_tsv(plaque_logf_full, "05-results/plaque_logf-full.tsv")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# function to get pallette for top species/genus
-
-function(x, pallette, n) {
-  col_pallette <- palette(n = n)
-  names(col_pallette) <- levels(x)
-  col_scale <- scale_fill_manual(name = "", values = col_pallette)
-}
-#my_pallette <- c(viridisLite::viridis(n = length(top_species_names)), "grey") 
-#names(my_pallette) <- levels(top_abundance$top_species)
-#my_scale <- scale_fill_manual(name = "top_species", values = my_pallette)
-
-
-
-
-# Diff abundance ----------------------------------------------------------
-
-# exp_day <- ANCOMBC::ancombc(
-#   experiment_phyloseq, 
-#   formula = "Env",
-#   group = "Env",
-#   global = T,
-#   p_adj_method = "fdr")
-# 
-# ANCOMBC::ancom(experiment_phyloseq, main_var = "Env")
-# 
-# # from vignette("ANCOMBC")
-# samp_frac <- exp_day$samp_frac
-# # Replace NA with 0
-# samp_frac[is.na(samp_frac)] = 0 
-# # add 1 to counts for log-transformation
-# log_exp_otu <- log(microbiome::abundances(experiment_otu) + 1)
-# 
-# # Adjust the log observed abundances
-# log_exp_otu_adj = t(t(log_exp_otu))
-# # Bias-corrected log observed abundances
-#   # Show the first 6 samples
-# round(log_exp_otu_adj[, 1:6], 2) %>% 
-#   as_tibble(rownames = "species") %>%
-#   .$SYN001.A0101
-# 
-# class(otu_table(taxatable_matrix, taxa_are_rows = T))
-
-
-
-#da_env_taxa <- ANCOMBC::ancombc(otu_phyloseq, formula = "Env")
-
-# taxatable_abundance_long <- taxatable %>%
-#   pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count") %>% 
-#   rename(species = `#OTU ID`) %>% 
-#   group_by(sample) %>%
-#   mutate(rel_abund = count / sum(count))
-# 
-# species_abundance_long <- taxatable_abundance_long %>%
-#   #bind_rows(taxatable_abundance) %>%
-#   mutate( # fix species names
-#     species = str_remove(species, "\\["), # remove square brackets from names
-#     species = str_remove(species, "\\]") # probably not the most elegant solution
-#     ) 
-#   
-# 
-# top_species_names <- species_abundance_long %>% 
-#   group_by(sample) %>% 
-#   arrange(desc(rel_abund)) %>% 
-#   slice_head(n = 4) %>% # take the top 4 species from each sample
-#   .$species %>% 
-#   unique()
-# 
-# genus_abundance_long <- species_abundance_long %>%
-#   mutate(genus = str_extract(species, "^([\\w\\-]+)")) %>% 
-#   dplyr::select(!c(species,rel_abund)) %>% 
-#   group_by(sample, genus) %>%
-#   summarise(count = sum(count, na.rm = T)) %>% 
-#   mutate(rel_abund = count / sum(count))
-# 
-# top_genus_names <- genus_abundance_long %>% 
-#   group_by(sample) %>% 
-#   arrange(desc(rel_abund)) %>% 
-#   slice_head(n = 4) %>% 
-#   .$genus %>% 
-#   unique()
-
-# Export data -------------------------------------------------------------
-
-#write_tsv(species_abundance_long, "05-results/species-abundance_long.tsv")
-#write_tsv(genus_abundance_long, "05-results/genus-abundance_long.tsv")
 

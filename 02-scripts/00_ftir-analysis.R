@@ -44,8 +44,8 @@ names(ftir_data_list) <- sample_names
 ftir_metadata <- sample_names %>%
   as_tibble() %>%
   mutate(sample = value,
-         analysis_id = sample) %>% # keep original sample ID
-  separate_rows(sample, sep = "\\+") %>% 
+         sample_id = sample) %>% # keep original sample ID
+  separate_rows(sample, sep = "\\+") %>% # separate combined samples 
   mutate(
     sample_id = str_extract(sample, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
     day = str_extract(sample_id, "(?<=F)[0-9]+"),
@@ -54,7 +54,7 @@ ftir_metadata <- sample_names %>%
       str_detect(sample_id, "F") ~ "Artificial", 
       str_detect(sample_id, "Arch") ~ "Archaeological",
       str_detect(sample_id, "modern") ~ "Modern"),
-    sample_id = case_when(source == "Modern" ~ sample,
+    sample_id = case_when(source == "Modern" ~ sample_id,
                         TRUE ~ sample_id),
     comb = case_when(str_detect(value, "\\+") ~ value,
                    TRUE ~ NA_character_),
@@ -109,8 +109,48 @@ ftir_data_list_cleaned <- lapply(ftir_data_list, clean_ftir)
 
 ftir_data <- do.call(bind_rows, ftir_data_list_cleaned)
 
-ftir_data_long <- inner_join(ftir_metadata, ftir_data, by = c("analysis_id" = "sample"))
+ftir_metadata <- ftir_data %>%
+  distinct(sample) %>%
+  mutate(
+    #analysis_id = sample,
+    analysis_id = sample
+    ) %>% # keep original sample ID
+  separate_rows(sample, sep = "\\+") %>% # separate combined samples
+  mutate(
+    sample_id = str_extract(sample, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
+    day = str_extract(sample_id, "(?<=F)[0-9]+"),
+    well = str_extract(sample_id, "^(?<=A-Z0-9).[A-Z0-9]+"),
+    source = case_when(
+      str_detect(sample_id, "F") ~ "Artificial",
+      str_detect(sample_id, "Arch") ~ "Archaeological",
+      str_detect(sample_id, "modern") ~ "Modern"),
+    #sample_id = case_when(source == "Modern" ~ sample_id,
+                          #TRUE ~ sample_id),
+    #comb = case_when(str_detect(sample, "\\+") ~ sample,
+    #                 TRUE ~ NA_character_),
+    grind = case_when(str_detect(sample, "(?<=_grind_)[a-f]$") ~ TRUE, # collapse grind samples
+                      TRUE ~ FALSE)) %>%
+  mutate(
+    sample_id = case_when(
+      str_detect(analysis_id, "modern-ref") ~ analysis_id, # re-separate modern
+      TRUE ~ sample_id
+      )
+  ) %>%
+  mutate(
+    day = as.numeric(day),
+    #comb = str_remove(comb, "_grind_[a-z]")
+  ) %>%
+  select(!c(sample)) %>%
+  inner_join(byoc_ftir, by = c("day", "sample_id")) %>% 
+  group_by(sample_id) %>%
+  mutate(analysis_id = paste0(analysis_id, collapse = ";")) %>%
+  distinct(sample_id, .keep_all = T) %>%
+  select(!c(tube, sample, experiment))
+
+# need a better way to combine FTIR data with metadata
+  # currently doesn't work because grind extensions (_a:f) are removed from metadata
 
 write_csv(grind_data, "05-results/grind-data_cleaned.csv")
-write_csv(ftir_data_long, "05-results/ftir-data_long.csv")
+write_csv(ftir_data, "05-results/ftir-data.csv")
+#write_csv(ftir_data_long, "05-results/ftir-data_long.csv")
 write_tsv(ftir_metadata, "01-documentation/ftir-metadata.tsv")

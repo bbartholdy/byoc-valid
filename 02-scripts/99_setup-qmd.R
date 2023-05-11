@@ -1,0 +1,115 @@
+## Script to load all required objects into qmd documents
+
+# Metagenomic analysis ----------------------------------------------------
+
+
+dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
+dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
+bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
+genus_oxytol <- read_tsv(here("01-documentation/genus-O2tolerance.tsv"))
+otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
+load(here("05-results/spca_byoc.rda"))
+load(here("05-results/spca_species.rda"))
+alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
+clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
+  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
+
+
+# Helper objects
+env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove environmental controls
+
+# convert species table to long format
+species_counts_long <- otu_table %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count") %>%
+  rename(species = `#OTU ID`) %>%
+  filter(sample %in% dna_analysis_metadata$`#SampleID`)
+
+# collapse species counts into genus counts
+genus_counts_long <- species_counts_long %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  group_by(sample, genus) %>%
+  summarise(count = sum(count)) %>% 
+  group_by(sample) %>%
+  mutate(rel_abund = count / sum(count)) %>%
+  ungroup()
+
+
+# convert alpha diversity data to long format
+
+alpha_div_long <- alpha_div %>%
+  pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+  left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
+  mutate(day_grouped = case_when( # group days to increase sample size
+    day < 6 ~ "inoc",
+    day > 6 & day < 24 ~ "treatm",
+    day == 24 ~ "model"),
+    day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "model"))
+  )
+
+# table containing the oxygen tolerance of species
+species_properties <- bac_properties %>%
+  right_join(species_counts_long, by = "species") %>%
+  mutate(genus = str_extract(species, "\\w+")) %>%
+  left_join(
+    rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
+  ) %>%
+  mutate(`Oxygen tolerance` = case_when(
+    is.na(`Oxygen tolerance`) ~ genus_oxytol, # if no species-level info available
+    TRUE ~ `Oxygen tolerance`)
+  ) %>%
+  group_by(sample) %>%
+  mutate(
+    abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
+    rel_abund = count / sum(count)
+  ) %>%
+  ungroup()
+
+# sPCA analyses
+
+byoc_explain_var <- spca_byoc$prop_expl_var$X # experiment samples
+# projection of samples onto PCs
+byoc_princomp <- spca_byoc$x %>% # experiment samples
+  as_tibble(rownames = "sample") %>%
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID"))
+# loadings of species
+byoc_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
+  as_tibble(rownames = "species") %>%
+  #left_join(bac_properties, by = "species") %>% 
+  left_join(species_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1))) %>%
+  distinct(species, .keep_all = T)
+
+compar_explain_var <- spca_species$prop_expl_var$X # comparative samples
+# projection of samples onto PCs
+compar_princomp <- spca_species$x %>% # comparative samples
+  as_tibble(rownames = "sample") %>%
+  left_join(dna_metadata, by = c("sample" = "#SampleID"))
+compar_pca_loadings <- spca_species$rotation %>% # comparative samples
+  as_tibble(rownames = "species") %>%
+  left_join(species_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1))) %>% 
+  distinct(species, .keep_all = T)
+
+
+# FTIR analysis -----------------------------------------------------------
+
+
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+
+source(here("02-scripts/99_tables.R"))
+#source(here("02-scripts/99_figures.R"))
+source(here("02-scripts/99_ftir-figures.R"))
+
+# upload names and versions of software used
+software_versions <- readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
