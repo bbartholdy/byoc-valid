@@ -43,14 +43,11 @@ The dental plaque biofilm grows in a well-characterized manner before mineralisa
 in a process that repeats regularly to build up dental calculus.
 Shortly after teeth are cleaned (whether mechanically or otherwise), salivary
 components adsorb to the crown or root and form the acquired dental pellicle.
-The pellicle is
-composed mainly of proteins and protects the tooth against
-mechanical and chemical decay [@yaoIdentificationProtein2003]. It also
-provides a viable surface for bacteria to attach, especially early-coloniser
-species within the genera *Streptococcus* and *Actinomyces*
+The pellicle provides a viable surface for bacteria to attach, especially
+early-coloniser species within the genera *Streptococcus* and *Actinomyces*
 [@marshDentalPlaque2006]. Once
 the tooth surface has been populated by specialists in surface-attachment, other
-species of bacteria can attach to their surface, increasing the biofilm density
+species of bacteria can attach to the adherent cells, increasing the biofilm density
 and diversity. The bacterial species secrete polysaccharides, proteins, lipids,
 and nucleic acids, into their immediate environment to form a matrix that provides
 structural support, nutrition, and allows for environmental niche partitioning
@@ -64,8 +61,8 @@ and proline-rich proteins in saliva, rises in local plaque pH, and increased
 hydrolysis of urea [@whiteDentalCalculus1997; @wongCalciumPhosphate2002].
 These conditions can cause increased precipitation and decreased dissolution of
 calcium phosphate salts within saliva and the plaque biofilm.
-The resulting supersaturation of calcium phosphate salts are the main
-drivers of biofilm mineralisation [@jinSupragingivalCalculus2002].
+The resulting supersaturation of calcium phosphate salts is the main
+driver of biofilm mineralisation [@jinSupragingivalCalculus2002].
 The primary minerals in dental calculus are hydroxyapatite,
 octacalcium phosphate, whitlockite, and brushite. During initial
 mineralisation the main mineral component is brushite, which shifts to hydroxyapatite
@@ -77,8 +74,8 @@ various factors, including diet [@hayashizakiSiteSpecific2008; @jiFluorideMagnes
 Dental plaque can also be grown *in vitro*, and these oral biofilm models are
 commonly used in dental research to assess the efficacy
 of certain treatments on dental pathogens [@filochePlaqueMicrocosm2007; @extercateAAA2010]
-without the ethical issues of inducing plaque accumulation and the complexity
-of access and sampling in humans (or animals).
+without the ethical issues of inducing plaque accumulation in study participants
+and the complexity of access and sampling in humans or animals.
 Oral biofilm models are often short-term models grown over a few days, but
 longer term models also exist (up to six weeks) which are used to develop mature plaque or
 dental calculus
@@ -97,7 +94,7 @@ Despite the limitations, oral biofilm models have many benefits over *in situ* r
 There are many variables involved in dental calculus formation, such as intra-
 and inter-individual variation in salivary flow, oral pH,
 and amylase activity, which can be hard to tease apart *in situ*.
-Oral biofilm models provide a controlled environment to explore the effect
+Oral biofilm models provide a controlled environment to explore the effect of
 selected variables on the growth of calculus and the retention of dietary
 components in the biofilm, as well as a means to identify
 how the methods used in archaeology may inadvertently bias the interpretations.
@@ -118,10 +115,9 @@ multiwell plate setup that is accessible even to smaller lab budgets and those
 with limited facilities for microbiology work.
 Here, we used next-generation sequencing and metagenomic classification
 to characterise the bacterial composition of our model dental calculus and compare
-to oral reference samples, including saliva, buccal mucosa, plaque, and modern human
-dental calculus. This was also
-done to ensure that the model microbiome is predominantly oral and not overgrown
-by environmental contaminants.
+it to oral reference samples, including saliva, buccal mucosa, plaque, and modern human
+dental calculus. This was done to ensure that the model microbiome is predominantly
+oral and not overgrown by environmental contaminants.
 We then determined the mineral composition of the model dental calculus using Fourier
 transform infrared (FTIR) spectroscopy to verify the presence of calculus-specific
 mineral phases and functional groups, and perform a qualitative comparison with
@@ -129,8 +125,8 @@ modern and archaeological reference calculus.
 Overall the model calculus is chemically similar to natural calculus, and has
 a predominantly oral microbiome.
 The microbial diversity and richness within the model samples were lower than
-oral reference samples, suggesting that the model samples are not as well-balanced
-in species composition and abundances as the natural samples.
+oral reference samples, suggesting that the model samples do not contain identical
+species composition and abundances as the natural samples.
 The mineral composition closely resembles modern and archaeological reference
 calculus, predominantly comprised of carbonate hydroxyapatite with a similar level of
 crystallinity and order.

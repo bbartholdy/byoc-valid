@@ -53,7 +53,7 @@ div_byoc_fig <- alpha_div_long %>%
     str_detect(sample, "SYN"),
     index == "shannon" | index == "pilou_even" | index == "richness"
   ) %>%
-  #mutate(day = as.factor(day)) %>%
+  mutate(index = factor(index, levels = c("shannon", "pilou_even", "richness"))) %>%
   ggplot(aes(x = day_grouped, y = value)) +
   geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
   geom_boxplot(width = 0.12) +
@@ -63,6 +63,7 @@ div_compar_fig <- alpha_div_long %>%
   filter(!Env %in% env_controls,
     index %in% c("shannon", "richness", "pilou_even")
   ) %>%
+  mutate(index = factor(index, levels = c("shannon", "pilou_even", "richness"))) %>%
   mutate(Env = case_when(str_detect(Env, "plaque") ~ "plaque",
     TRUE ~ Env),
     Study = case_when(
@@ -71,10 +72,10 @@ div_compar_fig <- alpha_div_long %>%
     ),
     Env = factor(Env, levels = oral_source_order)) %>%
   ggplot(aes(x = Env, y = value)) +
-  geom_violin(aes(col = Env, fill = Env), alpha = 0.5) +
-  geom_boxplot(width = 0.1) +
-  geom_jitter(aes(shape = Study), width = 0.1, alpha = 0.6) +
-  facet_wrap(~ index, scales = "free_y", ncol = 1, labeller = as_labeller(indices))
+    geom_violin(aes(col = Env, fill = Env), alpha = 0.5) +
+    #geom_boxplot(width = 0.1, fill = "transparent") +
+    geom_jitter(aes(shape = Study), width = 0.1, alpha = 0.6) +
+    facet_wrap(~ index, scales = "free_y", ncol = 1, labeller = as_labeller(indices))
 
 ## Beta-diversity
 

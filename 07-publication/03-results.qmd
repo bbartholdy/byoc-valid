@@ -151,29 +151,10 @@ diversity and richness at various stages of our protocol. Samples were grouped
 into sampling categories due to low sample sizes on sampling days
 (inoc = days 0, 3, 5; treatm = days 7, 9, 12, 15; model = day 24).
 There was a slight decrease in mean Shannon Index between inoculation
-(mean [M] = `r signif(filter(shan_byoc, day_grouped == "inoc")$mean, 3)` $\pm$ `r signif(filter(shan_byoc, day_grouped == "inoc")$sd, 3)`)
-and treatment samples
-(M = `r signif(filter(shan_byoc, day_grouped == "treatm")$mean, 3)`
-$\pm$ `r signif(filter(shan_byoc, day_grouped == "treatm")$sd, 3)`),
-followed by a slight increase to model calculus samples
-(M = `r signif(filter(shan_byoc, day_grouped == "model")$mean, 3)`
-$\pm$ `r signif(filter(shan_byoc, day_grouped == "model")$sd, 3)`),
-as well as a decrease in variance within samples types (@fig-diversity-byoc).
-The Pielou Evenness Index showed a similar pattern
-(M = `r signif(filter(pielou_byoc, day_grouped == "inoc")$mean, 3)`
-$\pm$ `r signif(filter(pielou_byoc, day_grouped == "inoc")$sd, 3)`;
-M = `r signif(filter(pielou_byoc, day_grouped == "treatm")$mean, 3)`
-$\pm$ `r signif(filter(pielou_byoc, day_grouped == "treatm")$sd, 3)`;
-M = `r signif(filter(pielou_byoc, day_grouped == "model")$mean, 3)`
-$\pm$ `r signif(filter(pielou_byoc, day_grouped == "model")$sd, 3)`),
-while number of species increased between the treatment period and the final model
-calculus
-(M = `r signif(filter(richness_byoc, day_grouped == "inoc")$mean, 3)`
-$\pm$ `r signif(filter(richness_byoc, day_grouped == "inoc")$sd, 3)`;
-M = `r signif(filter(richness_byoc, day_grouped == "treatm")$mean, 3)`
-$\pm$ `r signif(filter(richness_byoc, day_grouped == "treatm")$sd, 3)`;
-M = `r signif(filter(richness_byoc, day_grouped == "model")$mean, 3)`
-$\pm$ `r signif(filter(richness_byoc, day_grouped == "model")$sd, 3)`).
+and treatment samples, followed by a slight increase to model calculus samples,
+as well as a decrease in variance within samples types.
+The Pielou Evenness Index showed a similar pattern while the number of species
+increased between the treatment period and the final model calculus (@fig-diversity-byoc).
 
 ### Medium and model calculus samples are distinct from the inoculate
 
@@ -223,7 +204,7 @@ byoc_loadings_pc2 <- byoc_comp_2 +
 ggdraw() +
     draw_plot(byoc_spca_plot, width = 0.56, height = 0.44, x = 0.01, y = 0.46) +
     draw_plot(byoc_loadings_pc2, width = 0.46, height = 0.48, x = 0.56, y = 0.48) +
-    draw_plot(byoc_loadings_pc1, width = 0.70, height = 0.46, x = 0.04, y = 0.01) +
+    draw_plot(byoc_loadings_pc1, width = 0.69, height = 0.46, x = 0.06, y = 0.01) +
     draw_figure_label("A") +
     draw_figure_label("B", position = "top") +
     draw_figure_label("C", position = "bottom.left")
@@ -264,20 +245,21 @@ byoc_da_pca <- byoc_logf_full %>%
 ```{r}
 #| label: fig-diffabund-byoc
 #| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, squares are enriched in saliva, and triangles in medium. Lines are standard error. Plot shows the top 30 absolute log-fold changes between model calculus and saliva."
-#| fig-width: 8
+#| fig-width: 6
+#| fig-height: 4
 byoc_logf_base +
     theme_bw() +
     scale_shape_manual(values = c(1,2,5), labels = byoc_source_labels) +
     #scale_colour_viridis_d(option = "H", na.value = "grey50") +
     aerotol_col_pal +
     theme(
-      axis.text.y = element_text(face = "italic")
+      axis.text.y = element_text(size = 8, face = "italic")
     ) +
     labs(x = "Log fold change", y = "", shape = "Sample type")
 
 ```
 
-We determined whether there are speices that are differentially abundant between
+We determined whether there are species that are differentially abundant between
 our sample types using the ANCOMBC R package [@linANCOMBC2020], giving
 us an idea of how the biofilm develops under our experimental conditions.
 Species enriched in saliva compared to model calculus are largely aerobic or
@@ -315,7 +297,7 @@ shan_saliva <- alpha_div_long %>%
 ```{r}
 #| label: fig-shannon-compar
 #| fig-cap: "Shannon Index for model calculus and medium samples, as well as oral reference samples and comparative *in vitro* study."
-#| fig-height: 5
+#| fig-height: 6
 #| fig-width: 6
 div_compar_fig +
     #facet_wrap(~ index, scales = "free_y") +
@@ -337,27 +319,15 @@ div_compar_fig +
 ```
 
 We used the Shannon Index to compare alpha-diversity in our model to oral
-reference samples. The mean Shannon Index of model
-samples---medium, model calculus, reference *in vitro* biofilm
-(M = `r signif(shan_model$mean[[1]], 3)` $\pm$ `r signif(shan_model$sd[[1]], 3)`;
-M = `r signif(shan_model$mean[[2]], 3)` $\pm$ `r signif(shan_model$sd[[2]], 3)`;
-M = `r signif(shan_model$mean[[3]], 3)` $\pm$ `r signif(shan_model$sd[[3]], 3)`,
-respectively) were consistently lower than the means of oral reference
-samples---mucosa,
-modern reference dental calculus, saliva, and subgingival and subgingival plaque
-(`r paste0("M = ", signif(shan_oral$mean, 3), " ± ", signif(shan_oral$sd, 3), collapse = "; ")`).
-The Pielou species evenness index has a similar
+reference samples. The mean Shannon Index of model samples---medium, model calculus,
+reference *in vitro* biofilm were consistently lower than the means of oral reference
+samples---mucosa, modern reference dental calculus, saliva, and subgingival and
+subgingival plaque. The Pielou species evenness index has a similar
 distribution, although the comparative biofilm samples have a higher mean
-than biofilm samples from this study.
-Saliva inoculate samples from this study
-(M = `r signif(filter(shan_saliva, Study == "this_study")$mean, 3)` $\pm$
-`r signif(filter(shan_saliva, Study == "this_study")$sd, 3)`
-have a lower mean Shannon index than reference samples
-(M = `r signif(filter(shan_saliva, Study == "HMP")$mean, 3)` $\pm$
-`r signif(filter(shan_saliva, Study == "HMP")$sd, 3)`),
-which may have
+than biofilm samples from this study. Saliva inoculate samples from this study
+have a lower mean Shannon index than reference samples, which may have
 contributed to the lower alpha-diversity in model samples compared to reference
-samples.
+samples. The number of species follows the same trend.
 
 ### Model calculus is distinct from dental calculus and other oral samples
 
@@ -375,16 +345,19 @@ core_genera_fig +
     labs(fill = "Genus")
 ```
 
-We calculated the mean relative abundances at the genus in each sample to compare
-the core genera of model calculus with oral reference samples, with the most
-common genera (>5% relative abundance) shown in @fig-core-genera.
+We calculated the mean relative abundances of the genera in each sample to compare
+the core genera of model calculus with oral reference samples. The most
+common genera (>5% relative abundance) are shown in @fig-core-genera.
 The main overlap between the model calculus and oral reference
 samples is the high relative abundance of *Streptococcus*.
 Model calculus consists mostly of *Enterococcus* and
-*Veillonella* spp., despite both having low abundance in donor saliva<!--supp mat-->, 
-while oral reference samples are more
-diverse (@fig-core-genera), which is consistent with the
-alpha diversity calculations.
+*Veillonella* spp., despite both having low abundance in donor saliva<!--supp mat-->.
+*Enterococcus* are also known environmental contaminants, and we cannot exclude
+environmental contamination as a possible source for these species in our model.
+Oral reference samples have a more balanced composition, as they are also represented
+by fastidious early-coloniser species like *Capnocytophaga* and *Neisseria*
+spp., which require an environment with at least 5% carbon dioxide to thrive
+[@tonjumNeisseria2017].
 
 ```{r}
 #| label: compar-spca-fig-setup
@@ -433,13 +406,13 @@ compar_loadings_pc2 <- compar_comp_2 +
 ```{r}
 #| label: fig-spca-compar
 #| fig-cap: "sPCA on species-level counts from model calculus and reference samples. Figure shows (A) the main sPCA plot, (B) the species loadings from PC2, and (C) species loadings on PC1."
-#| fig-width: 11
-#| fig-height: 10
+#| fig-width: 9
+#| fig-height: 8
 # align PC1 and PC2 loading plots with (0,0) on the PC1 and PC2 of the sPCA plot
 ggdraw() +
-    draw_plot(compar_spca_plot, width = 0.57, height = 0.44, x = 0.01, y = 0.45) +
-    draw_plot(compar_loadings_pc2, width = 0.45, height = 0.48, x = 0.57, y = 0.49) +
-    draw_plot(compar_loadings_pc1, width = 0.68, height = 0.45, x = 0.02, y = 0.01) +
+    draw_plot(compar_spca_plot, width = 0.57, height = 0.44, x = 0.01, y = 0.46) +
+    draw_plot(compar_loadings_pc2, width = 0.45, height = 0.48, x = 0.57, y = 0.52) +
+    draw_plot(compar_loadings_pc1, width = 0.69, height = 0.45, x = 0.04, y = 0.01) +
     draw_figure_label("A") +
     draw_figure_label("B", position = "top") +
     draw_figure_label("C", position = "bottom.left")
@@ -476,7 +449,7 @@ compar_logf_pc1_plot <- compar_logf_pc1 +
     theme(
       axis.title = element_blank(),
       axis.text.x = element_blank(),
-      axis.text.y = element_text(face = "italic"),
+      axis.text.y = element_text(size = 8, face = "italic"),
       #legend.position = "none"
     ) +
     scale_shape_manual(values = c(1,2,5,7), labels = oral_source_labels) +
@@ -488,7 +461,8 @@ compar_logf_pc1_plot <- compar_logf_pc1 +
 compar_logf_pc2_plot <- compar_logf_pc2 +
     theme(
       axis.title.y = element_blank(),
-      axis.text.y = element_text(face = "italic"),
+      axis.text.y = element_text(size = 8, face = "italic"),
+      strip.text = element_text(size = 8),
       legend.position = "none"
       ) +
     scale_shape_manual(values = c(1,2,5,7), labels = oral_source_labels) +
@@ -502,7 +476,7 @@ compar_logf_pc2_plot <- compar_logf_pc2 +
 #| label: fig-diffabund-comp
 #| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, triangles in modern calculus, diamonds are enriched in subgingival plaque, and squares in supragingival plaque. Plot shows the top 30 loadings (absolute value) in PC1 (A) and PC2 (B) between model calculus and other sample types, ordered by decreasing log-fold change. Bars represent standard error."
 #| fig-width: 7
-#| fig-height: 8
+#| fig-height: 7
 
 compar_logf_pc1_plot / compar_logf_pc2_plot + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
 ```

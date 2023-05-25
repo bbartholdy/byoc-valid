@@ -327,6 +327,59 @@ byoc_table_long %>%
       axis.title.y = element_blank())
 ```
 
+## Alpha-diversity
+
+### Within experiment
+
+There was a slight decrease in mean Shannon Index between inoculation
+(mean [M] = `r signif(filter(shan_byoc, day_grouped == "inoc")$mean, 3)` $\pm$ `r signif(filter(shan_byoc, day_grouped == "inoc")$sd, 3)`)
+and treatment samples
+(M = `r signif(filter(shan_byoc, day_grouped == "treatm")$mean, 3)`
+$\pm$ `r signif(filter(shan_byoc, day_grouped == "treatm")$sd, 3)`),
+followed by a slight increase to model calculus samples
+(M = `r signif(filter(shan_byoc, day_grouped == "model")$mean, 3)`
+$\pm$ `r signif(filter(shan_byoc, day_grouped == "model")$sd, 3)`),
+as well as a decrease in variance within samples types.
+The Pielou Evenness Index showed a similar pattern
+(M = `r signif(filter(pielou_byoc, day_grouped == "inoc")$mean, 3)`
+$\pm$ `r signif(filter(pielou_byoc, day_grouped == "inoc")$sd, 3)`;
+M = `r signif(filter(pielou_byoc, day_grouped == "treatm")$mean, 3)`
+$\pm$ `r signif(filter(pielou_byoc, day_grouped == "treatm")$sd, 3)`;
+M = `r signif(filter(pielou_byoc, day_grouped == "model")$mean, 3)`
+$\pm$ `r signif(filter(pielou_byoc, day_grouped == "model")$sd, 3)`),
+while number of species increased between the treatment period and the final model
+calculus
+(M = `r signif(filter(richness_byoc, day_grouped == "inoc")$mean, 3)`
+$\pm$ `r signif(filter(richness_byoc, day_grouped == "inoc")$sd, 3)`;
+M = `r signif(filter(richness_byoc, day_grouped == "treatm")$mean, 3)`
+$\pm$ `r signif(filter(richness_byoc, day_grouped == "treatm")$sd, 3)`;
+M = `r signif(filter(richness_byoc, day_grouped == "model")$mean, 3)`
+$\pm$ `r signif(filter(richness_byoc, day_grouped == "model")$sd, 3)`).
+
+### Compared to oral reference samples
+
+We used the Shannon Index to compare alpha-diversity in our model to oral
+reference samples. The mean Shannon Index of model
+samples---medium, model calculus, reference *in vitro* biofilm
+(M = `r signif(shan_model$mean[[1]], 3)` $\pm$ `r signif(shan_model$sd[[1]], 3)`;
+M = `r signif(shan_model$mean[[2]], 3)` $\pm$ `r signif(shan_model$sd[[2]], 3)`;
+M = `r signif(shan_model$mean[[3]], 3)` $\pm$ `r signif(shan_model$sd[[3]], 3)`,
+respectively) were consistently lower than the means of oral reference
+samples---mucosa,
+modern reference dental calculus, saliva, and subgingival and subgingival plaque
+(`r paste0("M = ", signif(shan_oral$mean, 3), " ± ", signif(shan_oral$sd, 3), collapse = "; ")`).
+The Pielou species evenness index has a similar
+distribution, although the comparative biofilm samples have a higher mean
+than biofilm samples from this study.
+Saliva inoculate samples from this study
+(M = `r signif(filter(shan_saliva, Study == "this_study")$mean, 3)` $\pm$
+`r signif(filter(shan_saliva, Study == "this_study")$sd, 3)`
+have a lower mean Shannon index than reference samples
+(M = `r signif(filter(shan_saliva, Study == "HMP")$mean, 3)` $\pm$
+`r signif(filter(shan_saliva, Study == "HMP")$sd, 3)`),
+which may have
+contributed to the lower alpha-diversity in model samples compared to reference
+samples.
 
 ## Species composition
 

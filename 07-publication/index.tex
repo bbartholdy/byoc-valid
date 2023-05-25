@@ -7,7 +7,6 @@
 ]{article}
 
 \usepackage{amsmath,amssymb}
-\usepackage{lmodern}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -17,6 +16,10 @@
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
   \setmainfont[]{Latin Modern Roman}
   \setmathfont[]{Latin Modern Math}
 \fi
@@ -146,10 +149,12 @@
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
 \makeatletter
-\@ifpackageloaded{tcolorbox}{}{\usepackage[many]{tcolorbox}}
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
 \makeatother
 \makeatletter
 \@ifundefined{shadecolor}{\definecolor{shadecolor}{rgb}{.97, .97, .97}}
+\makeatother
+\makeatletter
 \makeatother
 \makeatletter
 \makeatother
@@ -162,6 +167,8 @@
 \hypersetup{
   pdftitle={Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus},
   pdfauthor={Bjørn Peare Bartholdy; Irina M. Velsko; Shira Gur-Arieh; Zandra Fagernäs; Amanda G. Henry},
+  pdfkeywords={oral biofilm, dental
+calculus, microbiome, metagenomics, ftir},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -179,7 +186,7 @@ suitable proxy for dental calculus}
 \\\\Faculty of Archaeology, Leiden University\\Leiden,\ The Netherlands
 \\
 \href{mailto:b.p.bartholdy@arch.leidenuniv.nl}{b.p.bartholdy@arch.leidenuniv.nl}\\\\\\
-\textbf{Irina M. Velsko}
+\textbf{Irina M. Velsko}~\orcidlink{0000-0001-9810-9917}
 \\\\Max Planck Institute for Evolutionary
 Anthropology\\Leipzig,\ Germany
 \\
@@ -187,8 +194,8 @@ Anthropology\\Leipzig,\ Germany
 \textbf{Shira Gur-Arieh}~\orcidlink{0000-0003-2015-7817}
 \\\\The Leon Recanati Institute for Maritime Studies, University of
 Haifa\\Haifa,\ Israel
-\\\\Institute for Pre- and Protohistoric Archaeology and Archaeology of
-the Roman Provinces, Ludwig Maximilian University\\Munich,\ Germany
+\\Institute for Pre- and Protohistoric Archaeology and Archaeology of
+the Roman Provinces\\Ludwig Maximilian University\\Munich,\ Germany
 \\
 \\\\\\
 \textbf{Zandra Fagernäs}~\orcidlink{0000-0003-2667-3556}
@@ -211,7 +218,7 @@ patterns in past populations. The benefits of using dental calculus for
 this purpose have been clearly demonstrated in previous studies, with
 dental calculus harbouring a wealth of microremains and biomarkers for
 health and diet within its mineral matrix. Previous studies have
-demonstrated some of the limitations and biases of how our methods of
+demonstrated some of the limitations and biases of how methods of
 processing may overlook, or even remove, some of the important
 information contained within the mineralised matrix. However, there are
 many factors that are impossible to account for \emph{in vivo} and in
@@ -220,23 +227,22 @@ factors such as pH and enzyme activity, leaving some limitations that
 may not be addressed through these types of studies and will require a
 different approach.
 
-In this study we present a protocol for creating a calcifying oral
-biofilm model that can be used to explore the biases and limitations of
-dental calculus as a medium for paleodietary reconstructions. We report
-the microbial and mineral composition of our model in an effort to
-validate the model calculus as an appropriate proxy to natural dental
-calculus. The microbial profile and species diversity of our model was
-determined using metagenomic classification with the nf-core/eager
-pipeline and Kraken2, and compared to various reference samples from
-oral sites, including saliva, plaque, and dental calculus. We then
-assessed whether our model calculus mineralises in a manner similar to
-natural dental calculus using Fourier transform infrared (FTIR)
-spectroscopy. The metagenomic classification showed a microbial profile
-predominantly made up of (facultative) anaerobes, with a community
-structure that was somewhat distinct from other oral reference samples.
-The core genera of the model consisted of oral species, but clustered
-separately from oral reference samples, with a higher abundance of
-anaerobes.\\
+We present a protocol for creating a calcifying oral biofilm model that
+can be used to explore the biases and limitations of dental calculus as
+a medium for paleodietary reconstructions. We report the microbial and
+mineral composition of our model in an effort to validate the model
+calculus as an appropriate proxy to natural dental calculus. The
+microbial profile and species diversity of our model was determined
+using metagenomic classification with the nf-core/eager pipeline and
+Kraken2, and compared to various reference samples from oral sites,
+including saliva, plaque, and dental calculus. We then assessed whether
+our model calculus mineralises in a manner similar to natural dental
+calculus using Fourier transform infrared (FTIR) spectroscopy. The
+metagenomic classification showed a microbial profile predominantly made
+up of (facultative) anaerobes, with a community structure that was
+somewhat distinct from other oral reference samples. The core genera of
+the model consisted of oral species, but clustered separately from oral
+reference samples, with a higher abundance of anaerobes.\\
 Mineral and organic components of our model mimic that of the modern and
 archaeological reference calculus that was used as a comparison. There
 was an overall increase in the inorganic component relative to organic
@@ -245,10 +251,16 @@ principal compound, consistent with natural human-derived calculus.
 
 We conclude that oral biofilm models, such as the one presented in this
 study, have great potential to validate current methods used in the
-analysis of fossil dental calculus, and should be used to complement,
-rather than replace current \emph{in vivo} studies.
+analysis of archaeological dental calculus, and should be used to
+complement, rather than replace current \emph{in vivo} studies.
 \end{abstract}
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, interior hidden, boxrule=0pt, sharp corners, enhanced, frame hidden, breakable]}{\end{tcolorbox}}\fi
+{\bfseries \emph Keywords}
+\def\sep{\textbullet\ }
+oral biofilm \sep dental
+calculus \sep microbiome \sep metagenomics \sep 
+ftir
+
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[sharp corners, boxrule=0pt, enhanced, interior hidden, borderline west={3pt}{0pt}{shadecolor}, breakable, frame hidden]}{\end{tcolorbox}}\fi
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -293,17 +305,15 @@ well-characterized manner before mineralisation, in a process that
 repeats regularly to build up dental calculus. Shortly after teeth are
 cleaned (whether mechanically or otherwise), salivary components adsorb
 to the crown or root and form the acquired dental pellicle. The pellicle
-is composed mainly of proteins and protects the tooth against mechanical
-and chemical decay (Yao et al., 2003). It also provides a viable surface
-for bacteria to attach, especially early-coloniser species within the
-genera \emph{Streptococcus} and \emph{Actinomyces} (Marsh, 2006). Once
-the tooth surface has been populated by specialists in
-surface-attachment, other species of bacteria can attach to their
-surface, increasing the biofilm density and diversity. The bacterial
-species secrete polysaccharides, proteins, lipids, and nucleic acids,
-into their immediate environment to form a matrix that provides
-structural support, nutrition, and allows for environmental niche
-partitioning (Flemming et al., 2016).
+provides a viable surface for bacteria to attach, especially
+early-coloniser species within the genera \emph{Streptococcus} and
+\emph{Actinomyces} (Marsh, 2006). Once the tooth surface has been
+populated by specialists in surface-attachment, other species of
+bacteria can attach to the adherent cells, increasing the biofilm
+density and diversity. The bacterial species secrete polysaccharides,
+proteins, lipids, and nucleic acids, into their immediate environment to
+form a matrix that provides structural support, nutrition, and allows
+for environmental niche partitioning (Flemming et al., 2016).
 
 Biofilms can become susceptible to calcification under certain
 microenvironmental conditions, including an increased concentration of
@@ -312,7 +322,7 @@ rises in local plaque pH, and increased hydrolysis of urea (White, 1997;
 Wong et al., 2002). These conditions can cause increased precipitation
 and decreased dissolution of calcium phosphate salts within saliva and
 the plaque biofilm. The resulting supersaturation of calcium phosphate
-salts are the main drivers of biofilm mineralisation (Jin \& Yip, 2002).
+salts is the main driver of biofilm mineralisation (Jin \& Yip, 2002).
 The primary minerals in dental calculus are hydroxyapatite, octacalcium
 phosphate, whitlockite, and brushite. During initial mineralisation the
 main mineral component is brushite, which shifts to hydroxyapatite in
@@ -325,13 +335,13 @@ Dental plaque can also be grown \emph{in vitro}, and these oral biofilm
 models are commonly used in dental research to assess the efficacy of
 certain treatments on dental pathogens (Exterkate et al., 2010; Filoche
 et al., 2007) without the ethical issues of inducing plaque accumulation
-and the complexity of access and sampling in humans (or animals). Oral
-biofilm models are often short-term models grown over a few days, but
-longer term models also exist (up to six weeks) which are used to
-develop mature plaque or dental calculus (Middleton, 1965; Sissons et
-al., 1991; Velsko \& Shaddox, 2018; Wong et al., 2002). A well-known
-limitation of biofilm models is the difficulty in capturing the
-diversity and complexity of bacterial communities and metabolic
+in study participants and the complexity of access and sampling in
+humans or animals. Oral biofilm models are often short-term models grown
+over a few days, but longer term models also exist (up to six weeks)
+which are used to develop mature plaque or dental calculus (Middleton,
+1965; Sissons et al., 1991; Velsko \& Shaddox, 2018; Wong et al., 2002).
+A well-known limitation of biofilm models is the difficulty in capturing
+the diversity and complexity of bacterial communities and metabolic
 dependencies, micro-environments, nutrient availability, and host
 immune-responses in the natural oral biome (Bjarnsholt et al., 2013;
 Edlund et al., 2018; Velsko, Cruz-Almeida, et al., 2017; Velsko \&
@@ -344,7 +354,7 @@ Despite the limitations, oral biofilm models have many benefits over
 calculus formation, such as intra- and inter-individual variation in
 salivary flow, oral pH, and amylase activity, which can be hard to tease
 apart \emph{in situ}. Oral biofilm models provide a controlled
-environment to explore the effect selected variables on the growth of
+environment to explore the effect of selected variables on the growth of
 calculus and the retention of dietary components in the biofilm, as well
 as a means to identify how the methods used in archaeology may
 inadvertently bias the interpretations. This type of research has, so
@@ -358,9 +368,9 @@ multiwell plate setup that is accessible even to smaller lab budgets and
 those with limited facilities for microbiology work. Here, we used
 next-generation sequencing and metagenomic classification to
 characterise the bacterial composition of our model dental calculus and
-compare to oral reference samples, including saliva, buccal mucosa,
-plaque, and modern human dental calculus. This was also done to ensure
-that the model microbiome is predominantly oral and not overgrown by
+compare it to oral reference samples, including saliva, buccal mucosa,
+plaque, and modern human dental calculus. This was done to ensure that
+the model microbiome is predominantly oral and not overgrown by
 environmental contaminants. We then determined the mineral composition
 of the model dental calculus using Fourier transform infrared (FTIR)
 spectroscopy to verify the presence of calculus-specific mineral phases
@@ -369,7 +379,7 @@ and archaeological reference calculus. Overall the model calculus is
 chemically similar to natural calculus, and has a predominantly oral
 microbiome. The microbial diversity and richness within the model
 samples were lower than oral reference samples, suggesting that the
-model samples are not as well-balanced in species composition and
+model samples do not contain identical species composition and
 abundances as the natural samples. The mineral composition closely
 resembles modern and archaeological reference calculus, predominantly
 comprised of carbonate hydroxyapatite with a similar level of
@@ -403,13 +413,13 @@ calculus. These results are presented in a separate article (Bartholdy
 growth. The samples for metagenomic analysis were grown in a separate
 experimental plate than the FTIR samples under the same experimental
 conditions. Biofilm (B) and calculus (C) samples were used for FTIR
-spectroscopy, and saliva (S) and artificial saliva (M) samples were used
-for metagenomic analysis.}
+spectroscopy, and saliva (S), artificial saliva (M), and calculus
+samples were used for metagenomic analysis.}
 
 \end{figure}
 
 To determine the composition of microbial communities, we sampled the
-medium from the biofilm wells over the course of the experiment and
+medium from the biofilm wells over the course of the experiment. We
 sequenced the DNA to identify species that are present in the model, and
 assess whether these mimic natural oral communities. During a separate
 experimental run, under the same conditions, we directly sampled the
@@ -509,14 +519,16 @@ starch contamination.
 \begin{longtable}[]{@{}lrr@{}}
 \caption{\label{tbl-dna-samples}Number of samples taken during the
 experiment, separated by sampling day and sample type.}\tabularnewline
-\toprule()
+\toprule\noalign{}
 Sample type & Sampling day & n \\
-\midrule()
+\midrule\noalign{}
 \endfirsthead
-\toprule()
+\toprule\noalign{}
 Sample type & Sampling day & n \\
-\midrule()
+\midrule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 saliva & 0 & 1 \\
 saliva & 3 & 1 \\
 saliva & 5 & 1 \\
@@ -529,7 +541,6 @@ medium & 18 & 2 \\
 medium & 21 & 2 \\
 medium & 24 & 2 \\
 model\_calculus & 24 & 16 \\
-\bottomrule()
 \end{longtable}
 
 A total of 35 samples were taken during the experiment from the donated
@@ -640,7 +651,7 @@ model dental calculus samples, we used Fourier Transform Infrared (FTIR)
 spectroscopy. We compared the spectra of model dental calculus with
 spectra of archaeological and modern dental calculus and used a built-in
 Omnic search library for mineral identification (Mentzer et al., 2014;
-Weiner, 2010a). The archaeological dental calculus was sampled from an
+Weiner, 2010b). The archaeological dental calculus was sampled from an
 isolated permanent tooth from Middenbeemster, a rural, 19th century
 Dutch site (Lemmers et al., 2013). Samples were analysed at the
 Laboratory for Sedimentary Archaeology, Haifa University. The analysis
@@ -653,20 +664,21 @@ between 4000 and 400 cm\(^{-1}\) wavenumbers.
 \caption{\label{tbl-ftir-byoc}Summary of samples used in FTIR analysis,
 including type of sample, sampling day, number of samples (n), and mean
 weight in mg.}\tabularnewline
-\toprule()
+\toprule\noalign{}
 Sample type & Sampling day & n & Weight (mg) \\
-\midrule()
+\midrule\noalign{}
 \endfirsthead
-\toprule()
+\toprule\noalign{}
 Sample type & Sampling day & n & Weight (mg) \\
-\midrule()
+\midrule\noalign{}
 \endhead
+\bottomrule\noalign{}
+\endlastfoot
 biofilm & 7 & 2 & 0.79 \\
 biofilm & 12 & 3 & 1.01 \\
 biofilm & 16 & 7 & 2.00 \\
 biofilm & 20 & 6 & 3.50 \\
 model\_calculus & 24 & 8 & 3.87 \\
-\bottomrule()
 \end{longtable}
 
 Analysis was conducted on 26 model calculus samples from days 7, 12, 16,
@@ -764,14 +776,11 @@ diversity and richness at various stages of our protocol. Samples were
 grouped into sampling categories due to low sample sizes on sampling
 days (inoc = days 0, 3, 5; treatm = days 7, 9, 12, 15; model = day 24).
 There was a slight decrease in mean Shannon Index between inoculation
-(mean {[}M{]} = 2.15 \(\pm\) 0.808) and treatment samples (M = 1.78
-\(\pm\) 0.568), followed by a slight increase to model calculus samples
-(M = 1.86 \(\pm\) 0.261), as well as a decrease in variance within
-samples types (Figure~\ref{fig-diversity-byoc}). The Pielou Evenness
-Index showed a similar pattern (M = 0.41 \(\pm\) 0.138; M = 0.351
-\(\pm\) 0.108; M = 0.354 \(\pm\) 0.0379), while number of species
-increased between the treatment period and the final model calculus (M =
-189 \(\pm\) 82.4; M = 155 \(\pm\) 29.8; M = 194 \(\pm\) 49.2).
+and treatment samples, followed by a slight increase to model calculus
+samples, as well as a decrease in variance within samples types. The
+Pielou Evenness Index showed a similar pattern while the number of
+species increased between the treatment period and the final model
+calculus (Figure~\ref{fig-diversity-byoc}).
 
 \hypertarget{medium-and-model-calculus-samples-are-distinct-from-the-inoculate}{%
 \subsubsection{Medium and model calculus samples are distinct from the
@@ -821,7 +830,7 @@ and saliva.}
 
 \end{figure}
 
-We determined whether there are speices that are differentially abundant
+We determined whether there are species that are differentially abundant
 between our sample types using the ANCOMBC R package (Lin \& Peddada,
 2020), giving us an idea of how the biofilm develops under our
 experimental conditions. Species enriched in saliva compared to model
@@ -849,18 +858,16 @@ medium samples, as well as oral reference samples and comparative
 
 We used the Shannon Index to compare alpha-diversity in our model to
 oral reference samples. The mean Shannon Index of model
-samples---medium, model calculus, reference \emph{in vitro} biofilm (M =
-1.74 \(\pm\) 0.627; M = 1.86 \(\pm\) 0.261; M = 1.69 \(\pm\) 0.173,
-respectively) were consistently lower than the means of oral reference
-samples---mucosa, modern reference dental calculus, saliva, and
-subgingival and subgingival plaque (M = 2.74 ± 0.461; M = 3.14 ± 0.255;
-M = 3.02 ± 0.548; M = 3.53 ± 0.241; M = 3.04 ± 0.391). The Pielou
-species evenness index has a similar distribution, although the
-comparative biofilm samples have a higher mean than biofilm samples from
-this study. Saliva inoculate samples from this study (M = 2.5 \(\pm\)
-0.472 have a lower mean Shannon index than reference samples (M = 3.33
-\(\pm\) 0.297), which may have contributed to the lower alpha-diversity
-in model samples compared to reference samples.
+samples---medium, model calculus, reference \emph{in vitro} biofilm were
+consistently lower than the means of oral reference samples---mucosa,
+modern reference dental calculus, saliva, and subgingival and
+subgingival plaque. The Pielou species evenness index has a similar
+distribution, although the comparative biofilm samples have a higher
+mean than biofilm samples from this study. Saliva inoculate samples from
+this study have a lower mean Shannon index than reference samples, which
+may have contributed to the lower alpha-diversity in model samples
+compared to reference samples. The number of species follows the same
+trend.
 
 \hypertarget{model-calculus-is-distinct-from-dental-calculus-and-other-oral-samples}{%
 \subsubsection{Model calculus is distinct from dental calculus and other
@@ -879,16 +886,21 @@ Other = other genera present in lower than 5\% relative abundance.}
 
 \end{figure}
 
-We calculated the mean relative abundances at the genus in each sample
+We calculated the mean relative abundances of the genera in each sample
 to compare the core genera of model calculus with oral reference
-samples, with the most common genera (\textgreater5\% relative
-abundance) shown in Figure~\ref{fig-core-genera}. The main overlap
-between the model calculus and oral reference samples is the high
-relative abundance of \emph{Streptococcus}. Model calculus consists
-mostly of \emph{Enterococcus} and \emph{Veillonella} spp., despite both
-having low abundance in donor saliva, while oral reference samples are
-more diverse (Figure~\ref{fig-core-genera}), which is consistent with
-the alpha diversity calculations.
+samples. The most common genera (\textgreater5\% relative abundance) are
+shown in Figure~\ref{fig-core-genera}. The main overlap between the
+model calculus and oral reference samples is the high relative abundance
+of \emph{Streptococcus}. Model calculus consists mostly of
+\emph{Enterococcus} and \emph{Veillonella} spp., despite both having low
+abundance in donor saliva. \emph{Enterococcus} are also known
+environmental contaminants, and we cannot exclude environmental
+contamination as a possible source for these species in our model. Oral
+reference samples have a more balanced composition, as they are also
+represented by fastidious early-coloniser species like
+\emph{Capnocytophaga} and \emph{Neisseria} spp., which require an
+environment with at least 5\% carbon dioxide to thrive (Tønjum \& van
+Putten, 2017).
 
 \begin{figure}
 
@@ -1076,110 +1088,73 @@ compare with oral reference samples.
 \hypertarget{microbiome}{%
 \subsection{Microbiome}\label{microbiome}}
 
-There is a loss of diversity from inocula saliva to model calculus, and
-when compared to oral reference samples, which is a common limitation in
-biofilm models (Bjarnsholt et al., 2013; Edlund et al., 2013). The
-donated saliva for the experiment had a lower diversity than the
-reference saliva samples, and may have contributed to a lower diversity
-in experimental samples. Consequently, there is also a lower diversity
-and richness when compared to other modern oral reference samples,
-including oral mucosa, saliva, plaque, and calculus. Samples of the
-medium from early in the experiment have similar species profiles to the
-donated saliva, but gradually diverge over the course of the experiment.
-This may be caused by experimental setup not sufficiently mimicking the
-oral environment, allowing different species to thrive that do not
-normally thrive in the natural oral environment.
+Model calculus has lower species diversity than inocula saliva and oral
+reference samples, which is a common limitation in biofilm models
+(Bjarnsholt et al., 2013; Edlund et al., 2013). The donated saliva for
+the experiment had a lower diversity than the reference saliva samples,
+and may have contributed to a lower diversity in experimental samples.
+Consequently, there is also a lower diversity and richness when compared
+to other modern oral reference samples, including oral mucosa, saliva,
+plaque, and calculus. Samples of the medium from early in the experiment
+have similar species profiles to the donated saliva, but gradually
+diverge over the course of the experiment. This may be caused by
+experimental setup not sufficiently mimicking the oral environment,
+allowing species to thrive that do not normally thrive in the natural
+oral environment.
 
-Model calculus has a lower alpha-diversity than modern reference
-calculus and other oral reference samples, and clusters separately in
-the sPCA analysis. Species within the genera \emph{Veillonella} and
-\emph{Enterococcus} are the most abundant in model calculus samples,
-followed by \emph{Streptococcus} and \emph{Prevotella}. Oral reference
-samples have a relative abundance of streptococci similar to our model,
-but a more diverse representation from other genera such as
-\emph{Actinomyces}, \emph{Capnocytophaga}, and \emph{Fusobacterium}.
-Especially \emph{Enterococcus} spp. seemed to thrive later in the
-experiment, at the expense of fastidious early coloniser species like
-\emph{Capnocytophaga} and \emph{Neisseria} spp., which require an
-environment with at least 5\% carbon dioxide to thrive (Tønjum \& van
-Putten, 2017). Our biofilm was grown under atmospheric carbon dioxide
-levels outside of our control. While \emph{Enterococcus} spp. were
-present (in low quantities) in donor saliva, they are also known
-environmental contaminants, and we cannot exclude environmental
-contamination as a possible source for these species in our model. The
-separation of model calculus from other oral reference samples may also
-be caused by a loss of diversity in aerotolerance. Of the dominant
-species in the model, most are either anaerobes or facultative
-anaerobes, predominantly Gram-negative \emph{Veillonella} and
-\emph{Prevotella}, and Gram-positive \emph{Enterococcus}. Species within
-predominantly aerobic genera, such as \emph{Neisseria}, \emph{Rothia},
-and \emph{Ottowia}, are deficient in the model compared to the donated
-saliva and other oral samples, suggesting a shift from a largely
-aerotolerant profile to an anaerobic profile during the experiment.
-While our model is not set up as an anaerobic system, the anaerobes seem
-to have outcompeted aerobes and, to some extent, facultative anaerobes.
-This is likely a result of communities of bacteria within the biofilm
-creating favourable microenvironments facilitated by the protective
-properties of the biofilm matrix (Edlund et al., 2018; Flemming et al.,
-2016). \emph{Capnocytophaga} and \emph{Actinomyces} spp. are
-predominantly (facultative) anaerobes, so their deficiency may be
-attributed to, for example, nutrient availability or being out-competed
-by other species.
+Oral reference samples have a relative abundance of streptococci similar
+to our model, but a more diverse representation from other genera and an
+overall higher species diversity and richness than our model. Reference
+samples also had a more diverse aerotolerance profile than our model,
+which primarily consisted of (faculatative) anaerobes. Species within
+predominantly aerobic genera, are deficient in the model, suggesting a
+shift from a largely aerotolerant profile to an anaerobic profile during
+the experiment. While our model is not set up as an anaerobic system,
+the anaerobes seem to have outcompeted aerobes and, to some extent,
+facultative anaerobes. This is likely a result of communities of
+bacteria within the biofilm creating favourable microenvironments
+facilitated by the protective properties of the biofilm matrix (Edlund
+et al., 2018; Flemming et al., 2016).
 
-Overall, the main causes of separation seem to be the abundance of
-(facultative) anaerobes in the model compared to reference calculus, and
-the overgrowth of \emph{Enterococcus} spp. \emph{E. faecalis}, \emph{E.
-durans}, and \emph{E. casseliflavus}. This may be due to human
-variation, as there can be large differences in the oral microbiome of
-two individuals at the species level due to variations in age, sex, and
-other demographic factors, as well as how and when saliva samples were
-collected (Burcham et al., 2020; Nearing et al., 2020). It may also be a
-problem in oral biofilm models in general, as the reference \emph{in
-vitro} samples also have a high abundance of \emph{Enterococcus} spp.
-Whether or not distinct microbial profiles, and the extracellular matrix
-they produce, will affect the retention of dietary particles in plaque
-remains to be seen, and likely depends on the role bacteria and the
-matrix play in the incorporation and retention of dietary compounds and
-microremains within a biofilm. Samples within the experiment were quite
-consistent in terms of bacterial composition, making it possible for
-future studies to explore the role of bacteria in starch retention.
-Overall the majority of model calculus samples contained a distinctly
+Overall, the majority of model calculus samples contained a distinctly
 oral signature, providing a promising starting point for the use of the
-model as a viable proxy to dental calculus.
+model as a viable proxy to dental calculus. The main differences between
+model and oral reference samples may be due to human variation, as there
+can be large differences in the oral microbiome of two individuals at
+the species level due to variations in age, sex, and other demographic
+factors, as well as how and when saliva samples were collected (Burcham
+et al., 2020; Nearing et al., 2020). Whether or not distinct microbial
+profiles, and the extracellular matrix they produce, will affect the
+retention of dietary particles in plaque remains to be seen, but is an
+important question to address in the future.
 
 \hypertarget{mineralisation}{%
 \subsection{Mineralisation}\label{mineralisation}}
 
 FTIR analysis allowed us to address the mineralisation process of the
-model. The results showed an increasing mineral composition over the
-course of the experiment as the model biofilm matured. Samples taken
-early in the experiment, on day 7 and 12, had a high lipid and protein
-content consistent with the presence of bacterial cells and a matrix of
-extracellular polysaccharides (Jain et al., 2013). The high water
-content, indicated by the O--H stretch, is also consistent with the high
-water content (up to 97\%) of a biofilm matrix (Sutherland, 2001; Zhang
-et al., 1998). As the samples mature over the course of the experiment,
-the ratio of proteins and lipids to phosphates shifts from predominantly
-organic content to predominantly inorganic content in the form of
-carbonated hydroxyapatite.
+model, which showed an increasing mineral composition over the course of
+the experiment. As the model biofilm matured, the predominantly organic
+content of early samples was replaced by inorganic content in the form
+of carbonated hydroxyapatite, consistent with a shift from a high
+presence of bacterial cells in a matrix of extracellular polysaccharides
+(Jain et al., 2013; Sutherland, 2001; Zhang et al., 1998) to a
+predominantly mineral content.
 
-The artificial samples from day 24 are consistent with spectra of
-carbonated hydroxyapatite and protein, and resemble both the modern
-reference calculus and the archaeological calculus in mineral
-composition and crystallinity. The steeper slope in the grind curve
-plots of the archaeological sample may suggest that the crystals in
-archaeological samples are larger, and hence more ordered than in the
-model calculus. A possible explanation is that the inorganic crystals
-within archaeological calculus have had more time to grow into the space
-left by degraded organic matter (Weiner, 2010b). It should be noted that
-only one archaeological sample was analysed here, and further analyses
-are necessary to estimate variance between samples. The short duration
-of model calculus growth over 24 days may also have affected the
-results, compared to longer-term \emph{in vivo}. The constant
-disruptions in growth of \emph{in vivo} dental plaque/calculus, due to
-oral hygiene and other external pressures on biofilm growth, will lead
-to multiple stages of calcium phosphates, whereas our model has more
-stable growth conditions.
+The model calculus samples resemble both the modern reference calculus
+and the archaeological calculus in mineral composition and
+crystallinity. The steeper slope in the grind curve plots of the
+archaeological sample suggests that the crystals in archaeological
+samples are larger, and hence more ordered than in model calculus. A
+possible explanation is that the inorganic crystals within
+archaeological calculus have had more time to grow into the space left
+by degraded organic matter (Weiner, 2010a); however, we only analysed
+one archaeological sample and cannot definitively address this. The
+short duration of model calculus growth may also have affected the
+results, compared to the longer-term growth and mineralisation of
+natural calculus. The constant disruptions in growth of \emph{in vivo}
+dental plaque/calculus, due to oral hygiene and other external pressures
+on biofilm growth, may lead to multiple stages of calcium phosphates,
+whereas our model has more stable growth conditions.
 
 One of the most well-known biomineralisers, \emph{Corynebacterium
 matruchotii} (Ennever et al., 1978; Takazoe et al., 1970), exhibited a
@@ -1200,18 +1175,14 @@ Model calculus displayed similar species diversity and microbial
 profiles across all samples, indicating a high level of replicability
 between samples in the experimental run. It remains to be seen whether
 the replicability within the experiment also scales up to
-between-experiment replicability in our model, though others have shown
-that replicability in long-term models is possible when using the same
-inocula (Velsko \& Shaddox, 2018). The variation in mineral composition
-was initially high in early model biofilm samples, but model calculus
-samples from day 24 were largely similar in composition as observed in
-the FTIR spectra. The use of a simple multiwell plate setup allows us to
-submit many samples to the same conditions, increasing replicability
-between samples (Exterkate et al., 2010). While the experimental
-conditions, including the dietary input, are kept constant, and the
-mineral and bacterial profiles are similar between samples, there is
-still a relatively large variation in starch retention in the model
-calculus (Bartholdy \& Henry, 2022).
+between-experiment replicability in our model, though others have
+already shown that replicability in long-term models is possible when
+using the same inocula (Velsko \& Shaddox, 2018). The variation in
+mineral composition in our model was initially high, but samples from
+day 24 were largely similar in composition as observed in the FTIR
+spectra. The use of a simple multiwell plate setup allows us to submit
+many samples to the same conditions, increasing replicability between
+samples (Exterkate et al., 2010).
 
 \hypertarget{limitations}{%
 \subsection{Limitations}\label{limitations}}
@@ -1239,7 +1210,7 @@ the influence of starch on the microbial community or mineral
 composition. Biofilms were grown in a standard shaking bacterial growth
 incubator, rather than an incubator specific to cell cultures. The lack
 of complex environmental control may cause the model to deviate from its
-natural growth over the 24 days that the experiment is run, due to a
+natural growth over the 25 days that the experiment is run, due to a
 lack of precise control over conditions such as pH and salivary flow
 rates.
 
@@ -1263,6 +1234,17 @@ biofilm, as this is the sample type under investigation.
 \hypertarget{future-work}{%
 \subsection{Future work}\label{future-work}}
 
+Further protocol optimisation will also be necessary to address some of
+the limitations of our current model, such as reducing the frequency of
+medium replacement (currently every three days) to help promote the
+growth of slow-growing fastidious organisms and limit generalists such
+as enterococci, and supplementing it with serum to provide additional
+nutrients and biofilm stability (Ammann et al., 2012; Tian et al.,
+2010). More infrequent medium replacement would facilitate slow-growing
+bacteria in establishing their metabolic relationships, allowing the
+byproducts of some species to become abundant enough for others that
+depend on these to grow (Marsh, 2005).
+
 Our goals for additional validation measures involve functional profiles
 of bacteria, to see if metabolic behaviour of bacteria is consistent
 with \emph{in vivo} conditions, and whether this is affected by the
@@ -1270,21 +1252,8 @@ presence/absence of amylase and starch treatments. The absence of host
 salivary \(\alpha\)-amylase activity in our model (as shown in Bartholdy
 \& Henry (2022)) provides an opportunity to explore the effect of
 various amylase levels on biofilm growth and composition, as well as the
-incorporation of dietary compounds, especially starches, in dental
-calculus. Further protocol optimisation will also be necessary to
-address some of the limitations of our current model, such as reducing
-the frequency of medium replacement (currently every three days) to help
-promote the growth of slow-growing fastidious organisms and limit
-generalists such as enterococci, and supplementing it with serum to
-provide additional nutrients and biofilm stability (Ammann et al., 2012;
-Tian et al., 2010). More infrequent medium replacement would facilitate
-slow-growing bacteria in establishing their metabolic relationships,
-allowing the byproducts of some species to become abundant enough for
-others that depend on these to grow (Marsh, 2005).\\
-An important question to address is what role bacteria play in the
-incorporation and retention of dietary microremains, and whether
-differing bacterial profiles affect the dietary incorporation and
-retention within the biofilm.\\
+incorporation of dietary compounds in dental calculus.
+
 The model can also be used to explore limitations and biases of methods
 used to reconstruct past dietary patterns from dental calculus. To this
 end, sucrose and raw starch treatments can be replaced with other
@@ -1316,9 +1285,9 @@ we use may further distort this picture. Our method can be used to test
 methods (e.g.~DNA, proteomics, etc.), decontamination protocols, as well
 as training on these methods and protocols without depleting limited
 archaeological resources. The purpose of our model is not to replace
-studies conducted on archaeological and natural dental calculus, rather
-balance limitations of each method and serve as a complementary approach
-to expand our toolkit.
+studies conducted on archaeological and natural dental calculus, but
+rather to balance limitations of each method and serve as a
+complementary approach to expand our toolkit.
 
 \hypertarget{acknowledgements}{%
 \section*{Acknowledgements}\label{acknowledgements}}
@@ -1615,17 +1584,17 @@ Patterns During} the {Qijia Cultural Period}: {Integrated Evidence} of
 {Northwest China}. \emph{Frontiers in Earth Science}, \emph{10}.
 \url{https://www.frontiersin.org/articles/10.3389/feart.2022.884856}
 
-\leavevmode\vadjust pre{\hypertarget{ref-marshDentalPlaque2006}{}}%
-Marsh, P. D. (2006). Dental plaque as a biofilm and a microbial
-community -- implications for health and disease. \emph{BMC Oral
-Health}, \emph{6}(S1), S14.
-\url{https://doi.org/10.1186/1472-6831-6-S1-S14}
-
 \leavevmode\vadjust pre{\hypertarget{ref-marshDentalPlaque2005}{}}%
 Marsh, P. D. (2005). Dental plaque: Biological significance of a biofilm
 and community life-style. \emph{Journal of Clinical Periodontology},
 \emph{32}(s6), 7--15.
 \url{https://doi.org/10.1111/j.1600-051X.2005.00790.x}
+
+\leavevmode\vadjust pre{\hypertarget{ref-marshDentalPlaque2006}{}}%
+Marsh, P. D. (2006). Dental plaque as a biofilm and a microbial
+community -- implications for health and disease. \emph{BMC Oral
+Health}, \emph{6}(S1), S14.
+\url{https://doi.org/10.1186/1472-6831-6-S1-S14}
 
 \leavevmode\vadjust pre{\hypertarget{ref-mentzerDistributionAuthigenic2014}{}}%
 Mentzer, S. M., Miller, C. E., Kloos, P., Wadley, L., \& Conard, N. J.
@@ -1822,16 +1791,16 @@ record of the human oral microbiome. \emph{Philosophical Transactions of
 the Royal Society B: Biological Sciences}, \emph{370}(1660), 20130376.
 \url{https://doi.org/10.1098/rstb.2013.0376}
 
+\leavevmode\vadjust pre{\hypertarget{ref-weinerBiologicalMaterials2010}{}}%
+Weiner, S. (2010a). Biological {Materials}: {Bones} and {Teeth}. In
+\emph{Microarchaeology: {Beyond} the {Visible Archaeological Record}}
+(pp. 99--134). {Cambridge University Press}.
+
 \leavevmode\vadjust pre{\hypertarget{ref-weinerInfraredSpectroscopy2010}{}}%
-Weiner, S. (2010a). Infrared {Spectroscopy} in {Archaeology}. In
+Weiner, S. (2010b). Infrared {Spectroscopy} in {Archaeology}. In
 \emph{Microarchaeology: {Beyond} the {Visible Archaeological Record}}
 (1st ed., pp. 275--316). {Cambridge University Press}.
 \url{https://doi.org/10.1017/CBO9780511811210}
-
-\leavevmode\vadjust pre{\hypertarget{ref-weinerBiologicalMaterials2010}{}}%
-Weiner, S. (2010b). Biological {Materials}: {Bones} and {Teeth}. In
-\emph{Microarchaeology: {Beyond} the {Visible Archaeological Record}}
-(pp. 99--134). {Cambridge University Press}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-weinerStatesPreservation1990}{}}%
 Weiner, S., \& Bar-Yosef, O. (1990). States of preservation of bones
@@ -1869,13 +1838,6 @@ Biology}, \emph{47}(11), 779--790.
 Wood, D. E., Lu, J., \& Langmead, B. (2019). Improved metagenomic
 analysis with {Kraken} 2. \emph{Genome Biology}, \emph{20}(1), 257.
 \url{https://doi.org/10.1186/s13059-019-1891-0}
-
-\leavevmode\vadjust pre{\hypertarget{ref-yaoIdentificationProtein2003}{}}%
-Yao, Y., Berg, E. A., Costello, C. E., Troxler, R. F., \& Oppenheim, F.
-G. (2003). Identification of protein components in human acquired enamel
-pellicle and whole saliva using novel proteomics approaches. \emph{J
-Biol Chem}, \emph{278}(7), 5300--5308.
-\url{https://doi.org/10.1074/jbc.M206333200}
 
 \leavevmode\vadjust pre{\hypertarget{ref-zhangMeasurementPolysaccharides1998}{}}%
 Zhang, X., Bishop, P. L., \& Kupferle, M. J. (1998). Measurement of

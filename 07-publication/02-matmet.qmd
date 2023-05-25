@@ -8,10 +8,10 @@ Raw potato and wheat starch solutions were added during the biofilm growth to
 explore the biases involved in their incorporation and extraction from dental
 calculus. These results are presented in a separate article [@bartholdyInvestigatingBiases2022].
 
-![Overview of the protocol for biofilm growth. The samples for metagenomic analysis were grown in a separate experimental plate than the FTIR samples under the same experimental conditions. Biofilm (B) and calculus (C) samples were used for FTIR spectroscopy, and saliva (S) and artificial saliva (M) samples were used for metagenomic analysis.](figures/Exp_protocol.png){#fig-protocol}
+![Overview of the protocol for biofilm growth. The samples for metagenomic analysis were grown in a separate experimental plate than the FTIR samples under the same experimental conditions. Biofilm (B) and calculus (C) samples were used for FTIR spectroscopy, and saliva (S), artificial saliva (M), and calculus samples were used for metagenomic analysis.](figures/Exp_protocol.png){#fig-protocol}
 
 To determine the composition of microbial communities, we sampled the medium
-from the biofilm wells over the course of the experiment and sequenced the DNA
+from the biofilm wells over the course of the experiment. We sequenced the DNA
 to identify species that are present in the model, and assess whether these mimic
 natural oral communities. During a separate experimental run, under the same
 conditions, we directly sampled the biofilms on multiple days and determined the

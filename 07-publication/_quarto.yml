@@ -6,7 +6,7 @@ project:
 format: 
   arxiv-pdf:
     output-file: "bioRxiv-manuscript-1"
-    keep-tex: true  
+    keep-tex: true
     linenumbers: false
     doublespacing: false
     runninghead: "Validity of a calcifying oral biofilm model"
@@ -45,21 +45,26 @@ author:
     affiliations:
       - ref: leiden
   - name: Irina M. Velsko
+    orcid: 0000-0001-9810-9917
     affiliations:
       - ref: mpi
   - name: Shira Gur-Arieh
+    orcid: 0000-0003-2015-7817
     affiliations:
       - ref: haifa
+      - ref: mun
   - name: Zandra Fagernäs
+    orcid: 0000-0003-2667-3556
     affiliations:
       - ref: mpi
       - ref: globe
   - name: Amanda G. Henry
+    orcid: 0000-0002-2923-4199
     affiliations:
       - ref: leiden
 affiliations:
   - id: leiden
-    name: Leiden University
+    name: Faculty of Archaeology, Leiden University
     city: Leiden
     country: The Netherlands
   - id: mpi
@@ -71,11 +76,22 @@ affiliations:
     city: Copenhagen
     country: Denmark
   - id: haifa
-    name: University of Haifa
+    name: The Leon Recanati Institute for Maritime Studies, University of Haifa
     city: Haifa
     country: Israel
+  - id: mun
+    name: Ludwig Maximilian University
+    department: Institute for Pre- and Protohistoric Archaeology and Archaeology of the Roman Provinces
+    city: Munich
+    country: Germany
 bibliography: references.bib
 csl: apa.csl
+keywords:
+  - oral biofilm
+  - dental calculus
+  - microbiome
+  - metagenomics
+  - ftir
 abstract-title: Abstract
 abstract: |
   Dental calculus is increasingly used by researchers to study dietary patterns
@@ -84,7 +100,7 @@ abstract: |
   harbouring a wealth of microremains and biomarkers for health and diet
   within its mineral matrix.
   Previous studies have demonstrated some of the limitations and
-  biases of how our methods of processing may overlook, or even remove,
+  biases of how methods of processing may overlook, or even remove,
   some of the important information contained within the mineralised matrix.
   However, there are many factors that are
   impossible to account for *in vivo* and in archaeological material, such as
@@ -92,7 +108,7 @@ abstract: |
   leaving some limitations that may not be addressed through these types of studies
   and will require a different approach.  
   
-  In this study we present a protocol for creating a calcifying oral biofilm model
+  We present a protocol for creating a calcifying oral biofilm model
   that can be used to explore the biases and
   limitations of dental calculus as a medium for paleodietary reconstructions.
   We report the microbial and mineral composition of our model in an effort to
@@ -115,6 +131,6 @@ abstract: |
   the principal compound, consistent with natural human-derived calculus.
   
   We conclude that oral biofilm models, such as the one presented in this study,
-  have great potential to validate current methods used in the analysis of fossil
+  have great potential to validate current methods used in the analysis of archaeological
   dental calculus, and should be used to complement, rather than replace current
   *in vivo* studies.
