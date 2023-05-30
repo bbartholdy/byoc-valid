@@ -5,7 +5,7 @@ project:
   pre-render: _bib.R
 format: 
   arxiv-pdf:
-    output-file: "bioRxiv-manuscript-1"
+    output-file: "bioRxiv-manuscript-2"
     keep-tex: true
     linenumbers: false
     doublespacing: false
@@ -14,7 +14,7 @@ format:
     keep-md: true
   pdf:
     keep-tex: true
-    output-file: "bioRxiv-manuscript-1"
+    output-file: "bioRxiv-manuscript-2"
     documentclass: article
     link-citations: true
     geometry:
@@ -27,7 +27,7 @@ format:
         \linenumbers
         \setlength{\parindent}{15pt}
   docx: 
-    output-file: "bioRxiv-manuscript-1"
+    output-file: "bioRxiv-manuscript-2"
 execute: 
   freeze: auto
   echo: false
@@ -58,25 +58,34 @@ author:
     affiliations:
       - ref: mpi
       - ref: globe
+  - name: Christina Warinner
+    orcid: 0000-0002-4528-5877
+    affiliations:
+      - ref: harv
+      - ref: mpi
   - name: Amanda G. Henry
     orcid: 0000-0002-2923-4199
     affiliations:
       - ref: leiden
 affiliations:
   - id: leiden
-    name: Faculty of Archaeology, Leiden University
+    name: Leiden University
+    department: Faculty of Archaeology
     city: Leiden
     country: The Netherlands
   - id: mpi
     name: Max Planck Institute for Evolutionary Anthropology
+    department: Department of Archaeogenetics
     city: Leipzig
     country: Germany
   - id: globe
-    name: Globe Institute, University of Copenhagen
+    name: University of Copenhagen
+    department: Globe Institute
     city: Copenhagen
     country: Denmark
   - id: haifa
-    name: The Leon Recanati Institute for Maritime Studies, University of Haifa
+    name: University of Haifa
+    department: The Leon Recanati Institute for Maritime Studies
     city: Haifa
     country: Israel
   - id: mun
@@ -84,6 +93,11 @@ affiliations:
     department: Institute for Pre- and Protohistoric Archaeology and Archaeology of the Roman Provinces
     city: Munich
     country: Germany
+  - id: harv
+    name: Department of Anthropology, Harvard University
+    department: Department of Anthropology
+    city: Cambridge, MA
+    country: USA
 bibliography: references.bib
 csl: apa.csl
 keywords:

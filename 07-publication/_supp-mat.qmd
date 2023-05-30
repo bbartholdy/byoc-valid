@@ -1,6 +1,6 @@
 ---
 title: "Supplementary Material: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus"
-author: "B.P.Bartholdy, I.M.Velsko, S.Gur-Arieh, Z.Fagernäs, A.G.Henry"
+author: "B.P.Bartholdy, I.M.Velsko, S.Gur-Arieh, Z.Fagernäs, C.Warinner, A.G.Henry"
 crossref: 
   #fig-prefix: S
   fig-title: Figure S
@@ -328,6 +328,37 @@ byoc_table_long %>%
 ```
 
 ## Alpha-diversity
+
+```{r}
+#| label: alpha-div-setup
+#| include: false
+
+shan_byoc <- filter(alpha_summ_byoc, index == "shannon") # isolate shannon index values
+pielou_byoc <- filter(alpha_summ_byoc, index == "pilou_even")
+richness_byoc <- filter(alpha_summ_byoc, index == "richness")
+
+shan_compar <- alpha_summ_all %>% 
+  filter(index == "shannon") # isolate shannon index values
+
+shan_model <- shan_compar %>%
+  filter(Env == "model_calculus" |
+           Env == "medium" |
+           Env == "vitro_biofilm")
+  
+shan_oral <- shan_compar %>%
+  filter(Env != "model_calculus",
+           Env != "medium",
+           Env != "vitro_biofilm")
+
+shan_saliva <- alpha_div_long %>%
+  filter(Env == "saliva",
+         index == "shannon") %>%
+  group_by(Study) %>%
+  summarise(mean = mean(value, na.rm = T),
+            sd = sd(value, na.rm = T))
+
+```
+
 
 ### Within experiment
 

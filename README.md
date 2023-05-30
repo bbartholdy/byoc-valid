@@ -3,7 +3,7 @@
 <!-- using the Opinionated Bioinformatics Project Directory Structure
 https://github.com/paleobiotechnology/analysis-project-structure -->
 
-![Version Badge](https://img.shields.io/badge/Version-0.0.0.9000-brightgreen?style=for-the-badge)
+![Version Badge](https://img.shields.io/badge/github/v/release/bbartholdy/byoc-valid?display_name=tag)
 
 ## Table of Contents
 
@@ -82,50 +82,117 @@ tree -I renv
 ```
 
 ```bash
-README.md
-conda_environment.yml
-.gitignore
-01-documentation/
-├──document_1.txt
-└──document_2.tsv
-02-scripts
-├──ANA-script.sh
-├──ANA-notebook.Rmd
-├──QUAL-script.sh
-└──QUAL-notebook.Rmd
-03-data/
-├──raw_data
-├──published_data
-├──reference_genomes
-└──databases/
-    └──<database_1>/
-04-analysis/
-├──analysis_1/
-│  ├──sub-step
-│  └──sub-step
-└──analysis_2/
-   ├──sub-step
-   └──sub-step
-05-results/
-├──ANA-final_file.tsv
-├──ANA-final_file.Rdata
-├──QUAL-tool_output.csv
-└──QUAL-tool_output.Rdata
-06-reports/
-├──ANA/
-│  ├──final_rmarkdown_figures/
-│  ├──final_rmarkdown.Rmd
-│  └──final_rmarkdown.html
-└──QUAL/
-   ├──final_rmarkdown_figures/
-   ├──final_rmarkdown.Rmd
-   └──final_rmarkdown.html
-07-publication/
-├──figures
-├──supplementary_figures/
-├──supplementary_files/
-├──sequencingdata_upload/
-└──final_paper.Rmd
+.
+├── 01-documentation
+│   ├── analysis-metadata.tsv
+│   ├── buccal-mucosa_sample_urls.txt
+│   ├── conda_versions.tsv
+│   ├── experiment-metadata.tsv
+│   ├── ftir-metadata.tsv
+│   ├── genus-O2tolerance.tsv
+│   ├── metadata.tsv
+│   ├── nonHMP_source.txt
+│   ├── software_versions.csv
+│   ├── source_samples_key.csv
+│   ├── species-properties.tsv
+│   ├── SYN_DNA_concentrations.tsv
+│   └── TSV_template.tsv
+├── 02-scripts
+│   ├── 00-comb-kraken-reports.R
+│   ├── 00_ftir-analysis.R
+│   ├── 01-dataprep.R
+│   ├── 02-authentication.R
+│   ├── 03-bacproperties.R
+│   ├── 04-diversity.R
+│   ├── 05-diff-abundance.R
+│   ├── 99_ftir-figures.R
+│   ├── 99_metagen-figures.R
+│   ├── 99_setup-qmd.R
+│   ├── 99_tables.R
+│   ├── functions.R
+│   └── _source-samples.R
+├── 03-data
+│   ├── 2022-05-27_bacdive_oxytol-search.csv
+│   ├── 2022-12-12_bacdive-oxytol-search.csv
+│   ├── 2023-03-24_bacdive_oxytol-search.csv
+│   ├── FTIR
+│   ├── kraken-OTU_long.csv
+│   ├── raw_data
+│   ├── reference_genomes
+│   └── sample_metadata.csv
+├── 04-analysis
+│   ├── decontam
+│   ├── eager
+│   ├── FTIR
+│   ├── kraken
+│   ├── OTUfilter_table.tsv
+│   └── sourcetracker
+├── 05-results
+│   ├── all-pca-loadings_ext.tsv
+│   ├── all-pca-loadings.tsv
+│   ├── alpha-diversity.tsv
+│   ├── byoc_logf-full.tsv
+│   ├── clr-byoc.tsv
+│   ├── clr-compar-extended.tsv
+│   ├── clr-compar.tsv
+│   ├── experiment-pca-loadings.tsv
+│   ├── ftir
+│   ├── ftir-data.csv
+│   ├── ftir-data_long.csv
+│   ├── grind-data_cleaned.csv
+│   ├── lib_sample.tsv
+│   ├── plaque_logf-full.tsv
+│   ├── post-decontam_taxatable.tsv
+│   ├── README
+│   ├── spca_byoc.rda
+│   ├── spca_species_ext.rda
+│   └── spca_species.rda
+├── 06-reports
+│   ├── diff-abund.nb.html
+│   ├── FTIR-analysis.docx
+│   ├── FTIR-analysis.html
+│   ├── FTIR-analysis.nb.html
+│   ├── FTIR-analysis.Rmd
+│   ├── metagen-authentication.nb.html
+│   ├── metagen-authentication.Rmd
+│   ├── metagen-diffabund.nb.html
+│   ├── metagen-diffabund.Rmd
+│   ├── metagen-diversity.nb.html
+│   ├── metagen-diversity.Rmd
+│   ├── metagen-explore.nb.html
+│   ├── metagen-explore.Rmd
+│   ├── metagen-summary.html
+│   ├── metagen-summary.nb.html
+│   └── metagen-summary.Rmd
+├── 07-publication
+│   ├── 01-intro.qmd
+│   ├── 02-matmet.qmd
+│   ├── 03-results.qmd
+│   ├── 04-disc.qmd
+│   ├── apa.csl
+│   ├── _archive
+│   ├── arxiv.sty
+│   ├── _bib.R
+│   ├── _extensions
+│   ├── figures
+│   ├── _freeze
+│   ├── index_cache
+│   ├── index_files
+│   ├── index.qmd
+│   ├── index.tex
+│   ├── orcidlink.sty
+│   ├── _output
+│   ├── _quarto.yml
+│   ├── references.bib
+│   ├── _supp-mat.qmd
+├── byoc-valid.Rproj
+├── CHANGELOG_files
+│   └── mediabag
+├── CHANGELOG.md
+├── Dockerfile
+├── README.md
+├── renv
+└── renv.lock
 ```
 
 An important component of this structure to note is within  scripts, results, and reports, that files are prefixed with short three or four letter codes in all capitals (e.g. QUAL, ANA). This indicates batches of files that are all related to a single analysis component or question that is addressed in the project. These prefixes can also be replaced with specific directories instead. The purpose of this structure is to make it easier for readers to rapidly find scripts of interest, and possible scripts of interest. This system is preferable over, e.g., numbering as it allows more flexibility in case analysis components change in order in the final publication, or morph and merge.
@@ -272,8 +339,6 @@ These reports or notebooks can go into more technical detail that any file for t
 
 ### `07-publication/`
 
-This optional directory can contain copies of all the final files for the actual publication. One could consider this directory as a duplicate of the files uploaded to a publishers website, i.e., main figure files, supplementary figure files, official supplementary files, and possibly also the final paper itself.
-
-This directory can also include metadata on the files uploaded to large data repositories.
-
-One can also consider structuring this in a way that could allow _interactive_ online rendering of the paper using tools such as [bookdown](https://bookdown.org/).
+This directory contains all the final files for publication. Manuscript files
+are written in Quarto (*.qmd*). The *_extension* folder contains the Quarto arXiv
+extension for formatting.

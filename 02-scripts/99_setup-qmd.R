@@ -53,6 +53,28 @@ alpha_div_long <- alpha_div %>%
     day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "model"))
   )
 
+# summary stats for alpha diversity in experiment
+alpha_summ_byoc <- alpha_div_long %>%
+  filter(
+    str_detect(sample, "SYN") # isolate samples from this study
+  ) %>%
+  group_by(index, day_grouped) %>% # group by sample type
+  summarise(mean = mean(value),
+    sd = sd(value))
+
+
+# summary stats for grouped samples by Env
+alpha_summ_all <- alpha_div_long %>%
+  filter(
+    Env != "skin",
+    Env != "sediment",
+    Env != "stool",
+    Env != "indoor_air") %>%
+  group_by(index, Env) %>%
+  summarise(mean = mean(value),
+    sd = sd(value))
+
+
 # table containing the oxygen tolerance of species
 species_properties <- bac_properties %>%
   right_join(species_counts_long, by = "species") %>%
@@ -103,7 +125,8 @@ compar_pca_loadings <- spca_species$rotation %>% # comparative samples
 # FTIR analysis -----------------------------------------------------------
 
 
-ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+#ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata_NEW.tsv"))
 ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
 ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 
