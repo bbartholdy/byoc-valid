@@ -16,7 +16,7 @@ range of topics in different regions and time periods. These include characteris
 of the oral microbiome and its evolution in past populations
 [@velskoMicrobialDifferences2019; @adlerSequencingAncient2013; @warinnerPathogensHost2014; @kazarinaPostmedievalMicrobial2021; @yatesOralMicrobiome2021],
 as well as extraction of microbotanical remains
-[@henryCalculusSyria2008; @hardyStarchGranulesDental2009;@mickleburghNewInsights2012; @maHumanDiet2022]
+[@henryCalculusSyria2008; @hardyStarchGranules2009;@mickleburghNewInsights2012; @maHumanDiet2022]
 and other residues to infer dietary patterns and nicotine use
 [@buckleyDentalCalculus2014; @hendyProteomicCalculus2018; @eerkensDentalCalculus2018; @bartholdyMultiproxyAnalysis2023; @velskoDentalCalculus2017].
 <!-- expand arch applications of DC -->
