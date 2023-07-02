@@ -5,7 +5,7 @@ project:
   pre-render: _bib.R
 format: 
   arxiv-pdf:
-    output-file: "bioRxiv-manuscript-2"
+    output-file: "bioRxiv-manuscript-2.1"
     keep-tex: true
     linenumbers: false
     doublespacing: false
@@ -14,7 +14,7 @@ format:
     keep-md: true
   pdf:
     keep-tex: true
-    output-file: "bioRxiv-manuscript-2"
+    output-file: "bioRxiv-manuscript-2.1"
     documentclass: article
     link-citations: true
     geometry:
@@ -27,7 +27,7 @@ format:
         \linenumbers
         \setlength{\parindent}{15pt}
   docx: 
-    output-file: "bioRxiv-manuscript-2"
+    output-file: "bioRxiv-manuscript-2.1"
 execute: 
   freeze: auto
   echo: false
