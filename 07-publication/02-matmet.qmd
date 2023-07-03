@@ -20,7 +20,7 @@ dental calculus, both modern and archaeological. Samples were taken from both
 controls and starch treatments, but differences between these samples were not
 explored in this study.
 
-## Biofilm growth
+### Biofilm growth
 
 <!-- Create table for all samples and indicate which samples underwent DNA, FTIR, etc. -->
 ```{r}
@@ -116,7 +116,7 @@ All laboratory work was conducted in sterile conditions under a laminar flow hoo
 to prevent starch and bacterial contamination. Starch-free control samples that
 were only fed sucrose were included to detect starch contamination.
 
-## Metagenomics
+### Metagenomics
 
 ```{r}
 #| label: tbl-dna-samples
@@ -144,7 +144,7 @@ amplification cycles to 95$^{\circ}$C for 60 s, 58$^{\circ}$C for 60 s, and
 72$^{\circ}$C for 90 s. The libraries were paired-end sequenced on a NextSeq 500
 to 150bp, and demultiplexed by an in-house script.
 
-### Preprocessing
+#### Preprocessing
 
 The raw DNA reads were preprocessed using the
 `r paste(filter(software_versions, str_detect(software, "eager")))`
@@ -173,7 +173,7 @@ Links to the specific
 sequences are included in the metadata. Human-filtered reads produced in this study were uploaded to ENA under
 accession number PRJEB61886.
 
-### Authentication
+#### Authentication
 
 Species with lower than 0.001% relative abundance across all samples were removed
 from the species table.
@@ -191,7 +191,7 @@ species were filtered out of the OTU tables for all downstream analyses.
 <!-- Authentication methods are described in more
 detail in 06-reports/metagen-authentication.Rmd-->
 
-### Community composition
+#### Community composition
 
 Relative abundances of communities were calculated at the species- and genus-level,
 as recommended for compositional data [@gloorMicrobiomeDatasets2017].
@@ -220,7 +220,7 @@ species were missing aerotolerance values. This was mitigated by aggregating gen
 tolerances to species with missing values, and may have some errors (although
 unlikely to make any significant difference).
 
-### Differential abundance
+#### Differential abundance
 
 Differential abundance of species was calculated using the Analysis of Compositions
 of Microbiomes with Bias Correction (ANCOM-BC) method from the
@@ -234,7 +234,7 @@ visualised the log-fold change of the top 30 species in each of principal compon
 and 2, allowing us to see which species are enriched in the different samples and
 causing clustering in the sPCA.
 
-## FTIR
+### FTIR
 
 ```{r ftir-byoc-samples}
 byoc_ftir <- ftir_metadata %>%
@@ -301,7 +301,7 @@ Thus the curves with steeper slopes, higher splitting factor, and lower FWHM
 represent lower levels of disorder in the mineral
 [Figure 2 in @asscherVariationsAtomic2011].
 
-## Statistics
+### Statistics
 
 <!-- R packages used -->
 Statistical analysis was conducted in `r version$version.string`

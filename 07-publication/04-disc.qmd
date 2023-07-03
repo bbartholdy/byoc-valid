@@ -12,7 +12,7 @@ Here, we assessed the viability of our model as a proxy for dental calculus
 using metagenomic classification and FTIR analysis to explore the bacterial
 and mineral composition, and compare with oral reference samples.
 
-## Microbiome
+### Microbiome
 
 <!-- diversity and complexity within experiment and compared to oral references -->
 Model calculus has lower species diversity than inocula saliva and oral reference
@@ -52,7 +52,7 @@ Whether or not distinct microbial profiles, and the extracellular matrix
 they produce, will affect the retention of dietary particles in plaque remains to
 be seen, but is an important question to address in the future. 
 
-## Mineralisation
+### Mineralisation
 
 FTIR analysis allowed us to address the mineralisation process of the model,
 which showed an increasing mineral composition over the course of the
@@ -90,7 +90,7 @@ formation of dental calculus, and inevitably serve as part of the structure that
 dental calculus is built upon [@rohanizadehUltrastructuralStudy2005], while the
 exact species composition of the biofilm communities may be less important.
 
-## Replicability
+### Replicability
 
 Model calculus displayed similar species diversity and microbial profiles
 across all samples, indicating a high level of replicability between samples
@@ -104,7 +104,7 @@ from day 24 were largely similar in composition as observed in the FTIR spectra.
 The use of a simple multiwell plate setup allows us to submit many samples
 to the same conditions, increasing replicability between samples [@extercateAAA2010].
 
-## Limitations
+### Limitations
 
 While our in vitro model calculus system provides reproducible and consistent
 artificial dental calculus for archaeological research, as demonstrated by the
@@ -149,7 +149,7 @@ the sample type under investigation.
 
 <!-- How it will facilitate the specific topic of research (e.g. archaeology) -->
 
-## Future work
+### Future work
 
 Further protocol optimisation will also be necessary to address some of the
 limitations of our current model, such as reducing the frequency of
@@ -174,7 +174,7 @@ reconstruct past dietary patterns from dental calculus. To this end,
 sucrose and raw starch treatments can be replaced with other dietary components
 of interest, such as cooked starches, whole plant extracts, and various proteins.
 
-# Conclusions
+## Conclusions
 
 The bacterial profile of our model calculus is not an exact match to the natural
 modern or archaeological reference calculus, but species richness and diversity

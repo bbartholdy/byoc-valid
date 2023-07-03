@@ -1,4 +1,4 @@
-## Metagenomic analysis
+### Metagenomic analysis
 
 ```{r}
 #| label: results-metagen-setup
@@ -94,7 +94,7 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
 # differential abundance
 ```
 
-### Sample authentication
+#### Sample authentication
 
 <!-- SourceTracker -->
 To determine the extent of contamination in our samples, we performed a
@@ -119,7 +119,7 @@ After contamination removal, samples consisted of between
 species with a mean of
 `r paste(round(mean(byoc_summ$count)))`.
 
-### Decrease in community diversity across experiment
+#### Decrease in community diversity across experiment
 
 ```{r}
 shan_byoc <- filter(alpha_summ_byoc, index == "shannon") # isolate shannon index values
@@ -156,7 +156,7 @@ as well as a decrease in variance within samples types.
 The Pielou Evenness Index showed a similar pattern while the number of species
 increased between the treatment period and the final model calculus (@fig-diversity-byoc).
 
-### Medium and model calculus samples are distinct from the inoculate
+#### Medium and model calculus samples are distinct from the inoculate
 
 ```{r}
 #| label: byoc-spca-fig-setup
@@ -268,7 +268,7 @@ species enriched in model calculus compared to saliva are mainly anaerobes.
 The differences between saliva and calculus are more pronounced than between
 medium and model calculus, which is expected (@fig-diffabund-byoc).
 
-### Lower diversity in artificial samples than oral references
+#### Lower diversity in artificial samples than oral references
 
 ```{r}
 shan_compar <- alpha_summ_all %>% 
@@ -329,7 +329,7 @@ have a lower mean Shannon index than reference samples, which may have
 contributed to the lower alpha-diversity in model samples compared to reference
 samples. The number of species follows the same trend.
 
-### Model calculus is distinct from dental calculus and other oral samples
+#### Model calculus is distinct from dental calculus and other oral samples
 
 ```{r}
 #| label: fig-core-genera
@@ -498,7 +498,7 @@ where most of the species are enriched in model calculus, all of which are
 anaerobes, and the largest differences occurring in *Cryptobacterium curtum*,
 *Eggerthella lenta*, and *Mogibacterium diversum* ([@fig-diffabund-comp]B).
 
-## Samples show an increased mineralisation over the course of the experiment
+### Samples show an increased mineralisation over the course of the experiment
 
 ```{r}
 #| label: results-ftir-setup
@@ -570,7 +570,7 @@ carbonate minerals component is also becoming more crystallised. There is a
 decreased variability between the spectra, with most spectra exhibiting a higher
 phosphate-to-protein/lipid ratio ([@fig-ftir-spectra]C and D).
 
-## Model calculus has a similar mineral composition to natural calculus
+### Model calculus has a similar mineral composition to natural calculus
 
 To determine whether the model dental calculus is comparable to natural dental calculus,
 both modern and archaeological dental calculus were analysed with FTIR spectroscopy to
@@ -594,7 +594,7 @@ carbonate hydroxyapatite, the main mineral found in mature dental calculus
   plot_layout(nrow = 3) + plot_annotation(tag_levels = "A")
 ```
 
-## Samples show similar crystallinity and order to reference calculus
+### Samples show similar crystallinity and order to reference calculus
 
 <!-- FTIR spectra comparison of artificial and reference dental calculus -->
 We determined the level of crystallinity and order of the carbonate hydroxyapatite
