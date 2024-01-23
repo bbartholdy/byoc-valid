@@ -130,7 +130,7 @@ richness_byoc <- filter(alpha_summ_byoc, index == "richness")
 
 ```{r}
 #| label: fig-diversity-byoc
-#| fig-cap: "Plot of Pielou Evenness Index, number of species, and Shannon Index across experiment samples grouped by sampling time. inoc = samples from days 0-5; treatm = samples from days 6-23; model = model calculus samples from day 24."
+#| fig-cap: "Plot of Shannon Index, Pielou Evenness Index, and number of species across experiment samples grouped by sampling time. inoc = samples from days 0-5; treatm = samples from days 6-23; model = model calculus samples from day 24."
 
 div_byoc_fig +
     theme_bw() +
