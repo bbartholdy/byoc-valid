@@ -1,14 +1,14 @@
 Our biofilm setup consists of whole saliva as the inoculate to approximate
 natural microbial communities within the human oral cavity, and a 24-well plate
 to generate multiple replicated conditions in a single experimental run
-(see @fig-protocol for an overview of the protocol).
+(see @fig-met-protocol for an overview of the protocol).
 The biofilm
 is grown for 25 days to allow time for growth of larger deposits and mineralisation.
 Raw potato and wheat starch solutions were added during the biofilm growth to
 explore the biases involved in their incorporation and extraction from dental
 calculus. These results are presented in a separate article [@bartholdyInvestigatingBiases2022].
 
-![Overview of the protocol for biofilm growth. The samples for metagenomic analysis were grown in a separate experimental plate than the FTIR samples under the same experimental conditions. Biofilm (B) and calculus (C) samples were used for FTIR spectroscopy, and saliva (S), artificial saliva (M), and calculus samples were used for metagenomic analysis.](figures/Exp_protocol.png){#fig-protocol}
+![Overview of the protocol for biofilm growth. The samples for metagenomic analysis were grown in a separate experimental plate than the FTIR samples under the same experimental conditions. Biofilm (B) and calculus (C) samples were used for FTIR spectroscopy, and saliva (S), artificial saliva (M), and calculus samples were used for metagenomic analysis.](figures/Exp_protocol.png){#fig-met-protocol}
 
 To determine the composition of microbial communities, we sampled the medium
 from the biofilm wells over the course of the experiment. We sequenced the DNA
@@ -91,7 +91,7 @@ the starch plates were agitated to keep the starches in suspension in the soluti
 and during treatments, the rpm was increased to 60.
 The purpose of starch treatments was to explore the incorporation
 of starch granules into the model calculus.
-Starch treatments were initiated on day 9 (@fig-protocol) to avoid starch granule
+Starch treatments were initiated on day 9 (@fig-met-protocol) to avoid starch granule
 counts being affected by $\alpha$-amylase hydrolysis from the inoculation saliva.
 An $\alpha$-amylase
 assay conducted on samples from days 3, 6, 8, 9, 10, 12, and 14 also showed that
@@ -109,7 +109,7 @@ starch treatments
 were reduced to once per day, two hours after the last CPMU treatment. This cycle
 was repeated
 for 10 days until the end of the experiment on day 24
-(@fig-protocol). More detailed protocols are available at
+(@fig-met-protocol). More detailed protocols are available at
 <https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1>.
 
 All laboratory work was conducted in sterile conditions under a laminar flow hood

@@ -431,7 +431,7 @@ as the top three positive contributors to PC1. Top negative contributors are
 *Capnocytophaga* spp as well as the aerobes *Corynebacterium matruchotii* and
 *Rothia dentocariosa*. The top positive contributors to PC2 are all anaerobes,
 mainly from the genus *Selenomonas*. Top negative contributors to PC2 are a mix of
-aerotolerances, with many *Streptococcus* spp.
+aerotolerances, with many *Streptococcus* spp (@fig-spca-compar).
 
 ```{r}
 #| label: comp-diffabund-fig-setup
