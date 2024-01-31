@@ -152,7 +152,7 @@ into sampling categories due to low sample sizes on sampling days
 (inoc = days 0, 3, 5; treatm = days 7, 9, 12, 15; model = day 24).
 There was a slight decrease in mean Shannon Index between inoculation
 and treatment samples, followed by a slight increase to model calculus samples,
-as well as a decrease in variance within samples types.
+as well as a decrease in variance within sample types.
 The Pielou Evenness Index showed a similar pattern while the number of species
 increased between the treatment period and the final model calculus (@fig-diversity-byoc).
 
@@ -244,7 +244,7 @@ byoc_da_pca <- byoc_logf_full %>%
 
 ```{r}
 #| label: fig-diffabund-byoc
-#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, squares are enriched in saliva, and triangles in medium. Lines are standard error. Plot shows the top 30 absolute log-fold changes between model calculus and saliva."
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the medium, triangles are enriched in model calculus, and diamonds are enriched in saliva. Lines are standard error. Plot shows the top 30 absolute log-fold changes between model calculus and saliva."
 #| fig-width: 6
 #| fig-height: 4
 byoc_logf_base +
@@ -539,7 +539,11 @@ calc_compar <- calc_compar +
 #ftir_data_long <- inner_join(ftir_metadata, ftir_data, by = c("analysis_id" = "sample"))
 ```
 
-Comparing the development of the model calculus to the reference samples, it is
+To determine whether the model dental calculus is comparable to natural dental calculus,
+both modern and archaeological dental calculus were analysed with FTIR spectroscopy to
+ascertain their composition.
+
+It is
 evident that between days 7 and 24 there is a decrease of the protein components
 and increase of the inorganic mineral carbonate hydroxyapatite. The model calculus
 samples from the end of the experiment are similar to both the modern and
@@ -572,10 +576,7 @@ phosphate-to-protein/lipid ratio ([@fig-ftir-spectra]C and D).
 
 ### Model calculus has a similar mineral composition to natural calculus
 
-To determine whether the model dental calculus is comparable to natural dental calculus,
-both modern and archaeological dental calculus were analysed with FTIR spectroscopy to
-ascertain their composition.
-The archaeological and modern reference spectra are largely indistinguishable and
+Archaeological and modern reference spectra are largely indistinguishable and
 consist of a broad O–H absorbance band (3400 cm$^{-1}$) related to amid a and hydroxyl
 group, weak CH3 bands (3000–2900 cm$^{-1}$), amide I band (1650 cm$^{-1}$) which is
 related to the protein content, carbonate (1420, 1458-1450, 875-870 cm$^{-1}$),
