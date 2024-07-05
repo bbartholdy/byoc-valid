@@ -1,4 +1,4 @@
-# BYOC Validation
+# Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus
 
 <!-- using the Opinionated Bioinformatics Project Directory Structure
 https://github.com/paleobiotechnology/analysis-project-structure -->
