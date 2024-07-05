@@ -3,7 +3,7 @@
 <!-- using the Opinionated Bioinformatics Project Directory Structure
 https://github.com/paleobiotechnology/analysis-project-structure -->
 
-![Version Badge](https://img.shields.io/badge/github/v/release/bbartholdy/byoc-valid?display_name=tag)
+![GitHub Release](https://img.shields.io/github/v/release/bbartholdy/byoc-valid)
 
 ## Table of Contents
 
