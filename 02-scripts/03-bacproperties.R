@@ -2,7 +2,7 @@
 
 library(dplyr)
 library(tibble)
-library(stringr)
+library(stringi)
 library(readr)
 
 # Upload data -------------------------------------------------------------
@@ -19,16 +19,19 @@ bacdive_oxytol <- readr::read_csv(
 
 # get list of bacterial species from all samples
 all_species_names <- taxatable %>% 
-  mutate(`#OTU ID` = str_remove(`#OTU ID`, "\\]"),
-         `#OTU ID` = str_remove(`#OTU ID`, "\\[")) %>%
+  mutate(`#OTU ID` = stri_replace(`#OTU ID`, "", regex =  "\\]"),
+         `#OTU ID` = stri_replace(`#OTU ID`, "", regex = "\\[")) %>%
     .$`#OTU ID`
-all_species_names[which(str_detect(all_species_names, coll("]")))]
-length(all_species_names)
+
+# see if previous operation removed all names with the ']' symbol
+  # expect: character(0)
+all_species_names[which(stri_detect(all_species_names, fixed = "]"))]
+# make sure no species names were removed
+stopifnot(length(all_species_names) == nrow(taxatable))
 
 # combine similar oxygen tolerances
 bacdive_oxytol_comb <- bacdive_oxytol %>%
   filter(
-    #str_match(species, all_species_names$species),
     species %in% all_species_names,
   ) %>%
   mutate("Oxygen tolerance" = case_when(
@@ -44,7 +47,7 @@ bacdive_oxytol_comb <- bacdive_oxytol %>%
 # distribution of oxygen tolerance within genera
 
 genus_oxytol <- bacdive_oxytol_comb %>%
-  mutate(genus = str_extract(species, "\\w+")) %>%
+  mutate(genus = stri_extract(species, regex = "\\w+")) %>%
   group_by(genus) %>% 
   count(`Oxygen tolerance`, sort = T) %>% # arrange by highest counts
   distinct(genus,.keep_all = T) %>% # keep only the oxytol with highest count for each genus
@@ -81,11 +84,11 @@ write_tsv(genus_oxytol, "04-analysis/bacdive/genus-O2tolerance.tsv")
 
 # what genera are missing in the bacdive search?
 genus_in_bacdive <- bacdive_oxytol %>%
-  mutate(genus = str_extract(species, "\\w+")) %>%
+  mutate(genus = stri_extract(species, regex = "\\w+")) %>%
   .$genus %>%
   unique()
 genus_in_samples <- taxatable %>% 
-  mutate(genus = str_extract(`#OTU ID`, "\\w+")) %>%
+  mutate(genus = stri_extract(`#OTU ID`, regex = "\\w+")) %>%
   .$genus %>%
   unique()
 genus_in_samples[!genus_in_samples %in% genus_in_bacdive]

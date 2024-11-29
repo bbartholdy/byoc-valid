@@ -18,29 +18,6 @@ byoc_summ <- species_counts_long %>%
   count(species) %>%
   summarise(count = sum(n))
 
-# # summary stats for alpha diversity in experiment
-# alpha_summ_byoc <- alpha_div_long %>%
-#   filter(
-#     str_detect(sample, "SYN") # isolate samples from this study
-#     ) %>%
-#   group_by(index, day_grouped) %>% # group by sample type
-#   summarise(mean = mean(value),
-#             sd = sd(value))
-# 
-# 
-# # summary stats for grouped samples by Env
-# alpha_summ_all <- alpha_div_long %>%
-#   filter(
-#     Env != "skin",
-#     Env != "sediment",
-#     Env != "stool",
-#     Env != "indoor_air") %>%
-#   group_by(index, Env) %>%
-#   summarise(mean = mean(value),
-#             sd = sd(value))
-
-
-
 # byoc-spca-plot-setup
 # set common ggplot theme for loading plots
 loading_theme_pc1 <-  

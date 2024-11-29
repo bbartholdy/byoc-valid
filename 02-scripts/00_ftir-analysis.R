@@ -2,7 +2,7 @@ library(readr)
 library(dplyr)
 library(tibble)
 library(tidyr)
-library(stringr)
+library(stringi)
 library(here)
 library(patchwork)
 
@@ -36,7 +36,7 @@ grind_data_raw <- readr::read_csv(here("03-data/FTIR/grind-curve_archDC.csv"))
 ftir_files <- list.files(here("04-analysis/FTIR"), "(?i).CSV", full.names = T)
 ftir_data_list <- lapply(ftir_files, read_csv, col_names = c("wavenumber", "abs"))
 sample_names <- list.files(here("04-analysis/FTIR/")) %>%
-  str_remove("(?i).CSV")
+  stri_replace("", regex = "(?i).CSV")
 names(ftir_data_list) <- sample_names
 
 # generate metadata for samples
@@ -47,22 +47,22 @@ ftir_metadata <- sample_names %>%
          sample_id = sample) %>% # keep original sample ID
   separate_rows(sample, sep = "\\+") %>% # separate combined samples 
   mutate(
-    sample_id = str_extract(sample, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
-    day = str_extract(sample_id, "(?<=F)[0-9]+"),
-    well = str_extract(sample_id, "^(?<=A-Z0-9).[A-Z0-9]+"),
+    sample_id = stri_extract(sample, regex = "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
+    day = stri_extract(sample_id, regex = "(?<=F)[0-9]+"),
+    well = stri_extract(sample_id, regex = "^(?<=A-Z0-9).[A-Z0-9]+"),
     source = case_when(
-      str_detect(sample_id, "F") ~ "Artificial", 
-      str_detect(sample_id, "Arch") ~ "Archaeological",
-      str_detect(sample_id, "modern") ~ "Modern"),
+      stri_detect(sample_id, fixed = "F") ~ "Artificial", 
+      stri_detect(sample_id, fixed = "Arch") ~ "Archaeological",
+      stri_detect(sample_id, fixed = "modern") ~ "Modern"),
     sample_id = case_when(source == "Modern" ~ sample_id,
                         TRUE ~ sample_id),
-    comb = case_when(str_detect(value, "\\+") ~ value,
+    comb = case_when(stri_detect(value, regex = "\\+") ~ value,
                    TRUE ~ NA_character_),
-    grind = case_when(str_detect(value, "(?<=_grind_)[a-f]$") ~ TRUE, # collapse grind samples
+    grind = case_when(stri_detect(value, regex = "(?<=_grind_)[a-f]$") ~ TRUE, # collapse grind samples
                     TRUE ~ FALSE)) %>%
   select(!c(value, sample)) %>%
   mutate(day = as.numeric(day),
-         comb = str_remove(comb, "_grind_[a-z]")) %>% 
+         comb = stri_remove(comb, regex = "_grind_[a-z]")) %>% 
   full_join(byoc_ftir, by = c("day", "sample_id")) %>%
   distinct(sample_id, .keep_all = T) %>%
   select(!c(tube, sample, experiment))
@@ -83,13 +83,13 @@ grind_sample_order <- c(
 
 grind_data <- grind_data_raw %>%
   filter(Sample != "Synthetic") %>% # not sure what 'Synthetic' refers to...
-  mutate(day = stringr::str_extract(Sample, "(?<=F)[0-9]+"),
-         grind = stringr::str_extract(Sample, "[a-f]$"),
+  mutate(day = stri_extract(Sample, regex = "(?<=F)[0-9]+"),
+         grind = stri_extract(Sample, regex = "[a-f]$"),
          Sample = case_when(
            #Sample == "Bone +Dentine" ~ "Bone-Dentine",
            #Sample == "Bone +Dentine_2" ~ "Bone-Dentine_2",
-           str_detect(Sample, "F") ~ "Artificial calculus", 
-           str_detect(Sample, "MB11") ~ "Archaeological calculus",
+           stri_detect(Sample, fixed = "F") ~ "Artificial calculus", 
+           stri_detect(Sample, fixed = "MB11") ~ "Archaeological calculus",
            TRUE ~ Sample),
          Sample_day = if_else(!is.na(day), paste(Sample, "day", day), Sample),
          Sample_day = factor(Sample_day, levels = grind_sample_order)
@@ -117,22 +117,18 @@ ftir_metadata <- ftir_data %>%
     ) %>% # keep original sample ID
   separate_rows(sample, sep = "\\+") %>% # separate combined samples
   mutate(
-    sample_id = str_extract(sample, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
-    day = str_extract(sample_id, "(?<=F)[0-9]+"),
-    well = str_extract(sample_id, "^(?<=A-Z0-9).[A-Z0-9]+"),
+    sample_id = stri_extract(sample, regex = "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
+    day = stri_extract(sample_id, regex = "(?<=F)[0-9]+"),
+    well = stri_extract(sample_id, regex = "^(?<=A-Z0-9).[A-Z0-9]+"),
     source = case_when(
-      str_detect(sample_id, "F") ~ "Artificial",
-      str_detect(sample_id, "Arch") ~ "Archaeological",
-      str_detect(sample_id, "modern") ~ "Modern"),
-    #sample_id = case_when(source == "Modern" ~ sample_id,
-                          #TRUE ~ sample_id),
-    #comb = case_when(str_detect(sample, "\\+") ~ sample,
-    #                 TRUE ~ NA_character_),
-    grind = case_when(str_detect(sample, "(?<=_grind_)[a-f]$") ~ TRUE, # collapse grind samples
+      stri_detect(sample_id, fixed = "F") ~ "Artificial",
+      stri_detect(sample_id, fixed = "Arch") ~ "Archaeological",
+      stri_detect(sample_id, fixed = "modern") ~ "Modern"),
+    grind = case_when(stri_detect(sample, regex = "(?<=_grind_)[a-f]$") ~ TRUE, # collapse grind samples
                       TRUE ~ FALSE)) %>%
   mutate(
     sample_id = case_when(
-      str_detect(analysis_id, "modern-ref") ~ analysis_id, # re-separate modern
+      stri_detect(analysis_id, fixed = "modern-ref") ~ analysis_id, # re-separate modern
       TRUE ~ sample_id
       )
   ) %>%

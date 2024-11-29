@@ -14,7 +14,7 @@ species_counts_long <- otu_table %>%
 
 # collapse species counts into genus counts
 genus_counts_long <- species_counts_long %>%
-  mutate(genus = str_extract(species, "\\w+")) %>%
+  mutate(genus = stri_extract(species, regex = "\\w+")) %>%
   group_by(sample, genus) %>%
   summarise(count = sum(count)) %>% 
   group_by(sample) %>%
@@ -38,7 +38,7 @@ alpha_div_long <- alpha_div %>%
 # summary stats for alpha diversity in experiment
 alpha_summ_byoc <- alpha_div_long %>%
   filter(
-    str_detect(sample, "SYN") # isolate samples from this study
+    stri_detect(sample, fixed = "SYN") # isolate samples from this study
   ) %>%
   group_by(index, day_grouped) %>% # group by sample type
   summarise(mean = mean(value),
@@ -60,7 +60,7 @@ alpha_summ_all <- alpha_div_long %>%
 # table containing the oxygen tolerance of species
 species_properties <- bac_properties %>%
   right_join(species_counts_long, by = "species") %>%
-  mutate(genus = str_extract(species, "\\w+")) %>%
+  mutate(genus = stri_extract(species, regex = "\\w+")) %>%
   left_join(
     rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
   ) %>%

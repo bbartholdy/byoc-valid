@@ -50,7 +50,7 @@ indices <- c(
 
 div_byoc_fig <- alpha_div_long %>%
   filter(
-    str_detect(sample, "SYN"),
+    stri_detect(sample, regex = "SYN"),
     index == "shannon" | index == "pilou_even" | index == "richness"
   ) %>%
   mutate(index = factor(index, levels = c("shannon", "pilou_even", "richness"))) %>%
@@ -64,7 +64,7 @@ div_compar_fig <- alpha_div_long %>%
     index %in% c("shannon", "richness", "pilou_even")
   ) %>%
   mutate(index = factor(index, levels = c("shannon", "pilou_even", "richness"))) %>%
-  mutate(Env = case_when(str_detect(Env, "plaque") ~ "plaque",
+  mutate(Env = case_when(stri_detect(Env, fixed = "plaque") ~ "plaque",
     TRUE ~ Env),
     Study = case_when(
       is.na(Study) ~ "other",
@@ -164,13 +164,13 @@ compar_comp_2 <- compar_pca_loadings %>%
 
 genus_counts_short <- genus_counts_long %>%
   left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
-  filter(str_detect(Env, "plaque|calculus")) %>%
+  filter(stri_detect(Env, regex = "plaque|calculus")) %>%
   group_by(Env, genus) %>%
   summarise(rel_abund = mean(rel_abund)) %>% # mean relative abundance in each sample type
   mutate(
     genus = case_when(rel_abund <= 0.05 ~ NA_character_,
       TRUE ~ genus),
-    label = str_extract(genus, "\\w{2}") # create 2-letter abbreviation for labels
+    label = stri_extract(genus, regex = "\\w{2}") # create 2-letter abbreviation for labels
   ) #%>% 
 #mutate(genus = as.factor(genus))
 genus_names <- sort(unique(genus_counts_short$genus)[-1])
@@ -258,7 +258,7 @@ compar_logf_pc2<- compar_da_pca %>%
 species_pos_pc1 <- clr_compar_long %>%
   left_join(pca_loadings, by = "species") %>%
   left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
-  left_join(select(dna_metadata, `#SampleID`, Env), by = c("sample" = "#SampleID")) %>% 
+  left_join(dplyr::select(dna_metadata, `#SampleID`, Env), by = c("sample" = "#SampleID")) %>% 
   #left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
   filter(species %in% arrange(pca_loadings, desc(PC1))$species[1:200]) %>%
   #arrange(sample, PC1.y) %>%
@@ -270,7 +270,7 @@ species_pos_pc1 <- clr_compar_long %>%
 species_neg_pc1 <- clr_compar_long %>%
   left_join(pca_loadings, by = "species") %>%
   left_join(as_tibble(spca_species$x, rownames = "sample"), by = "sample") %>%
-  left_join(select(dna_metadata, `#SampleID`, Env), by = c("sample" = "#SampleID")) %>% 
+  left_join(dplyr::select(dna_metadata, `#SampleID`, Env), by = c("sample" = "#SampleID")) %>% 
   #left_join(analysis_colours, by = c("sample" = "#SampleID")) %>%
   #arrange(species, PC1.y) %>% # arrange by species loading (PC1.x)
   filter(species %in% arrange(pca_loadings, PC1)$species[1:200]) %>%

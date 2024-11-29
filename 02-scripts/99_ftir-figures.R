@@ -12,19 +12,19 @@ grind_sample_order <- c( # make sure the grind samples are ordered correctly in 
   "Enamel_2",
   "Enamel_3")
 
-ftir_data_id <- ftir_data_raw %>% 
+ftir_data_id <- ftir_data %>% 
   rename(analysis_id = sample) %>% 
   mutate(
-    sample = str_extract(analysis_id, "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
+    sample = stri_extract(analysis_id, regex = "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
     sample = case_when(
-      str_detect(analysis_id, "modern-ref") ~ analysis_id, # re-separate modern ref samples
+      stri_detect(analysis_id, fixed = "modern-ref") ~ analysis_id, # re-separate modern ref samples
       TRUE ~ sample
     )
   )
 
 ftir_data <- ftir_metadata %>%
   separate_longer_delim(analysis_id, delim = ";") %>% 
-  right_join(ftir_data_raw, by = c("analysis_id" = "sample"))
+  right_join(ftir_data, by = c("analysis_id" = "sample"))
 
 ## Spectra
 
@@ -85,7 +85,7 @@ ftir_day24 <- ftir_data %>%
 
 calc_compar <- ftir_data %>%
   filter(
-    str_detect(analysis_id, "MB11_grind_c") | analysis_id == "F24.1A3" | 
+    stri_detect(analysis_id, fixed = "MB11_grind_c") | analysis_id == "F24.1A3" | 
       analysis_id == "modern-ref_1"
   ) %>%
   mutate(

@@ -22,7 +22,7 @@ species_otu_table <- otu_table %>%
 
 genus_otu_table <- species_otu_table %>%
   pivot_longer(-sample, names_to = "species", values_to = "count") %>%
-  mutate(genus = str_extract(species, "\\w+")) %>%
+  mutate(genus = stri_extract(species, regex = "\\w+")) %>%
   dplyr::select(!species) %>%
   group_by(sample, genus) %>%
   summarise(count = sum(count)) %>%

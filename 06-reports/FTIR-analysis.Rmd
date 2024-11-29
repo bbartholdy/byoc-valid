@@ -20,7 +20,7 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(stringr)
+library(stringi)
 library(here)
 library(plotly)
 library(readr)
@@ -72,8 +72,8 @@ form enough carbonated hydroxtapatite for analysis.
 ```{r}
 #| label: comb-data-summary
 ftir_metadata %>%
-  filter(str_detect(analysis_id, "\\+")) %>%
-  filter(str_detect(analysis_id, "grind", negate = T)) %>% 
+  filter(stri_detect(analysis_id, regex = "\\+")) %>%
+  filter(stri_detect(analysis_id, fixed = "grind", negate = T)) %>% 
   #group_by(day) #%>%
   select(sample_id, analysis_id, day) %>%
   #mutate(comb = str_remove(comb, "_grind_a")) %>%
@@ -309,7 +309,7 @@ ftir_data %>%
 #| fig-cap: "Plot of archaeological calculus, modern reference calculus, and artificial calculus, zoomed in on region 1800-400 cm-1."
 ftir_data %>%
   filter(
-    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
+    stri_detect(sample, fixed = "MB11_grind_c") | sample == "F24.1A3" | 
       sample == "modern_ref1",
     wavenumber < 1800,
     ) %>%

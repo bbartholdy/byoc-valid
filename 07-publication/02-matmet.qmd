@@ -27,7 +27,7 @@ explored in this study.
 #| label: matmet-setup
 #| include: false
 library(dplyr)
-library(stringr)
+library(stringi)
 library(magrittr)
 # env_summ <- metadata %>%
 #   group_by(Env) %>%
@@ -147,18 +147,18 @@ to 150bp, and demultiplexed by an in-house script.
 #### Preprocessing
 
 The raw DNA reads were preprocessed using the
-`r paste(filter(software_versions, str_detect(software, "eager")))`
+`r paste(filter(software_versions, stri_detect(software, fixed = "eager")))`
 pipeline [@yatesEAGER2020]. The pipeline included adapter removal and read merging
 using
-`r paste(filter(software_versions, str_detect(software, regex("adapterremoval", ignore_case = T))))`
+`r paste(filter(software_versions, stri_detect(software, fixed = "AdapterRemoval")))`
 [@AdapterRemovalv2].
 Merged reads were mapped to the human reference genome (GRCh38<!--link-->)
 using
-`r paste(filter(software_versions, str_detect(software, regex("bwa", ignore_case = T))))`
+`r paste(filter(software_versions, stri_detect(software, fixed = "BWA")))`
 [@BWA] (-n 0.01; -l 32), and unmapped reads were extracted using
-`r paste(filter(software_versions, str_detect(software, regex("samtools", ignore_case = T))))`.
+`r paste(filter(software_versions, stri_detect(software, fixed = "Samtools")))`.
 The final step of the pipeline, metagenomic classification, was conducted in
-`r paste(filter(software_versions, str_detect(software, regex("kraken", ignore_case = T))))`
+`r paste(filter(software_versions, stri_detect(software, fixed = "kraken")))`
 [@kraken2] using the Standard 60GB database
 (<https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20220926.tar.gz>).
 

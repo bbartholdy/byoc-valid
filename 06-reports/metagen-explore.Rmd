@@ -6,7 +6,7 @@ output: html_notebook
 ```{r setup, include=FALSE}
 library(dplyr)
 library(tidyr)
-library(stringr)
+library(stringi)
 library(ggplot2)
 library(here)
 metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
@@ -78,7 +78,7 @@ otu_table_long <- otu_decontam %>%
     values_to = "count"
     ) %>%
   rename(species = `#OTU ID`) %>%
-  mutate(genus = str_extract(species, "\\w+"))
+  mutate(genus = stri_extract(species, regex = "\\w+"))
 ```
 
 Counts are converted to relative abundance per sample. Separate data frames are
@@ -98,7 +98,7 @@ genus_abund_long <- species_abund_long %>%
 
 # top 20 common genera in experiment
 top_genus <- genus_abund_long %>%
-  filter(str_detect(sample, "SYN")) %>% 
+  filter(stri_detect(sample, regex = "SYN")) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(genus) %>%
@@ -107,7 +107,7 @@ top_genus <- genus_abund_long %>%
 
 # top 20 species in experiment
 top_species <- species_abund_long %>%
-  filter(str_detect(sample, "SYN")) %>% 
+  filter(stri_detect(sample, regex = "SYN")) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(species) %>%
@@ -330,7 +330,7 @@ Relative abundance of ABS per sample. Different treatments indicated by text col
 
 ```{r}
 species_properties %>% 
-  filter(str_detect(sample, "SYN")) %>%#,
+  filter(stri_detect(sample, regex = "SYN")) %>%#,
          #str_detect(sample, "SYN00[1-3]", negate = T)) %>% 
   ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
     geom_col() +
@@ -370,7 +370,7 @@ genus_abund_long %>%
   distinct(genus) %>%
   slice_head(n = 30) %>% # top 30 species across all samples
   left_join(species_abund_long, by = "genus") %>% # recombine with samples
-  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
+  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
   ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.0001))) +
     geom_tile() +
     theme_void() +
@@ -383,7 +383,7 @@ genus_abund_long %>%
         hjust = 1,
         vjust = 1,
         colour = filter(
-            analysis_colours, str_detect(Env, "calculus|plaque")
+            analysis_colours, stri_detect(Env, regex = "calculus|plaque")
             )$env_col %>%
           rev()
         )
@@ -399,13 +399,13 @@ Relative abundance
 ```{r}
 # relative abundance
 species_abund_long %>%
-  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(species) %>%
   slice_head(n = 30) %>% # top 30 species across all samples
   left_join(species_abund_long, by = "species") %>% # recombine with samples
-  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
+  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
   ggplot(aes(x = sample, y = species, fill = log(rel_abund + 0.001))) +
     geom_tile() +
     theme_void() +
@@ -418,7 +418,7 @@ species_abund_long %>%
         hjust = 1,
         vjust = 1,
         colour = filter(
-            analysis_colours, str_detect(Env, "calculus|plaque")
+            analysis_colours, stri_detect(Env, regex = "calculus|plaque")
             )$env_col
         )
       ) +
@@ -472,7 +472,7 @@ are more abundant in the *in vitro* biofilm samples than
 
 ```{r}
 clr_compar_long %>%
-  filter(str_detect(species, "Streptococcus|Actinomyces|Fusobacterium")) %>% 
+  filter(stri_detect(species, regex = "Streptococcus|Actinomyces|Fusobacterium")) %>% 
   ggplot(aes(x = sample, y = species, fill = clr_count)) +
     geom_tile() +
     scale_fill_viridis_c(option = "C") +
@@ -484,7 +484,7 @@ clr_compar_long %>%
 
 ```{r}
 clr_compar_long %>%
-  filter(str_detect(species, "Fusobacterium|Eubacterium|Treponema|Tannerella|Prevotella")) %>% 
+  filter(stri_detect(species, regex = "Fusobacterium|Eubacterium|Treponema|Tannerella|Prevotella")) %>% 
   ggplot(aes(x = sample, y = species, fill = clr_count)) +
     geom_tile() +
     scale_fill_viridis_c(option = "C") +
@@ -500,7 +500,7 @@ oral reference samples.
 
 ```{r}
 species_properties %>% 
-  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
   #mutate(`Oxygen tolerance` = forcats::fct_explicit_na(`Oxygen tolerance`)) %>%
   ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
     geom_col() +
@@ -511,7 +511,7 @@ species_properties %>%
   theme(
     axis.text.y = element_text(
         colour = analysis_colours %>%
-          filter(str_detect(Env, "calculus|plaque")) %>%
+          filter(stri_detect(Env, regex = "calculus|plaque")) %>%
           #arrange(desc(day)) %>%
           .$env_col %>%
       rev()
@@ -527,7 +527,7 @@ oxygen tolerance is unknown (`NA`).
 
 ```{r}
 species_properties %>% 
-  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
   ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
     geom_col() +
     theme_minimal() +

@@ -39,7 +39,7 @@ library(dplyr)
 library(tidyr)
 library(forcats)
 library(readr)
-library(stringr)
+library(stringi)
 library(ggplot2)
 library(plotly)
 library(cuperdec)
@@ -76,8 +76,6 @@ clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
 clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
 pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
-#load(here("05-results/spca_byoc.rda"))
-#load(here("05-results/spca_species.rda"))
 
 source(here("02-scripts/functions.R"))
 source(here("02-scripts/99_setup-qmd.R"))
@@ -151,91 +149,51 @@ dna_metadata %>%
 #| label: tbl-env-samples
 #| tbl-cap: "Table of environmental reference samples (contamination testing). Includes sample type (Env), and associated project and study with DOI."
 dna_metadata %>% 
-  filter(
-    str_detect(`#SampleID`, "LIB|SYN", negate = T),
-    Env %in% env_controls
-  ) %>% 
-  select(!c(SourceSink, download_link, Study)) %>% 
+  filter(Env %in% env_controls) %>%
+  dplyr::select(!c(SourceSink, download_link, Study)) %>% 
   arrange(Env) %>% 
   knitr::kable()
 ```
 
-## Pre-processing
 
-### SourceTracker2
+### Pre-processing
 
-Steps taken for SourceTracker analysis.
-
-OTU table was filtered for relative abundance. Percent abundance of each taxon
-across all samples was calculated and then taxa with lower than 0.001% abundance
-were filtered out.
-
-Installation of Qiime2 and dev version of SourceTracker via conda:
-
-```sh
-wget https://data.qiime2.org/distro/core/qiime2-2022.2-py38-linux-conda.yml
-conda env create -n qiime2-2022.2 --file qiime2-2022.2-py38-linux-conda.yml
-rm qiime2-2022.2-py38-linux-conda.yml # cleanup
-conda activate qiime2-2022.2
-pip install https://github.com/biota/sourcetracker2/archive/master.zip
+```{r}
+#| label: tbl-lib-conc
+knitr::kable(lib_conc)
 ```
 
-Installation of Qiime1 to access filter_samples_from_otu_table.py
+Processing of the raw DNA reads was conducted using the
+`r paste(filter(software, stri_detect(software, fixed = "eager")))`
+pipeline [@yatesEAGER2020].
+Adapter removal and read merging was performed using
+`r paste(filter(software, stri_detect(software, fixed = "adapterremoval", opts_fixed = list("case_insensitive" = TRUE))))`
+[@AdapterRemovalv2]. Merged reads were mapped to the human reference genome,
+GRCh38, using
+`r paste(filter(software, stri_detect(software, fixed = "bwa", opts_fixed = list("case_insensitive" = TRUE))))`
+[@BWA] with default settings (-n 0.01; -l 32), and unmapped reads were extracted
+using
+`r paste(filter(software, stri_detect(software, fixed = "samtools", opts_fixed = list("case_insensitive" = TRUE))))`.
 
-```sh
-conda create -n qiime1 python=2.7 qiime -c bioconda
-```
+Metagenomic classification was conducted in
+`r paste(filter(software, stri_detect(software, fixed = "kraken", opts_fixed = list("case_insensitive" = TRUE))))`
+using the Standard database (https://benlangmead.github.io/aws-indexes/k2).
 
-Convert OTU table from *.tsv* to *.biom*.
+Kraken output reports were combined and converted to OTU tables, and only
+species-level assignments were selected for downstream analysis
+[02-scripts/00-comb-kraken-reports.R](02-scripts/00-comb-kraken-reports.R).
+The OTU tables were further filtered by removing species with relative abundance
+lower than 0.001%.
 
-```sh
-biom convert -i 04-analysis/OTUfilter_table.tsv -o 04-analysis/sourcetracker/OTUfilter-table-from-tsv_json.biom --table-type="OTU table" --to-json
-```
+### Authentication
 
-Filter OTU table
+#### SourceTracker2
 
-```sh
-filter_samples_from_otu_table.py \
--i 04-analysis/sourcetracker/OTUfilter-table-from-tsv_json.biom \
--o 04-analysis/sourcetracker/OTUs1000filter_table.biom \
--n 1000
-```
+SourceTracker2 [@knightsSourceTracker2011] was used to estimate source composition
+of the oral biofilm model samples using a Bayesian framework. Samples were compared
+with oral and environmental controls to detect potential external contamination.
 
-Table summary
-
-```sh
-biom summarize-table -i 04-analysis/sourcetracker/OTUs1000filter_table.biom > 04-analysis/sourcetracker/summary_OTUs1000filter-table.txt
-```
-
-Convert to TSV for use with the **decontam** package.
-
-```sh
-biom convert -i 04-analysis/sourcetracker/OTUs1000filter_table.biom -o 04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv --to-tsv
-```
-
-Run SourceTracker2 on the filtered OTU table with rarefaction depth of 1000
-for both source and samples. Samples and sources were mapped in the
-[ST_comb-plaque-map.txt](../04-analysis/sourcetracker/ST_comb-plaque-map.txt).
-The plaque source is a combination of supragingival and subgingival plaque.
-
-```sh
-conda activate qiime2-2022.2
-```
-
-```sh
-sourcetracker2 \
-    -i 04-analysis/sourcetracker/OTUs1000filter_table.biom \
-    -m 04-analysis/sourcetracker/ST_comb-plaque-map.txt \
-    --source_sink_column SourceSink  \
-    --source_column_value source \
-    --source_rarefaction_depth 1000 \
-    --sink_rarefaction_depth 1000 \
-    --sink_column_value sink \
-    --source_category_column Env \
-    -o 04-analysis/sourcetracker/sourcetracker2_output \
-    --jobs 2 \
-    --per_sink_feature_assignments
-```
+{{< include ../02-scripts/02_authentication-ST2.md >}}
 
 Plots were created of estimated contributions of various sources to the saliva,
 model calculus and medium samples. Samples are arranged from left to right by how
@@ -243,105 +201,195 @@ late in the experiment they were sampled, with left being the earliest samples
 (@fig-sourcetracker2). The output from SourceTracker2 was compared to a dataset
 of known oral species (@fig-oral-sources).
 
-```{r}
-#| label: st2-plot-setup
-#| echo: false
-sourcetracker2_long <- sourcetracker2_longer()
-day_order <- dna_experiment_metadata %>%
-  mutate(Env = factor(
-    Env, levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
-    ) 
-  ) %>% 
-  group_by(Env) %>%
-  arrange(day, .by_group = T) %>%
-  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
-  mutate(rm = if_else(`#SampleID` %in% dna_analysis_metadata$`#SampleID`, F, T),
-         col = case_when(rm == T ~ "red", # excluded samples coloured red
-                         rm == F ~ "black"))
-```
+
+{{< embed ../02-scripts/02_metagen-authentication.qmd#fig-sourcetracker2 >}}
+
+Many of the later medium samples were assigned to the 'Unknown' and 'indoor_air'
+categories. To see whether this was the result of external
+contamination or the presence of oral taxa with an unknown origin (which could be
+due to the taxa matching multiple sources), the taxa from 'Unknown' were compared
+to the oral reference database from the **cuperdec** R package. Only samples with
+a large proportion of oral taxa and a low proportion of indoor_air
+(`indoor_air + Unknown < oral` and `oral > 70%`) were included.
+
+{{< embed ../02-scripts/02_metagen-authentication.qmd#fig-oral-sources >}}
+
+A large proportion of the species assigned to the various sources are known to
+be oral taxa. The samples do also seem to contain some external contamination.
+
+Based on the results from SourceTracker, samples
+`r paste(filter(day_order, rm == T)$'#SampleID', sep = ",")`
+were removed from the analysis. The removed samples were all sampled late in
+the experiment (day 18+).
+
+Results from SourceTracker indicated a large portion of species from most samples
+are from an oral origin (plaque, saliva, or calculus). Some samples contained a
+large proportion of species from potential contaminants (indoor air) and of
+unknown origin. Potential contaminants were compared to a database of oral
+bacteria to see the proportion of known oral species were present in the samples.
+Many of the species assigned to `indoor_air` are known oral species
+(Figure \@ref(fig:st-plot)).
+
+
+#### decontam
+
+Potential contaminants were identified using the frequency and prevalence method
+in the **decontam** v`r packageVersion("decontam")` [@R-decontam] R package.
+[02-scripts/02-authentication.R](../02-scripts/02-authentication.R). Samples
+from *indoor_air*, *skin*, and *sediment* were used as negative controls for
+the prevalence method with a probability threshold of 0.01. 
+[DNA concentrations](../01-documentation/SYN_DNA_concentrations.tsv) were used
+for the 'frequency' method with a probability threshold of 0.99
+and negative controls.
+
+Putative contaminants were filtered out of the
+[OTU tables](../05-results/post-decontam_taxatable.tsv) for all downstream analyses.
+
+See [06-reports/metagen-authentication.Rmd](../06-reports/metagen-authentication.Rmd)
+for more details.
 
 
 ```{r}
-#| label: fig-sourcetracker2
-#| fig-cap: "Estimated proportion of source composition of the abundance-filtered oral biofilm model samples using SourceTracker2. Names of removed samples in red text."
-sourcetracker2_long %>% 
-  ggplot(aes(y = SampleID, x= proportion, fill = source)) +
-    geom_col() +
-    theme_minimal() +
-    scale_y_discrete(limits = day_order$`#SampleID`) +
-    scale_fill_viridis_d(option = "C") +
-    theme(axis.title = element_blank(),
-          axis.text.y = element_text(vjust = 0.5, hjust = 0.5, colour = day_order$col))
-```
+# replaced by species_table_long in 99_setup-qmd.R
+# species_table_long <- otu_decontam %>%
+#   pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
 
-```{r}
-#| label: fig-oral-sources
-#| fig-cap: "Estimated proportion of oral or other composition of the abundance-filtered oral biofilm model samples using the oral database from the cuperdec R package. Names of removed samples in red text."
-oral_taxa <- cuperdec_database_ex %>%
-  filter(isolation_source == "oral")
-all_data_long %>% 
-  filter(count > 0) %>% 
-  mutate(oral_source = if_else(taxon %in% oral_taxa$species, "oral", "other")) %>%
-  ggplot(aes(y = SampleID, x = count, fill = oral_source)) +
-    geom_col(position = "fill") +
-    scale_fill_viridis_d(option = "C") +
-    theme_minimal() +
-    theme(axis.text.y = element_text(colour = day_order$col),
-          axis.title.y = element_blank()) +
-    scale_y_discrete(limits = day_order$`#SampleID`)
-```
+byoc_counts_long <- species_counts_long %>% 
+  filter(
+    stri_detect(sample, fixed = "SYN"),
+    #sample %in% dna_analysis_metadata$`#SampleID`, # does not change dimensions
+    count > 0
+  )
 
-### decontam
-
-```{r}
-species_table_long <- otu_decontam %>%
-  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
-
-byoc_table_long <- species_table_long %>% 
-  filter(str_detect(sample, "SYN"),
-         sample %in% dna_analysis_metadata$`#SampleID`,
-         count > 0)
-
-species_summ <- byoc_table_long %>%
+byoc_species_summ <- byoc_counts_long %>%
   group_by(sample) %>%
-  count(`#OTU ID`) %>%
+  count(sample) %>%
   summarise(count = sum(n))
 ```
 
 After running `isContaminant()` and filtering out (non-oral) potential contaminants,
 the samples contained between
-`r paste(range(species_summ$count), collapse = " and ")`
+`r paste(range(byoc_species_summ$count), collapse = " and ")`
 species with a mean of
-`r paste(round(mean(species_summ$count), 2))` (@fig-species-counts).
+`r paste(round(mean(byoc_species_summ$count), 2))` (@fig-species-counts).
+
+{{< embed ../02-scripts/02_metagen-authentication.qmd#fig-species-counts >}}
+
+
+### Community composition
+
+Genus- and species-level OTU tables were prepared from the decontaminated OTU
+table, and relative abundance of species in a sample was calculated as recommended
+for compositional data [@gloorMicrobiomeDatasets2017].
 
 ```{r}
-#| label: fig-species-counts
-#| fig-cap: "Species counts after removal of contaminants for biofilm model samples."
+#| label: species-profiles-setup
+#| include: false
+# which species had no match on BacDive?
+# join species counts and bacterial properties (oxygen tolerance and ABS)
+  # genus oxygen tolerance used in cases where no information exists at species level
 
-byoc_table_long %>% 
-  group_by(sample) %>%
-  count(`#OTU ID`) %>% 
-  ggplot(aes(y = sample, x = n), fill = viridisLite::magma(1, begin = 0.5)) +
-    geom_col() +
-  theme_minimal() +
-    theme(
-      axis.line.x = element_line(),
-      axis.title.x = element_blank(),
-      panel.grid.major.y = element_blank(),
-      axis.title.y = element_blank())
+### already computed in 99_setup-qmd.R ###
+# species_properties <- bac_properties %>%
+#   right_join(species_counts_long, by = "species") %>%
+#   mutate(genus = stri_extract(species, regex = "\\w+")) %>%
+#   left_join(
+#     rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
+#     ) %>%
+#   mutate(`Oxygen tolerance` = case_when(
+#     is.na(`Oxygen tolerance`) ~ genus_oxytol, # if no species-level info available
+#     TRUE ~ `Oxygen tolerance`)
+#     ) %>%
+#   group_by(sample) %>%
+#   mutate(
+#     abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
+#     rel_abund = count / sum(count)
+#     ) %>%
+#   ungroup()
+
+no_match <- unique(
+  filter(species_properties, is.na(`Oxygen tolerance`))$species
+)
 ```
 
-## Alpha-diversity
+<!-- species profiles -->
+
+Information on the oxygen tolerance of bacterial species was downloaded from 
+[BacDive](https://bacdive.dsmz.de) on
+`r stri_extract(list.files("../03-data/", pattern = "bacdive"), regex = "\\d{4}-\\d{2}-\\d{2}")`.
+A total of **`r length(no_match)`** out of
+**`r length(unique(species_counts_long$species))`**
+(`r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`)
+species did not have a match on BacDive. These were assigned oxygen tolerance
+based on the most common occurrence within the genus they belong.
+A list of amylase-binding streptococci (ABS) was created based on
+[@nikitkovaStarchBiofilms2013].
+
+<!-- community composition: alpha diversity -->
+Alpha-diversity, specifically the Shannon Index, was calculated to compare species
+richness and diversity across experimental and comparative oral samples. Shannon
+Index was calculated using the R package **vegan** v`r packageVersion("vegan")`
+[@Rvegan].
+
+<!-- community composition: beta diversity -->
+Sparse principal components analysis (sPCA) was conducted on centered-log-ratio
+(CLR) transformed species-level counts using the R package **mixOmics**
+v`r packageVersion("mixOmics")` [@RmixOmics]. The **mixOmics** implementation of
+sPCA uses a LASSO penalisation to eliminate unimportant variables.
+Two separate analyses were conducted: 1) on experiment samples to assess the
+difference in sample types and biofilm age; and 2) on oral comparative samples
+and biofilm model end-products to explore community differences between *in vitro*
+and *in vivo* biofilms.
+
+Loadings obtained from the sPCA analyses were used in combination with
+CLR-transformed counts to create heatmaps of species- and genus-level counts
+within the experiment and across comparative samples.
+
+<!--Beta-diversity, Bray Curtis dissimilarity.-->
+
+
+### Alpha-diversity
+
+Days are grouped to increase sample sizes:
+
+- Inoculation (`inoc`) = days 0,3,5
+- Treatment (`treatm`) = days 7,9,12,15
+- End-product (`final`) = day 24
+
 
 ```{r}
 #| label: alpha-div-setup
 #| include: false
 
-shan_byoc <- filter(alpha_summ_byoc, index == "shannon") # isolate shannon index values
-pielou_byoc <- filter(alpha_summ_byoc, index == "pilou_even")
-richness_byoc <- filter(alpha_summ_byoc, index == "richness")
+### already computed in 99_setup-qmd.R ###
+# alpha_div_long <- alpha_div %>%
+#   pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+#   left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
+#   left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
+#   mutate(day_grouped = case_when( # group days to increase sample size
+#     day < 6 ~ "inoc",
+#     day > 6 & day < 24 ~ "treatm",
+#     day == 24 ~ "final"),
+#     day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "final"))
+#     )
 
-shan_compar <- alpha_summ_all %>% 
+# more simplified version of the above. Does it have all needed variables?
+  # needs day_grouped
+# alpha_div_long <- alpha_div |>
+#   pivot_longer(
+#     -sample,
+#     names_to = "index",
+#     values_to = "value"
+#     ) |>
+#   inner_join(dna_metadata, by = c("sample" = "#SampleID"))
+
+alpha_div_byoc <- filter(alpha_div_long, stri_detect(sample, fixed = "SYN"))
+
+shan_byoc <- filter(alpha_div_byoc, index == "shannon")  # isolate shannon index values
+pielou_byoc <- filter(alpha_div_byoc, index == "pilou_even")
+richness_byoc <- filter(alpha_div_byoc, index == "richness")
+
+shan_compar <- alpha_div_long %>% 
   filter(index == "shannon") # isolate shannon index values
 
 shan_model <- shan_compar %>%
@@ -391,7 +439,34 @@ $\pm$ `r signif(filter(richness_byoc, day_grouped == "treatm")$sd, 3)`;
 M = `r signif(filter(richness_byoc, day_grouped == "model")$mean, 3)`
 $\pm$ `r signif(filter(richness_byoc, day_grouped == "model")$sd, 3)`).
 
-### Compared to oral reference samples
+The model calculus is less variable than the initial and middle biofilm samples.
+
+```{r}
+#| label: tbl-alpha-experiment
+alpha_summ_byoc
+```
+
+
+```{r}
+#| label: fig-alpha-experiment
+#| fig-cap: "Plot of alpha-diversity indices across experiment samples grouped by sampling time."
+
+alpha_div_long %>%
+  filter(stri_detect(sample, fixed = "SYN")) %>%
+  #mutate(day = as.factor(day)) %>%
+  ggplot(aes(x = day_grouped, y = value)) +
+    geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
+    geom_boxplot(width = 0.12) +
+    facet_wrap(~ index, scales = "free_y") +
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    )
+```
+
+#### Compared to oral reference samples
 
 We used the Shannon Index to compare alpha-diversity in our model to oral
 reference samples. The mean Shannon Index of model
@@ -416,7 +491,134 @@ which may have
 contributed to the lower alpha-diversity in model samples compared to reference
 samples.
 
-## Species composition
+Compared to other oral samples, there is lower species diversity and richness
+in the medium and model calculus.
+
+
+```{r}
+#| label: fig-alpha-compar
+alpha_div_long %>%
+  filter(!Env %in% env_controls) %>%
+  mutate(Env = case_when(stri_detect(Env, fixed = "plaque") ~ "plaque",
+                         TRUE ~ Env)) %>%
+  ggplot(aes(x = Env, y = value)) +
+    geom_violin(aes(col = Env, fill = Env), alpha = 0.5) +
+    geom_boxplot(width = 0.1) +
+    facet_wrap(~ index, scales = "free_y") +
+    theme_bw() +
+    theme(
+      axis.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    )
+```
+
+```{r}
+#| label: tbl-alpha-all
+alpha_div_long %>%
+  filter(!Env %in% env_controls) %>%
+  group_by(index, Env) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value)
+  ) %>%
+  arrange(desc(mean))
+```
+
+### Species profiles
+
+```{r}
+#| label: species-properties-plots
+
+# Oxygen tolerance plots
+oxy_tol <- species_properties %>%
+  distinct(species, .keep_all = T) %>% 
+  count(`Oxygen tolerance`) %>%
+  mutate(#`Oxygen tolerance` = replace_na(`Oxygen tolerance`, "unknown"),
+         perc = scales::percent(n / sum(n), accuracy = 0.1)) %>%
+  ggplot(aes(x = "", y = n, fill = `Oxygen tolerance`)) +
+    geom_col(colour = "white") + 
+    coord_polar(theta = "y") +
+    geom_text(aes(label = perc), position = position_stack(vjust = 0.5), col = "white") +
+    theme_void() +
+    scale_fill_manual(
+      values = c(viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`)))))
+    )
+
+byoc_oxytol <- species_properties %>% 
+  filter(stri_detect(sample, fixed = "SYN")) %>% 
+  ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = rev(day_order$`#SampleID`)) +
+    scale_fill_manual(
+      values = viridisLite::turbo(n = length(levels(as.factor(species_properties$`Oxygen tolerance`))))
+      ) +
+  theme(
+    axis.text.y = element_text(colour = rev(experiment_colours$env_col))
+  )
+
+# ABS plots
+byoc_abs <- species_properties %>% 
+  filter(stri_detect(sample, fixed = "SYN")) %>%
+  ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = rev(day_order$`#SampleID`)) +
+    scale_fill_viridis_d(option = "G") +
+    theme(
+      axis.text.y = element_blank(),
+      axis.title = element_blank()
+      )
+```
+
+```{r}
+#| label: fig-byoc-properties
+#| fig-cap: "The distribution of oxygen tolerance (left) and ABS (right) in experimental samples."
+byoc_oxytol + byoc_abs + plot_layout(guides = "collect")
+```
+
+### Species composition
+
+```{r}
+#| label: scree-byoc
+#| fig-cap: "Scree plot of principal components from the sPCA on experiment samples."
+plot(spca_byoc, type = "l")
+```
+
+```{r}
+#| label: spca-setup
+#| include: false
+# explained variance
+byoc_explain_var <- spca_byoc$prop_expl_var$X # experiment samples
+compar_explain_var <- spca_species$prop_expl_var$X # comparative samples
+
+# loadings of samples
+byoc_princomp <- spca_byoc$x %>% # experiment samples
+  as_tibble(rownames = "sample") %>%
+  left_join(experiment_metadata, by = c("sample" = "#SampleID"))
+spca_compar <- spca_species$x %>% # comparative samples
+  as_tibble(rownames = "sample") %>%
+  left_join(metadata, by = c("sample" = "#SampleID"))
+
+# loadings of species
+exp_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
+  as_tibble(rownames = "species") %>%
+  #left_join(bac_properties, by = "species") %>% 
+  left_join(species_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2, `Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1))) %>%
+  distinct(species, .keep_all = T)
+
+comp_pca_loadings <- spca_species$rotation %>% # comparative samples
+  as_tibble(rownames = "species") %>%
+  left_join(species_properties, by = "species") %>% 
+  dplyr::select(species,PC1,PC2,PC3,`Oxygen tolerance`) %>%
+  arrange(desc(abs(PC1))) %>% 
+  distinct(species, .keep_all = T)
+#exp_pca_loadings
+```
+
 
 Counts from model biofilm and oral reference samples were transformed with a
 centered ratio log-transform and ordered by PC1 loading

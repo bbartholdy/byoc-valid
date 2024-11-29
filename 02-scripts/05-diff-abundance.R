@@ -1,7 +1,7 @@
 # Compare species abundance for biofilm samples and modern plaque/calculus
 library(dplyr)
 library(readr)
-library(stringr)
+library(stringi)
 library(tibble)
 library(tidyr)
 library(phyloseq)
@@ -18,7 +18,7 @@ taxa_table_long <- taxa_table %>%
 
 # convert otu tables to phyloseq object
 byoc_matrix <- taxa_table_long %>%
-  filter(str_detect(sample, "SYN")) %>%
+  filter(stri_detect(sample, regex = "SYN")) %>%
   pivot_wider(names_from = "sample", values_from = "count") %>%
   column_to_rownames(var = "#OTU ID") 
 
@@ -35,7 +35,7 @@ byoc_phyloseq <- phyloseq(byoc_otu, byoc_meta)
 plaque_matrix <- taxa_table_long %>%
   filter(
     sample %in% filter(
-      analysis_metadata, str_detect(Env, "calculus|plaque") # comparative samples and model calculus
+      analysis_metadata, stri_detect(Env, regex = "calculus|plaque") # comparative samples and model calculus
       )$`#SampleID`
     ) %>%
   pivot_wider(names_from = "sample", values_from = "count") %>%
@@ -43,7 +43,7 @@ plaque_matrix <- taxa_table_long %>%
   otu_table(taxa_are_rows = T)
 
 plaque_meta <- analysis_metadata %>%
-  filter(str_detect(Env, "calculus|plaque")) %>%
+  filter(stri_detect(Env, regex = "calculus|plaque")) %>%
   column_to_rownames(var = "#SampleID") %>%
   sample_data()
 
@@ -86,7 +86,7 @@ byoc_logf_full <- as_tibble(byoc_da$res$lfc, rownames = "species") %>%
   ) %>%
   mutate(upper = lfc + se,
          lower = lfc - se,
-         name = str_remove(name, "^Env"),
+         name = stri_replace(name, "", regex = "^Env"),
          abn = case_when(sign(lfc) == -1 ~ "model_calculus",
                          TRUE ~ name)) %>%
   rename(env = name)
@@ -113,7 +113,7 @@ plaque_logf_full <- plaque_logf_change %>%
   ) %>%
   mutate(lower = lfc - se,
          upper = lfc + se,
-         name = str_remove(name, "^Env"),
+         name = stri_replace(name, "", regex = "^Env"),
          abn = case_when(sign(lfc) == -1 ~ "model_calculus",
                          TRUE ~ name)) %>%
   rename(env = name)

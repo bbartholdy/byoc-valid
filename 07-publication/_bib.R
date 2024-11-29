@@ -1,11 +1,11 @@
 library(here)
 library(rbbt)
-library(stringr)
+library(stringi)
 
 file_names <- list.files(here("07-publication"), pattern = ".qmd", full.names = T)
-file_names <- file_names[str_detect(file_names, "_", negate = T)]
+file_names <- file_names[stri_detect(file_names, regex = "_", negate = T)]
 bbtkeys <- bbt_detect_citations(file_names)
-bbtignore <- bbtkeys[str_detect(bbt_detect_citations(file_names), "^fig-|^tbl-")] # ignore table and figure cross-references
+bbtignore <- bbtkeys[stri_detect(bbt_detect_citations(file_names), regex = "^fig-|^tbl-")] # ignore table and figure cross-references
 
 try(
 if(file.exists(here("07-publication/references.bib"))) {
