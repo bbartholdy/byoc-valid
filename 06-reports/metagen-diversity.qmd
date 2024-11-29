@@ -1,9 +1,10 @@
 ---
 title: "PCA and diversity analysis"
-output: html_notebook
 ---
 
-```{r setup, include=FALSE}
+```{r}
+#| label: diversity-setup
+#| include: false
 #library(vegan)
 library(mixOmics)
 library(dplyr)
@@ -17,11 +18,11 @@ load(here("05-results/spca_species.rda"))
 load(here("05-results/spca_species_ext.rda"))
 
 alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
-metadata <- read_tsv(here("01-documentation/metadata.tsv"))
-analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
-experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
+dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
-bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
+bac_properties <- readr::read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 
 treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
 env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
@@ -117,19 +118,14 @@ Shannon index across the course of the experiment.
 <!-- need to combine days into larger groups -->
 
 ```{r}
+#| label: tbl-samples-per-day
+#| tbl-cap: "Number of samples available per day."
 # plot shannon index across samples
 alpha_div %>% 
-  #as_tibble(rownames = "sample") %>%
-  #rename("#SampleID" = sample) %>% 
   left_join(experiment_metadata, by = c("sample" = "#SampleID")) %>% 
   mutate(day = as_factor(day)) %>% 
-  filter(!is.na(day)) %>% 
-  ggplot(aes(x = day, y = shannon, col = day)) +
-    geom_boxplot(outlier.colour = NA) +
-    geom_jitter(width = 0.2) +
-    theme_minimal() +
-    theme(legend.position = "none",
-          panel.grid.major.x = element_blank())
+  filter(!is.na(day)) %>%
+  count(day) 
 ```
 
 Not really enough samples to make any relevant interpretations.
@@ -141,46 +137,23 @@ Days were grouped for increased sample sizes.
 - final = day 24
 
 ```{r}
-experiment_metadata_ext <- experiment_metadata %>%
-  mutate(day_group = case_when(day < 6 ~ "inoc",
-                               day > 6 & day < 24 ~ "treatm",
-                               day == 24 ~ "final")
-         )
-
-# alpha_div %>% 
-#   #as_tibble(rownames = "sample") %>%
-#   #rename("#SampleID" = sample) %>% 
-#   left_join(experiment_metadata_ext, by = c("sample" = "#SampleID")) %>% 
-#   mutate(day = as_factor(day)) %>% 
-#   filter(!is.na(day)) %>% 
-#   ggplot(aes(x = day_group, y = shannon, col = day_group)) +
-#     geom_boxplot(outlier.colour = NA) +
-#     geom_jitter(width = 0.2) +
-#     scale_colour_viridis_d(option = "D") +
-#     theme_minimal() +
-#     theme(legend.position = "none",
-#           panel.grid.major.x = element_blank(),
-#           panel.grid.minor.y = element_blank(),
-#           axis.title.x = element_blank()) +
-#     scale_x_discrete(limits = c("inoc", "treatm", "final"))
-
+#| label: fig-alpha-experiment
+#| fig-cap: "Alpha diversity indices of experimental samples including the grouped categories, inoculation, treatment, and final product."
 alpha_div_long %>% 
-  #as_tibble(rownames = "sample") %>%
-  #rename("#SampleID" = sample) %>% 
-  #left_join(experiment_metadata, by = c("sample" = "#SampleID")) #%>% 
   mutate(day = as_factor(day)) %>% 
   filter(!is.na(day)) %>% 
-  ggplot(aes(x = day_grouped, y = value, col = day_grouped)) +
-    geom_boxplot(outlier.colour = NA) +
-    geom_jitter(width = 0.2) +
+  ggplot(aes(x = day_grouped, y = value)) +
+    geom_boxplot(outlier.colour = NA, col = "darkgrey") +
+    geom_jitter(aes(col = day_grouped), width = 0.2) +
     facet_wrap(~ index, scales = "free_y") +
     scale_colour_viridis_d(option = "D") +
     theme_minimal() +
-    theme(legend.position = "none",
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor.y = element_blank(),
-          axis.title.x = element_blank()) #+
-    #scale_x_discrete(limits = c("inoc", "treatm", "final"))
+    theme(
+      legend.position = "none",
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      axis.title.x = element_blank()
+    )
 
 ```
 
@@ -188,21 +161,21 @@ Slight decrease in Shannon diversity over the course of the experiment.
 
 ### Sample types
 
-Shannon index compared between sample types.
+
 
 ```{r}
+#| label: fig-shannon
+#| fig-cap: "Shannon index compared between sample types."
 alpha_div %>%
-  #as_tibble(rownames = "sample") %>%
-  #rename("#SampleID" = sample) %>% 
   left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>% 
   filter(Env != "sediment", 
          Env != "skin",  
          Env != "stool", 
          Env != "indoor_air") %>%
   remove_missing() %>%
-  ggplot(aes(x = Env, y = simp_unb, col = Env)) +
-    geom_boxplot(outlier.colour = NA) +
-    geom_jitter(width = 0.2) +
+  ggplot(aes(x = Env, y = simp_unb)) +
+    geom_boxplot(outlier.colour = NA, col = "darkgrey") +
+    geom_jitter(aes(col = Env), width = 0.2) +
     theme_minimal() +
     theme(axis.text.x = element_text(hjust = 1, angle = 45),
           legend.position = "none",
