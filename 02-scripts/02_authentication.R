@@ -37,7 +37,7 @@ otu_comb_long <- otu_filtered_table %>%
 
 # SourceTracker -----------------------------------------------------------
 
-sourcetracker2_long <- sourcetracker2_longer()
+sourcetracker2_long <- sourcetracker2_longer(sourcetracker2)
 
 # contributions in problematic samples
 problem_samples <- sourcetracker2_long %>%
