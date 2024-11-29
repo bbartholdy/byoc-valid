@@ -6,11 +6,28 @@
 # Helper objects
 env_controls <- c("indoor_air", "sediment", "stool", "skin") # vector to remove environmental controls
 
-# convert species table to long format
-species_counts_long <- otu_table %>%
+day_order <- dna_experiment_metadata %>%
+  filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`) %>% 
+  mutate(Env = factor(
+    Env, 
+    levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
+    ) 
+  ) %>% 
+  group_by(Env) %>%
+  arrange(day, .by_group = T) %>%
+  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
+  mutate(
+    rm = if_else(`#SampleID` %in% dna_analysis_metadata$`#SampleID`, F, T),
+    col = case_when(rm == T ~ "red", # excluded samples coloured red
+                    rm == F ~ "black"))
+
+
+
+# convert species table to long format for easier wrangling
+species_counts_long <- otu_decontam %>%
   pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count") %>%
-  rename(species = `#OTU ID`) %>%
-  filter(sample %in% dna_analysis_metadata$`#SampleID`)
+  rename(species = `#OTU ID`) #%>%
+  #filter(sample %in% dna_analysis_metadata$`#SampleID`) # does not change data frame size
 
 # collapse species counts into genus counts
 genus_counts_long <- species_counts_long %>%

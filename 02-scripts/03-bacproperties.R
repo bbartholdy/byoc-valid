@@ -34,15 +34,12 @@ bacdive_oxytol_comb <- bacdive_oxytol %>%
   filter(
     species %in% all_species_names,
   ) %>%
-  mutate("Oxygen tolerance" = case_when(
-    `Oxygen tolerance` == "aerobe" | 
-      `Oxygen tolerance` == "obligate aerobe" ~ "aerobe",
-    `Oxygen tolerance` == "aerotolerant" | 
-      `Oxygen tolerance` == "facultative anaerobe" |
-      `Oxygen tolerance` == "microaerophile" |
-      `Oxygen tolerance` == "facultative aerobe" ~ "facultative anaerobe",
-    `Oxygen tolerance` == "anaerobe" |
-      `Oxygen tolerance` == "obligate anaerobe" ~ "anaerobe")) #%>% 
+  mutate("Oxygen tolerance" = case_match(
+    `Oxygen tolerance`,
+    c("aerobe", "obligate aerobe") ~ "aerobe",
+    c("aerotolerant", "facultative anaerobe", "microaerophile", "facultative aerobe") ~ "facultative anaerobe",
+    c("anaerobe", "obligate anaerobe") ~ "anaerobe"
+  ))
 
 # distribution of oxygen tolerance within genera
 

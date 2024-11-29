@@ -28,6 +28,19 @@ byoc_source_labels <- c(
   "model_calculus" = "model calculus"
 )
 
+# set common ggplot theme for loading plots
+loading_theme <-  theme_minimal() +
+    theme(
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.ticks.x.bottom = element_line(linewidth = 1),
+      axis.text.y = element_text(),
+      axis.text.x = element_text(vjust = -0.2),
+      axis.line.x = element_line(),
+      legend.position = "bottom"
+          )
+
 # helper objects to set x-axis limits
 min_byoc_PC1 <- min(byoc_pca_loadings$PC1)
 min_byoc_PC2 <- min(byoc_pca_loadings$PC2)
@@ -82,8 +95,8 @@ div_compar_fig <- alpha_div_long %>%
 byoc_spca_base <- byoc_princomp %>%
   ggplot(aes(x = PC1, y = PC2, col = as_factor(day), shape = Env)) +
   geom_point(size = 4, stroke = 1) +
-  geom_vline(xintercept = 0, size = 0.2) +
-  geom_hline(yintercept = 0, size = 0.2)
+  geom_vline(xintercept = 0, linewidth = 0.2) +
+  geom_hline(yintercept = 0, linewidth = 0.2)
 
 byoc_comp_1 <- byoc_pca_loadings %>%
   arrange(desc(PC1)) %>% 
@@ -124,8 +137,8 @@ compar_spca_base <- compar_princomp %>%
   )) %>% 
   ggplot(aes(x = PC1, y = PC2, col = Study, shape = Env)) +
   geom_point(size = 3) +
-  geom_vline(xintercept = 0, size = 0.2) +
-  geom_hline(yintercept = 0, size = 0.2)
+  geom_vline(xintercept = 0, linewidth = 0.2) +
+  geom_hline(yintercept = 0, linewidth = 0.2)
 
 compar_comp_1 <- compar_pca_loadings %>%
   arrange(desc(PC1)) %>% 
