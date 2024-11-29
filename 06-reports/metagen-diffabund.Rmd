@@ -32,19 +32,22 @@ and plaque reference samples
 ## ANCOM-BC
 
 Differential abundance is calculated using the ANCOM-BC method from the `ANCOMBC`
-R package. P-values adjusted using the false discovery rate (FDR) method. Samples
+R package [@linANCOMBC2020]. P-values adjusted using the false discovery rate (FDR) method. Samples
 grouped by sample type (i.e. saliva, plaque, modern calculus, artificial calculus).
 
-First, differential abundance of experimental samples only, comparing abundance
-between donated saliva, medium, and the final calculus product.
+First, differential abundance of experimental samples were calculated,
+comparing abundance between donated saliva, medium, and the model calculus.
+Then, differential abundance of oral reference samples and model calculus
+was calculated.
 
 ### Across experiment
 
 ```{r}
+exp_logf_full <- byoc_logf_full
 exp_logf_full %>%
   arrange(desc(abs(lfc))) %>%
   slice_head(n = 20) %>%
-  dplyr::select(species, lfc, `Oxygen tolerance`, abs)
+  dplyr::select(species, lfc)#, `Oxygen tolerance`, abs)
 
 # highest absolute log-fold changes
 exp_logf_full %>% 
@@ -104,7 +107,8 @@ head(calc_logf_full)
 Plots of log-fold change between samples
 
 ```{r}
-# Plot of largest absolute log-fold changes
+#| label: fig-log-fold-largest
+#| fig-cap: "Plot of largest absolute log-fold changes."
 calc_logf_full %>%
   group_by(env) %>% 
   arrange(desc(abs(lfc))) %>%
@@ -127,8 +131,11 @@ calc_logf_full %>%
       legend.position = "none",
       axis.title.y = element_blank()
           )
+```
 
-# Top 30 loadings from PC1
+```{r}
+#| label: fig-top30-pc1
+#| fig-cap: "Top 30 loadings from PC1."
 
 calc_logf_full %>%
   filter(species %in% pca_loadings$species[1:20]) %>% 
@@ -143,8 +150,11 @@ calc_logf_full %>%
       legend.position = "none",
       axis.title.y = element_blank()
           )
+```
 
-# Top 30 loadings from PC2
+```{r}
+#| label: fig-top30-pc2
+#| fig-cap: "Top 30 loadings from PC2."
 calc_logf_full %>%
   filter(species %in% arrange(pca_loadings, desc(abs(PC2)))$species[1:20]) %>%
   slice_head(n = 60) %>% # pca_loadings already arranged by PC1
