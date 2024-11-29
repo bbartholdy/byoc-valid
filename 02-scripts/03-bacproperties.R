@@ -1,6 +1,5 @@
 # Bacterial properties
 
-#library(BacDive)
 library(dplyr)
 library(tibble)
 library(stringr)
@@ -9,28 +8,16 @@ library(readr)
 # Upload data -------------------------------------------------------------
 
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
-taxatable <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
+taxatable <- readr::read_tsv("04-analysis/decontam/post-decontam_taxatable.tsv")
 bacdive_oxytol <- readr::read_csv(
   "03-data/2022-12-12_bacdive-oxytol-search.csv",
   skip = 2
 )
-# bacdive_halotol <- readr::read_csv(
-#   "03-data/2022-06-29_bacdive_halotol-search.csv",
-#   skip = 2
-# ) 
-
-# Functions ---------------------------------------------------------------
-
-
 
 
 # Bacterial properties ----------------------------------------------------
 
-# access_credentials <- Sys.getenv(c("BACDIVE_USER", "BACDIVE_PW"))
-# bacdive_token <- open_bacdive(access_credentials[[1]], access_credentials[[2]])
-
 # get list of bacterial species from all samples
-
 all_species_names <- taxatable %>% 
   mutate(`#OTU ID` = str_remove(`#OTU ID`, "\\]"),
          `#OTU ID` = str_remove(`#OTU ID`, "\\[")) %>%
@@ -81,12 +68,16 @@ abs_vector <- c("Streptococcus mitis", "Streptococcus oralis",
                 "Streptococcus mutans")
 
 bac_properties <- sample_oxytol %>%
-  mutate(abs = case_when(species %in% abs_vector ~ TRUE,
-                         TRUE ~ FALSE))
+  mutate(abs = case_when(
+    species %in% abs_vector ~ TRUE,
+    TRUE ~ FALSE
+  ))
 
-write_tsv(as_tibble(all_species_names), "species-list-for-bacdive.txt", col_names = F)
-write_tsv(bac_properties, "01-documentation/species-properties.tsv")
-write_tsv(genus_oxytol, "01-documentation/genus-O2tolerance.tsv")
+# produce a species list to use with the bacdive API (future analysis)
+write_tsv(as_tibble(all_species_names), "04-analysis/bacdive/species-list-for-bacdive.txt", col_names = F)
+
+write_tsv(bac_properties, "04-analysis/bacdive/species-properties.tsv")
+write_tsv(genus_oxytol, "04-analysis/bacdive/genus-O2tolerance.tsv")
 
 # what genera are missing in the bacdive search?
 genus_in_bacdive <- bacdive_oxytol %>%

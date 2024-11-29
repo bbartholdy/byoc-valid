@@ -13,8 +13,8 @@ metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
 analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
 experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
-bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
-otu_table_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv")) 
+bac_properties <- readr::read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
+otu_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
 load(here("05-results/spca_species.rda"))
 
@@ -66,12 +66,12 @@ analysis_colours <- analysis_metadata %>%
 
 # Data preparation
 
-The otu table with contaminants removed is convert to long format and a column for
+The otu table with contaminants removed is converted to long format and a column for
 genus names is created by extracting the first word of the species designation.
 
 ```{r}
 # convert decontaminated taxatable to long format
-otu_table_long <- otu_table_decontam %>%
+otu_table_long <- otu_decontam %>%
   pivot_longer(
     cols = where(is.numeric),
     names_to = "sample",

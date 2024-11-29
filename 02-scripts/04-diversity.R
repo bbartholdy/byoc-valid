@@ -6,7 +6,7 @@ library(here)
 library(purrr)
 library(readr)
 
-otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+otu_table <- read_tsv(here("04-analysis/decontam/post-decontam_taxatable.tsv"))
 metadata <- read_tsv(here("01-documentation/metadata.tsv"))
 analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
 experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
@@ -70,6 +70,7 @@ comp_ext_otu_matrix <- species_otu_matrix %>%
 comp_matrix_genus <- genus_otu_matrix %>%
   subset(rownames(species_otu_matrix) %in% comp_metadata$`#SampleID`)
 
+
 # Alpha diversity ---------------------------------------------------------
 
 
@@ -94,30 +95,8 @@ alpha_div <- lapply(alpha_div_list, as_tibble, rownames = "sample") %>%
     richness = value
   )
 
-
-# alpha_div <- 
-#   as_tibble(
-#     alpha_div_shan, rownames = "sample"
-#     ) %>%
-#   full_join(
-#     as_tibble(alpha_div_inv, rownames = "sample"),
-#     by = "sample"
-#     ) %>%
-#   full_join(
-#     as_tibble(alpha_div_unb, rownames = "sample"),
-#     by = "sample"
-#   ) %>%
-#   full_join(
-#     as_tibble(pilou_even, rownames = "sample"),
-#     by = "sample"
-#   ) %>%
-#   rename(shannon = value.x,
-#          simp_inv = value.y,
-#          simp_unb = value.x.x,
-#          pilou_even = value.y.y)
-  
-
-write_tsv(alpha_div, here("05-results/alpha-diversity.tsv"))
+write_tsv(alpha_div, here("04-analysis/alpha-diversity/alpha-diversity.tsv"))
+write_tsv(alpha_div, here("05-results/alpha-diversity.tsv")) # copy for results dir
 
 
 # Beta diversity ----------------------------------------------------------
@@ -140,7 +119,9 @@ exp_pca_loadings <- spca_byoc$loadings$X %>%
   dplyr::select(species,PC1,PC2) %>%
   arrange(desc(abs(PC1)))
 
+save(spca_byoc, file = here("04-analysis/beta-diversity/spca_byoc.rda"))
 save(spca_byoc, file = here("05-results/spca_byoc.rda"))
+write_tsv(exp_pca_loadings, here("04-analysis/beta-diversity/experiment-pca-loadings.tsv"))
 write_tsv(exp_pca_loadings, here("05-results/experiment-pca-loadings.tsv"))
 
 # Comparative samples
@@ -168,7 +149,9 @@ clr_species_ext_datf <- clr_species_ext_copy %>%
 clr_genus_datf <- clr_genus_copy %>%
   as_tibble(rownames = "sample")
 
+write_tsv(clr_species_datf, "04-analysis/beta-diversity/clr-compar.tsv")
 write_tsv(clr_species_datf, "05-results/clr-compar.tsv")
+write_tsv(clr_species_ext_datf, "04-analysis/beta-diversity/clr-compar-extended.tsv")
 write_tsv(clr_species_ext_datf, "05-results/clr-compar-extended.tsv")
 
 spca_species <- spca(clr_species, ncomp = 10, scale = F)
@@ -193,21 +176,13 @@ pca_loadings_ext <- spca_species_ext$rotation %>%
   dplyr::select(species, PC1, PC2, PC3) %>%
   arrange(desc(abs(PC1)))
 
-# Y <- tibble("#SampleID" = rownames(clr_species)) %>%
-#   left_join(
-#     comp_metadata,
-#     by = "#SampleID"
-#     ) %>%
-#   .$Env
-# species_splsda <- splsda(clr_species, Y)
-# plotIndiv(species_splsda, group = Y, ind.names = F, legend = T)
-# 
-# genus_splsda <- splsda(clr_genus, Y)
-# plotIndiv(genus_splsda, group = Y, ind.names = F, legend = T)
-
+save(spca_species, file = here("04-analysis/beta-diversity/spca_species.rda"))
 save(spca_species, file = here("05-results/spca_species.rda"))
+save(spca_species_ext, file = here("04-analysis/beta-diversity/spca_species_ext.rda"))
 save(spca_species_ext, file = here("05-results/spca_species_ext.rda"))
+write_tsv(pca_loadings, here("04-analysis/beta-diversity/all-pca-loadings.tsv"))
 write_tsv(pca_loadings, here("05-results/all-pca-loadings.tsv"))
+write_tsv(pca_loadings_ext, here("04-analysis/beta-diversity/all-pca-loadings_ext.tsv"))
 write_tsv(pca_loadings_ext, here("05-results/all-pca-loadings_ext.tsv"))
 
 # Bray-Curtis

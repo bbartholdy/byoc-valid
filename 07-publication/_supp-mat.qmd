@@ -1,6 +1,6 @@
 ---
 title: "Supplementary Material: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus"
-author: "B.P.Bartholdy, I.M.Velsko, S.Gur-Arieh, Z.Fagernäs, C.Warinner, A.G.Henry"
+#author: "B.P.Bartholdy, I.M.Velsko, S.Gur-Arieh, Z.Fagernäs, C.Warinner, A.G.Henry" # should use _quarto metadata?
 crossref: 
   #fig-prefix: S
   fig-title: Figure S
@@ -11,6 +11,7 @@ format:
     toc: true
     code-fold: true
     output-file: "supplementary-material.html"
+    df-print: paged
   pdf: 
     toc: true
     output-file: "supplementary-material.pdf"
@@ -48,7 +49,7 @@ knitr::opts_knit$set(root.dir = here())
 # upload ftir data
 
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
+ftir_data <- read_csv(here("05-results/ftir-data.csv"))
 ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 
 # upload dna data
@@ -56,10 +57,13 @@ ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
 dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
 dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
-otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
-bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
-genus_oxytol <- read_tsv(here("01-documentation/genus-O2tolerance.tsv"))
+lib_conc <- read_tsv(here("05-results/SYN_DNA_concentrations.tsv"))
+software <- read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
+#otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
+genus_oxytol <- read_tsv(here("04-analysis/bacdive/genus-O2tolerance.tsv"))
 otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+kraken_otu <- read_tsv(here("04-analysis/OTUfilter_table.tsv"))
 load(here("05-results/spca_byoc.rda"))
 load(here("05-results/spca_species.rda"))
 alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))

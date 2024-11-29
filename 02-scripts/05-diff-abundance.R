@@ -6,27 +6,10 @@ library(tibble)
 library(tidyr)
 library(phyloseq)
 library(ANCOMBC)
-taxa_table <- readr::read_tsv("05-results/post-decontam_taxatable.tsv")
+taxa_table <- readr::read_tsv("04-analysis/decontam/post-decontam_taxatable.tsv")
 analysis_metadata <- readr::read_tsv("01-documentation/analysis-metadata.tsv")
 experiment_metadata <- readr::read_tsv("01-documentation/experiment-metadata.tsv")
-#bac_properties <- read_tsv("01-documentation/species-properties.tsv")
-# function to calculate bias-corrected log-observed abundances
-# from vignette("ANCOMBC")
-
-#' function to calculate bias-corrected log-observed abundances
-#' from `vignette("ANCOMBC")`
-#' 
-#' @param x `ancombc` object.
-bias_correct <- function(x, otu_table) {
-  require(microbiome)
-  samp_frac <- x$samp_frac
-  samp_frac[is.na(samp_frac)] <- 0 # replace NAs with 0
-  log_otu <- log(microbiome::abundances(otu_table) + 1)
-  log_otu_adj <- exp(t(t(log_otu) - samp_frac)) %>% # bias corrected abund
-    as_tibble(rownames = "species")
-  return(log_otu_adj)
-}
-
+source("02-scripts/functions.R")
 
 # Data prep ---------------------------------------------------------------
 
@@ -135,7 +118,9 @@ plaque_logf_full <- plaque_logf_change %>%
                          TRUE ~ name)) %>%
   rename(env = name)
 
+write_tsv(byoc_logf_full, "04-analysis/diff-abund/byoc_logf-full.tsv")
 write_tsv(byoc_logf_full, "05-results/byoc_logf-full.tsv")
+write_tsv(plaque_logf_full, "04-analysis/diff-abund/plaque_logf-full.tsv")
 write_tsv(plaque_logf_full, "05-results/plaque_logf-full.tsv")
 
 

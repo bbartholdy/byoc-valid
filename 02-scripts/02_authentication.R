@@ -13,9 +13,9 @@ source("02-scripts/functions.R")
 metadata <- readr::read_tsv("01-documentation/metadata.tsv")
 lib_sample <- readr::read_tsv("05-results/lib_sample.tsv") %>%
   rename("#OTU ID" = species)
-lib_conc <- readr::read_tsv("01-documentation/SYN_DNA_concentrations.tsv") # library concentrations
+lib_conc <- readr::read_tsv("05-results/SYN_DNA_concentrations.tsv") # library concentrations
 #otu_table <- readr::read_tsv("04-analysis/pre-decontam_sample_taxatable.tsv")
-otu_filtered_table <- readr::read_tsv("04-analysis/decontam/pre-decontam_OTUfiltered-table_from-biom.tsv", skip = 1)
+otu_filtered_table <- readr::read_tsv("04-analysis/qiime/pre-decontam_OTUfiltered-table_from-biom.tsv", skip = 1)
 #comp_taxatable <- readr::read_tsv("04-analysis/pre-decontam_comparative_taxatable.tsv")
 sourcetracker2 <- readr::read_tsv("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt")
 sourcetracker2_stdevs <- readr::read_tsv("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")

@@ -7,18 +7,19 @@ output: html_notebook
 #| label: setup
 #| include: false
 library(here)
+library(readr)
 library(dplyr)
 library(ggplot2)
 library(phyloseq)
 library(microbiome)
 library(ANCOMBC)
-taxatable <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv"))
-analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
-experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+taxatable <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
+experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
-pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
-exp_pca_loadings <- readr::read_tsv(here("05-results/experiment-pca-loadings.tsv"))
-bac_properties <- readr::read_tsv(here("01-documentation/species-properties.tsv"))
+pca_loadings <- read_tsv(here("05-results/all-pca-loadings.tsv"))
+exp_pca_loadings <- read_tsv(here("05-results/experiment-pca-loadings.tsv"))
+bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
 byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
 plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
 ```
