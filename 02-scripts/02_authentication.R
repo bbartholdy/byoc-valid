@@ -74,17 +74,6 @@ iso_database <- load_database(cuperdec_database_ex, target = "oral")
 oral_taxa <- iso_database %>%
   filter(Isolation_Source == TRUE)
 
-#ggsave(here("unknowns_plot1.png"), width = 10, height = 7, units = "in")
-
-# unknown_data_long %>% 
-#   filter(count > 0) %>% 
-#   mutate(oral_source = if_else(taxon %in% oral_taxa$Taxon, "oral", "other")) %>%
-#   #group_by(SampleID) %>%
-#   #mutate(proportion = ) # proportion of taxon count in sample
-#   ggplot(aes(x = SampleID, y = count, fill = oral_source)) +
-#   geom_col(position = "fill") +
-#   theme(axis.text.x = element_text(angle = 90))
-
 
 # filter out samples where the proportion of indoor_air exceeds oral source
 remove_samples1 <- sourcetracker2_long %>% 
@@ -171,12 +160,6 @@ which_contaminants_prev  <- isContaminant(
   neg = decontam_neg,
   threshold = 0.99
 )
-# which_contaminants <- isContaminant(
-#   otu_filtered_matrix, 
-#   #conc = lib_conc_select$`Quantification post-Indexing total`,
-#   neg = decontam_neg,
-#   method = "prevalence"
-#   )
 
 freq_contaminants <- filter(which_contaminants_freq, contaminant == TRUE)
 prev_contaminants <- filter(which_contaminants_prev, contaminant == TRUE)
@@ -217,6 +200,7 @@ write_tsv(all_data_long, "04-analysis/sourcetracker/source-comb_long.tsv")
 write_tsv(analysis_metadata, "01-documentation/analysis-metadata.tsv")
 
 # export decontam results
-write_tsv(neg_controls, "04-analysis/decontam/negative-controls.tsv")
-write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv"))
-write_tsv(as_tibble(true_contaminants), here("04-analysis/list-of-contaminants.txt"), col_names = F)
+write_tsv(neg_controls, here("04-analysis/decontam/negative-controls.tsv"))
+write_tsv(otu_decontam, here("04-analysis/decontam/post-decontam_taxatable.tsv"))
+write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv")) # copy for results dir
+write_tsv(as_tibble(true_contaminants), here("04-analysis/decontam/list-of-contaminants.txt"), col_names = F)

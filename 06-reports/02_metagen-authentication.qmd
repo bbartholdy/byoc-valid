@@ -1,0 +1,183 @@
+---
+title: "Authentication"
+execute: 
+  echo: false
+knitr: 
+  opts_chunk: 
+    message: false
+---
+
+```{r}
+#| label: setup-authentication
+#| include: false
+library(cuperdec)
+library(decontam)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(patchwork)
+library(readr)
+library(here)
+# upload data
+metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+experiment_metadata <- read_tsv("01-documentation/experiment-metadata.tsv")
+analysis_metadata <- read_tsv("01-documentation/analysis-metadata.tsv")
+kraken_taxatab <- read_tsv(here("04-analysis/OTUfilter_table.tsv"))
+sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
+sourcetracker2_stdevs <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions_stds.txt")) 
+otu_decontam <- read_tsv(here("04-analysis/decontam/post-decontam_taxatable.tsv"))
+all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
+source("02-scripts/functions.R")
+source("02-scripts/99_setup-qmd.R")
+sourcetracker2_long <- sourcetracker2_longer()
+# knitr options
+knitr::opts_knit$set(root.dir = here())
+```
+
+
+## Visualisation of sources
+
+```{r}
+day_order <- experiment_metadata %>%
+  mutate(Env = factor(
+    Env, levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
+    ) 
+  ) %>% 
+  group_by(Env) %>%
+  arrange(day, .by_group = T) %>%
+  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
+  mutate(rm = if_else(`#SampleID` %in% analysis_metadata$`#SampleID`, F, T),
+         col = case_when(rm == T ~ "red", # excluded samples coloured red
+                         rm == F ~ "black"))
+```
+
+The samples were organised by day they were sampled then visualised. 
+Plot of estimated contributions of various sources to the artificial
+calculus and artificial saliva samples.
+@fig-oral-sources;A shows the results of SourceTracker2 with assignments to source,
+while @fig-oral-sources;B shows the proportion of bacteria that come from
+an oral vs. non-oral source based on a database of oral bacteria from the **cuperdec** R package.
+
+
+```{r}
+#| label: sourcetracker2-plot-setup
+#| fig-cap: "Estimated proportion of source composition of the abundance-filtered oral biofilm model samples using SourceTracker2. Names of removed samples in red text."
+source_plot <- sourcetracker2_long %>% 
+  ggplot(aes(y = SampleID, x= proportion, fill = source)) +
+    geom_col() +
+    theme_minimal() +
+    scale_y_discrete(limits = day_order$`#SampleID`) +
+    scale_fill_viridis_d(option = "C") +
+    theme(
+      axis.title = element_blank(),
+      axis.text.y = element_blank(),
+      legend.position = "left"
+    )
+
+oral_taxa <- cuperdec_database_ex %>%
+  filter(isolation_source == "oral")
+oral_plot <- all_data_long %>% 
+  filter(count > 0) %>% 
+  mutate(oral_source = if_else(taxon %in% oral_taxa$species, "oral", "other")) %>%
+  ggplot(aes(y = SampleID, x = count, fill = oral_source)) +
+    geom_col(position = "fill") +
+    scale_fill_viridis_d(option = "C") +
+    theme_minimal() +
+    theme(
+      axis.text.y = element_text(colour = day_order$col),
+      axis.title.y = element_blank()
+    ) +
+    scale_y_discrete(limits = day_order$`#SampleID`)
+```
+
+Many of the later medium samples were assigned to the 'Unknown' and 'indoor_air'
+categories. To see whether this was the result of external
+contamination or the presence of oral taxa with an unknown origin (which could be
+due to the taxa matching multiple sources), the taxa from 'Unknown' were compared
+to the oral reference database from the **cuperdec** R package. Only samples with
+a large proportion of oral taxa and a low proportion of indoor_air
+(`indoor_air + Unknown < oral` and `oral > 70%`) were included. Included sample
+names are indicated with black, and removed samples with red.
+
+```{r}
+#| label: fig-oral-sources
+#| fig-cap: "Plot of estimated contributions of (A) various sources to the model calculus and model saliva samples, and (B) grouped into oral and non-oral sources using the cuperdec database for oral samples. Samples are arranged from top to bottom by how late in the experiment they were sampled, with bottom being the earliest samples. Sample names in red indicate samples that were removed from further analysis due to contamination."
+
+source_plot + oral_plot + plot_annotation(tag_levels = "A")
+```
+
+
+## cuperdec
+
+```{r}
+#| label: cuperdec
+taxa_table <- load_taxa_table(kraken_taxatab)
+iso_database <- load_database(cuperdec_database_ex, target = "oral")
+metadata_table <- load_map(metadata,
+                           sample_col = "#SampleID",
+                           source_col = "Env"
+                           )
+
+curves <- calculate_curve(taxa_table, iso_database)
+filter_result <- simple_filter(curves, 60)
+```
+
+```{r}
+#| label: fig-cuperdec-plot
+#| fig-cap: "Cumulative Percent Decay curves representing the level of 'endogenous' content of microbiome samples included in the study."
+plot_cuperdec(curves, metadata_table, filter_result, restrict_x = 250)
+```
+
+## decontam
+
+```{r}
+species_table_long <- otu_decontam %>%
+  pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
+
+byoc_table_long <- species_table_long %>% 
+  filter(stringi::stri_detect(sample, regex = "SYN"),
+         sample %in% analysis_metadata$`#SampleID`,
+         count > 0)
+
+species_summ <- byoc_table_long %>%
+  group_by(sample) %>%
+  count(`#OTU ID`) %>%
+  summarise(count = sum(n))
+
+removed_samples <- metadata %>%
+  anti_join(analysis_metadata) %>%
+  rename(samples = `#SampleID`)
+```
+
+A total of `r nrow(list_of_contaminants)` potential contaminants were removed.
+
+```{r}
+#| label: tbl-removed-samples
+removed_samples %>%
+  left_join(experiment_metadata, by = c("samples" = "#SampleID", "Env")) %>%
+  dplyr::select(samples, Env, day) %>%
+  arrange(day)
+```
+
+After running `isContaminant()` and filtering out (non-oral) potential contaminants,
+the samples contained between
+`r paste(range(species_summ$count), collapse = " and ")`
+species with a mean of
+`r paste(round(mean(species_summ$count), 2))`.
+
+```{r}
+#| label: fig-species-counts
+#| fig-cap: "Species counts after removal of contaminants for biofilm model samples."
+byoc_table_long %>% 
+  group_by(sample) %>%
+  count(`#OTU ID`) %>% 
+  ggplot(aes(y = sample, x = n), fill = viridisLite::magma(1, begin = 0.5)) +
+    geom_col() +
+  theme_minimal() +
+    theme(
+      axis.line.x = element_line(),
+      axis.title.x = element_blank(),
+      panel.grid.major.y = element_blank(),
+      axis.title.y = element_blank())
+```
+
