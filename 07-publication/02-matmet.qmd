@@ -236,7 +236,8 @@ causing clustering in the sPCA.
 
 ### FTIR
 
-```{r ftir-byoc-samples}
+```{r}
+#| label: ftir-byoc-samples
 byoc_ftir <- ftir_metadata %>%
   filter(source == "Artificial")
 ```
@@ -256,10 +257,10 @@ and 400 cm$^{-1}$ wavenumbers.
 
 ```{r}
 #| label: tbl-ftir-byoc
-#| tbl-cap: "Summary of samples used in FTIR analysis, including type of sample, sampling day, number of samples (n), and mean weight in mg."
+#| tbl-cap: "Summary of biofilm samples used in the FTIR analysis, including which day during the experiment the sample was taken, number of samples taken from that day (n), and mean weight in mg."
 knitr::kable(
   ftir_samples_table, digits = 2, 
-  col.names = c("Sample type", "Sampling day", "n", "Weight (mg)")
+  col.names = c("Sampling day", "n", "Weight (mg)")
 )
 ```
 

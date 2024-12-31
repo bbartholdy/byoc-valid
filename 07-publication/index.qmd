@@ -8,6 +8,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(stringi)
+#library(stringr)
 library(patchwork)
 library(forcats)
 library(cowplot)
@@ -19,7 +20,8 @@ dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv")
 dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
 bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 genus_oxytol <- read_tsv(here("04-analysis/bacdive/genus-O2tolerance.tsv"))
-otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
+otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
 load(here("05-results/spca_byoc.rda"))
 load(here("05-results/spca_species.rda"))
@@ -34,10 +36,11 @@ clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
 source(here("02-scripts/99_setup-qmd.R"))
 source(here("02-scripts/99_metagen-figures.R"))
 
-#ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata_NEW.tsv"))
-ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
-ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
+#ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
+ftir_data <- read_csv(here("05-results/ftir_full-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/ftir_grind-data.csv"))
+#ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
 
 source(here("02-scripts/99_tables.R"))
 #source(here("02-scripts/99_figures.R"))
@@ -87,7 +90,7 @@ and Werner Siemens Foundation ("PALEOBIOTECHNOLOGY, funding IMV and CW).
 # Data Availability Statement {-}
 
 Human-filtered DNA sequencing data have been deposited in the ENA database under
-accession PRJEB61886.
+accession [PRJEB61886](https://www.ebi.ac.uk/ena/browser/view/PRJEB61886).
 Analysis scripts and source code for the manuscript and supplementary materials
 are available on GitHub (<https://github.com/bbartholdy/byoc-valid>)
 and archived on 4TU.ResearchData ([10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0](https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0)).

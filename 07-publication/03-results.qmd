@@ -12,7 +12,7 @@ removed_samples <- dna_metadata %>%
 
 # summary of species counts
 byoc_summ <- species_counts_long %>%
-  filter(str_detect(sample, "SYN"),
+  filter(stri_detect(sample, regex = "SYN"),
          count > 0) %>%
   group_by(sample) %>%
   count(species) %>%
@@ -457,6 +457,7 @@ compar_logf_pc2_plot <- compar_logf_pc2 +
 
 compar_logf_pc1_plot / compar_logf_pc2_plot + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
 ```
+
 <!-- you should set up that there are known differences in the species composition of saliva and calculus, so you want to see if your calculus samples are enriched in species that are enriched in natural calculus-->
 
 To investigate which species are enriched in different sample types, and compare
@@ -587,7 +588,7 @@ crystalisation. The steeper slope of enamel samples is consistent with a more
 ordered structure in enamel compared to dental calculus.
 
 
-```{r message=FALSE, warning=FALSE}
+```{r}
 #| label: fig-grind-curve
 #| fig-cap: "Grinding curves of our biofilm and model calculus compared to published trendlines (dashed light grey lines) for archaeological (dotted line) and modern (dashed line) enamel."
 # grind_all_plot + inset_element(grind_calc_plot, left = 0.4, bottom = 0.48, right = 1, top = 1.03) + 
