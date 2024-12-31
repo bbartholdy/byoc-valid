@@ -12,28 +12,11 @@ grind_sample_order <- c( # make sure the grind samples are ordered correctly in 
   "Enamel_2",
   "Enamel_3")
 
-ftir_data_id <- ftir_data %>% 
-  rename(analysis_id = sample) %>% 
-  mutate(
-    sample = stri_extract(analysis_id, regex = "^[A-Z0-9]+.[A-Z0-9]+|[A-Za-z0-9\\-]+"),
-    sample = case_when(
-      stri_detect(analysis_id, fixed = "modern-ref") ~ analysis_id, # re-separate modern ref samples
-      TRUE ~ sample
-    )
-  )
-
-ftir_data <- ftir_metadata %>%
-  separate_longer_delim(analysis_id, delim = ";") %>% 
-  right_join(ftir_data, by = c("analysis_id" = "sample"))
-
 ## Spectra
 
 # day 7
 ftir_day7 <- ftir_data %>%
   filter(
-    #day == 7,
-    #sample_id == "F7.1A6",
-    #sample_id != "F7",
     analysis_id == "F7.1A6_b"
   ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
@@ -44,10 +27,8 @@ ftir_day7 <- ftir_data %>%
 # day 12
 ftir_day12 <- ftir_data %>%
   filter(
-    day == 12,
-    analysis_id != "F7",
-    analysis_id != "F7.1A6_b",
-    analysis_id != "F12.1A5+F12.B1"
+    analysis_id == "F12.1A5+F12.B1_B" |
+      analysis_id == "F12.1D1+F12.1D2"
   ) %>%
   ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
   geom_line() +
@@ -71,9 +52,6 @@ ftir_day16 <- ftir_data %>%
 # day 24 (final product)
 ftir_day24 <- ftir_data %>%
   filter(
-    #day == 24,
-    #is.na(grind),
-    #str_detect(sample, "[_]", negate = T),
     analysis_id == "F24.1A3" |
       analysis_id == "F24.1C2" |
       analysis_id == "F24.1D3"
@@ -85,7 +63,8 @@ ftir_day24 <- ftir_data %>%
 
 calc_compar <- ftir_data %>%
   filter(
-    stri_detect(analysis_id, fixed = "MB11_grind_c") | analysis_id == "F24.1A3" | 
+    analysis_id == "ArchDC_MB11_grind_c" | 
+      analysis_id == "F24.1A3" | 
       analysis_id == "modern-ref_1"
   ) %>%
   mutate(
@@ -144,9 +123,8 @@ grind_calc_plot <- ftir_grind_data %>%
     #legend.position = "none",
     panel.border = element_rect(
       colour = "grey", 
-      fill = "transparent", size = 1),
+      fill = "transparent", linewidth = 1),
     panel.background = element_rect(fill = "white")
   ) +
   #scale_colour_viridis_d(end = 0.4)
   scale_colour_viridis_d()
-

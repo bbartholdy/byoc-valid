@@ -27,7 +27,6 @@ F24.2C3	F24.2C3_b;F24.2C3;F24.2C3+F24.2D3_grind_a;F24.2C3+F24.2D3_grind_b;F24.2C
 F24.2D3	F24.2C3+F24.2D3_grind_a;F24.2C3+F24.2D3_grind_b;F24.2C3+F24.2D3_grind_c;F24.2C3+F24.2D3_grind_d;F24.2C3+F24.2D3_grind_e;F24.2D3_B;F24.2D3	Artificial	N	calculus	2	D3	control	3.77	24
 F7.1A6	F7.1A6_b;F7.1A6	Artificial	N	calculus	1	A6	starch	1.2	7
 F7.2D1	F7.2D1	Artificial	N	calculus	2	D1	control	0.39	7
-F7	F7	Artificial	NA	NA	NA	NA	NA	NA	NA
 modern-ref	modern-ref_1;modern-ref_2	Modern	NA	NA	NA	NA	NA	NA	NA
 F12.2A6	NA	NA	N	calculus	2	A6	starch	0.31	12
 F12.2B6	NA	NA	N	calculus	2	B6	starch	0.09	12

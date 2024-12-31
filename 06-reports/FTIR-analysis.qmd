@@ -1,11 +1,9 @@
 ---
 title: "FTIR analysis"
-always_allow_html: true
-output:
-  #word_document: default
-  html_notebook: default
-  html_document:
-    df_print: paged
+format:
+  #word: default
+  html:
+    df-print: paged
 ---
 
 ## Introduction
@@ -20,25 +18,15 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d())
 library(dplyr)
 library(ggplot2)
 library(patchwork)
-library(stringi)
+library(stringr)
 library(here)
 library(plotly)
 library(readr)
-ftir_data <- read_csv(here("05-results/ftir-data.csv"))
-grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+ftir_data <- read_csv(here("05-results/ftir_full-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/ftir_grind-data.csv"))
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 source(here("02-scripts/functions.R"))
 source(here("02-scripts/99_ftir-figures.R"))
-```
-
-```{r}
-#| label: setup-echo
-#| eval: false
-
-# Loading libraries and data
-ftir_data <- read_csv(here("05-results/ftir-data.csv"))
-grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
-ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 ```
 
 To determine the mineral composition and level of crystallisation of the model
@@ -51,29 +39,35 @@ was calculated using a macro script.
 ## Materials
 
 ```{r}
-#| label: ftir-summ
-knitr::kable(
-  ftir_samples_table, digits = 2, 
-  col.names = c("Sample type", "Sampling day", "n", "Weight (mg)"),
-  caption = "Summary of FTIR samples used in analysis, including weight in mg. Only a portion of the samples were analysed, so the weight is not indicative of the amount of calculus analysed."
-)
+#| label: tbl-ftir-summ
+ftir_metadata |>
+  filter(!is.na(analysis_id)) |> # remove samples that weren't analysed
+  group_by(source, day) |>
+  summarise(
+    n = n(),
+    weight_mg = mean(weight_mg, na.rm = TRUE)
+  ) |>
+  knitr::kable(
+    digits = 2, 
+    col.names = c("Sample type", "Sampling day", "n", "Weight (mg)"),
+    caption = "Summary of FTIR samples used in analysis, including weight in mg. Weight is the weight of the entire sample, and since only a portion of the samples were analysed, weight is not indicative of the amount of calculus analysed."
+  )
 ```
 
-`r sum(n_samples$n)` model biofilm samples from days 7, 16, 20, and 24, were analysed.
+`r nrow(filter(ftir_metadata, !is.na(analysis_id)))` model biofilm samples from days 7, 16, 20, and 24 were analysed.
 Reference samples for comparison included two modern calculus samples and an
 archaeological calculus sample. The archaeological sample was an isolated tooth
 from Middenbeemster, a rural Dutch site from the 19th century. Some samples
 had to be combined to provide enough material for analysis
-(see Table \@ref(tab:comb-data-summary)). Only samples collected
+(see @tbl-ftir-comb). Only samples collected
 on the same day were combined. No grind curves were produced for samples from
 days 7 and 12. These were largely composed of organics and proteins, and did not
 form enough carbonated hydroxtapatite for analysis.
 
 ```{r}
-#| label: comb-data-summary
+#| label: tbl-ftir-comb
 ftir_metadata %>%
-  filter(stri_detect(analysis_id, regex = "\\+")) %>%
-  filter(stri_detect(analysis_id, fixed = "grind", negate = T)) %>% 
+  filter(str_detect(analysis_id, "\\+")) %>%
   #group_by(day) #%>%
   select(sample_id, analysis_id, day) %>%
   #mutate(comb = str_remove(comb, "_grind_a")) %>%
@@ -105,27 +99,22 @@ most.
 
 ## Results
 
-```{r}
-#| label: results-setup
-grind_sample_order <- c(
-  "Archaeological calculus",
-  "Artificial calculus day 16",
-  "Artificial calculus day 20",
-  "Artificial calculus day 24",
-  "Archaeological bone",
-  "Bone-Dentine",
-  "Bone-Dentine_2",
-  "Enamel",
-  "Enamel_2",
-  "Enamel_3")
-```
-
 ### Day 7
 
 ```{r}
-#| label: int-plot-day7
+#| label: fig-day7-interactive
 #| warning: false
-plotly::ggplotly(int_plot_7)
+
+ftir_data %>%
+  filter(
+    analysis_id == "F7.1A6"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+plotly::ggplotly()
 ```
 
 Day 7 spectra have large O--H and amide A absorbance bands in stretching mode around 3400 cm$^{-1}$,
@@ -158,9 +147,18 @@ content of lipids and proteins than inorganic content.
 ### Day 12
 
 ```{r}
-#| label: int-plot-day12
+#| label: fig-day12-interactive
 #| warning: false
-ggplotly(int_plot_12)
+ftir_data %>%
+  filter(
+    analysis_id == "F12.1D1+F12.1D2"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+ggplotly()
 ```
 
 Day 12, amide I and II continue to be the dominant peaks, and a higher ratio
@@ -171,9 +169,19 @@ Three marked CH~3~ and CH$_2$ stretching vibrations at 2960,
 ### Day 16
 
 ```{r}
-#| label: int-plot-day16
+#| label: fig-day16-interactive
 #| warning: false
-ggplotly(int_plot_16)
+
+ftir_data %>%
+  filter(
+    analysis_id == "F16.2B2"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+ggplotly()
 ```
 
 Day 16, the ratio of O--H and amides to PO~4~ has shifted, with
@@ -187,9 +195,19 @@ higher phosphate-to-protein/lipid ratio.
 ### Day 24
 
 ```{r}
-#| label: int-plot-day24
+#| label: fig-day24-interactive
 #| warning: false
-ggplotly(int_plot_24)
+
+ftir_data %>%
+  filter(
+    analysis_id == "F24.1D3"
+    ) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+    geom_line() +
+    theme_classic() +
+    scale_x_reverse()
+
+ggplotly()
 ```
 
 Day 24, large O--H and amide A absorbance bands in stretching mode around 3400 cm$^{-1}$,
@@ -204,13 +222,13 @@ For day 24, although the amide I and II are still present, the main component of
 the samples is the carbonate hydroxyapatite with a strong absorbance band at 1039--1040
 cm$^{-1}$, well-defined PO~4~ doublet at 604/605--564/566 cm$^{-1}$, and carbonate
 bands at 1413--1420 and 1445--1460 cm$^{-1}$. There is little variation between
-the sample spectra  ([@fig-ftir-spectra]D).
+the sample spectra  ([@fig-all-days]D).
 
 
 ## Across sampling days
 
 ```{r}
-#| label: all-days
+#| label: fig-all-days
 #| fig-cap: "Select samples from all sampling days."
 # day 6: F7.1A6
 # day 12: F12.1D1+F12.1D2
@@ -218,16 +236,18 @@ the sample spectra  ([@fig-ftir-spectra]D).
 # day 24: F24.1D3 
 ftir_data %>%
   filter(
-    sample == "F7.1A6" |
-    sample == "F12.1D1+F12.1D2" |
-    sample == "F16.2B2" |
-    sample == "F24.1D3"
+    analysis_id == "F7.1A6" |
+    analysis_id == "F12.1D1+F12.1D2" |
+    analysis_id == "F16.2B2" |
+    analysis_id == "F24.1D3"
     ) %>%
-  mutate(abs = case_when(sample == "F7.1A6" ~ abs + 1.35,
-                         sample == "F12.1D1+F12.1D2" ~ abs + 0.9,
-                         sample == "F16.2B2" ~ abs + 0.45,
-                         TRUE ~ abs)) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+  mutate(abs = case_when(
+    analysis_id == "F7.1A6" ~ abs + 1.35,
+    analysis_id == "F12.1D1+F12.1D2" ~ abs + 0.9,
+    analysis_id == "F16.2B2" ~ abs + 0.45,
+    TRUE ~ abs
+    )) %>%
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
     theme_classic() +
     scale_x_reverse() +
@@ -267,9 +287,10 @@ OH absorbance band at around 3400 cm$^{-1}$, amide I, II, and III peaks at
 #| fig-cap: "Two spectra from a single sample of archaeological calculus with different grinding levels (c and d)."
 ftir_data %>%
   filter(
-    sample == "ArchDC_MB11_grind_c" | sample == "ArchDC_MB11_grind_d"
+    analysis_id == "ArchDC_MB11_grind_c" |
+      analysis_id == "ArchDC_MB11_grind_d"
     ) %>%
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
     theme_classic() +
     scale_x_reverse()
@@ -286,12 +307,15 @@ carbonate (1420, 1458-1450, 875-870 cm$^{-1}$), amide I band (1650 cm$^{-1}$), a
 #| fig-cap: "Spectra from archaeological calculus, modern reference calculus, and artificial calculus are compared. Absorbance was shifted to allow comparison of the three spectra, so the absorbance should be interpreted as relative, not absolute."
 ftir_data %>%
   filter(
-    str_detect(sample, "MB11_grind_c") | sample == "F24.1A3" | 
-      sample == "modern_ref1"
+    str_detect(analysis_id, "MB11_grind_c") |
+      analysis_id == "F24.1A3" |
+      analysis_id == "modern_ref1"
     ) %>%
-  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.45,
-                         TRUE ~ abs)) %>% 
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+  mutate(abs = case_when(
+    analysis_id == "F24.1A3" ~ abs + 0.45,
+    TRUE ~ abs
+    )) %>% 
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
     theme_classic() +
     # scale_x_continuous(
@@ -305,17 +329,18 @@ ftir_data %>%
 
 
 ```{r warning=FALSE}
-#| label: zoom-plot
+#| label: fig-zoom-plot
 #| fig-cap: "Plot of archaeological calculus, modern reference calculus, and artificial calculus, zoomed in on region 1800-400 cm-1."
 ftir_data %>%
   filter(
-    stri_detect(sample, fixed = "MB11_grind_c") | sample == "F24.1A3" | 
-      sample == "modern_ref1",
+    str_detect(analysis_id, "MB11_grind_c") |
+      analysis_id == "F24.1A3" | 
+      analysis_id == "modern_ref1",
     wavenumber < 1800,
     ) %>%
-  mutate(abs = case_when(sample == "F24.1A3" ~ abs + 0.45,
+  mutate(abs = case_when(analysis_id == "F24.1A3" ~ abs + 0.45,
                          TRUE ~ abs)) %>% 
-  ggplot(aes(x = wavenumber, y = abs, col = sample)) +
+  ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
     geom_line() +
     theme_classic() +
     # scale_x_continuous(
@@ -346,53 +371,19 @@ dentin. No appreciable differences between days 16, 20, and 24. The archaeologic
 dental calculus does show a slightly increased slope, although more archaeological
 samples are needed to show if this is consistent in archaeological calculus.
 
-```{r message=FALSE, warning=FALSE}
-#| label: grind-plots
-grind_all_plot <- grind_data %>%
-  mutate(
-    Sample_day = factor(Sample_day, levels = grind_sample_order)) %>%
-  group_by(day, Sample) %>%
-    ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
-    geom_point(size = 2, alpha = 0.6) +
-    geom_smooth(method = "lm", se = F) +
-    theme_minimal() +
-    labs(col = "Sample", shape = "Sample",
-         x = "FWHM of the 1035 peak",
-         y = "Splitting factor")
-
-# isolate calculus samples to see diffs between days and the 'real deal'
-grind_calc_plot <- grind_data %>%
-  filter(Sample == "Artificial calculus" | Sample == "Archaeological calculus") %>%
-  ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
-  geom_point(size = 2, alpha = 0.6) +
-  geom_smooth(method = "lm", se = F) +
-  labs(col = "Sample", shape = "Sample",
-       x = "FWHM of the 1035 peak",
-       y = "Splitting factor") +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = "none",
-    panel.border = element_rect(
-      colour = "grey", 
-      fill = "transparent", size = 1),
-    panel.background = element_rect(fill = "white")
-    ) +
-  scale_colour_viridis_d(end = 0.4)
-
+```{r}
+#| label: fig-grind-plots
+#| fig-cap: "Grinding curves of archaeological and model dental calculus, and enamel. The enamel is derived from published linear equations."
 grind_all_plot
 ```
 
-<!--
-```{r message=FALSE, warning=FALSE}
+
+<!-- ```{r message=FALSE, warning=FALSE}
 #| label: fig-grind-curve-inset
 #| fig-cap: "(A) Grinding curves of multiple materials; and (B) calculus-only materials, including biofilm samples from three days, and an archaeological calclulus sample."
 grind_all_plot + inset_element(grind_calc_plot, left = 0.5, bottom = 0.5, right = 1, top = 1) + 
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
-```
--->
+``` -->
 
 ## Discussion
 
