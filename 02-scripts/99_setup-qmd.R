@@ -10,17 +10,17 @@ day_order <- dna_experiment_metadata %>%
   filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`) %>% 
   mutate(Env = factor(
     Env, 
-    levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
+    levels = c("saliva", "medium", "byoc_calculus") # order by stage of experiment instead of alphabetically
     ) 
   ) %>% 
   group_by(Env) %>%
   arrange(day, .by_group = T) %>%
-  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
+  #filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
   mutate(
     rm = if_else(`#SampleID` %in% dna_analysis_metadata$`#SampleID`, F, T),
     col = case_when(rm == T ~ "red", # excluded samples coloured red
-                    rm == F ~ "black"))
-
+                    rm == F ~ "black")
+  )
 
 
 # convert species table to long format for easier wrangling

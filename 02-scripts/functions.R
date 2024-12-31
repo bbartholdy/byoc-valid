@@ -15,17 +15,6 @@ sourcetracker2_longer <- function(data){
     rename(source = ...1)
 }
 
-ftir_spect_plot <- function(.data, sample_name){
-  .data %>%
-    dplyr::filter(
-      analysis_id == {{ sample_name }}
-    ) %>%
-    ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
-      geom_line() +
-      theme_classic() +
-      scale_x_reverse()
-}
-
 #' function to calculate bias-corrected log-observed abundances
 #' from `vignette("ANCOMBC")`
 #' 
@@ -38,4 +27,30 @@ bias_correct <- function(x, otu_table) {
   log_otu_adj <- exp(t(t(log_otu) - samp_frac)) %>% # bias corrected abund
     as_tibble(rownames = "species")
   return(log_otu_adj)
+}
+
+ftir_spect_plot <- function(.data, sample_name){
+  .data %>%
+    dplyr::filter(
+      analysis_id == {{ sample_name }}
+    ) %>%
+    ggplot(aes(x = wavenumber, y = abs, col = analysis_id)) +
+      geom_line() +
+      theme_classic() +
+      scale_x_reverse()
+}
+
+# clean FTIR spectra
+clean_ftir <- function(x, normalise = FALSE) {
+  x_clean <- x %>%
+    filter(abs != 0) %>%
+    arrange(desc(wavenumber)) # unnecessary - can be reversed in ggplot
+  
+  if(normalise == TRUE){
+    x_norm <- x_clean %>%
+      mutate(abs = abs / max(abs) * 100)
+    return(x_norm)
+  } else {
+    return(x_clean) 
+  }
 }
