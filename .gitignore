@@ -50,7 +50,8 @@ vignettes/*.pdf
 ## PROJECT SPECIFIC ##
 ######################
 
-05-results/ftir/
+03-data/
+#05-results/ftir/
 #04-analysis/
 07-publication/_archive/
 07-publication/_output/
