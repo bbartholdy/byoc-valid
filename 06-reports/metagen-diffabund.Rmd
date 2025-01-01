@@ -14,8 +14,8 @@ library(phyloseq)
 library(microbiome)
 library(ANCOMBC)
 taxatable <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
-analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
-experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
+experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 pca_loadings <- read_tsv(here("05-results/all-pca-loadings.tsv"))
 exp_pca_loadings <- read_tsv(here("05-results/experiment-pca-loadings.tsv"))

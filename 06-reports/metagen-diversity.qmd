@@ -18,14 +18,14 @@ load(here("05-results/spca_species.rda"))
 load(here("05-results/spca_species_ext.rda"))
 
 alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
-dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
-dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
-dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+dna_metadata <- read_tsv(here("01-documentation/dna-metadata.tsv"))
+dna_analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
+dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 bac_properties <- readr::read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 
-treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
-env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
+treatment_colours <- viridisLite::inferno(n = length(unique(dna_experiment_metadata$treatment))) # define pallette and number of colours
+env_colours <- viridisLite::magma(n = length(unique(dna_analysis_metadata$Env))) # define pallette and number of colours
 
 alpha_div_long <- alpha_div %>%
   pivot_longer(cols = where(is.numeric), names_to = "index") %>%
@@ -38,7 +38,7 @@ alpha_div_long <- alpha_div %>%
     day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "final"))
     )
 
-experiment_colours <- experiment_metadata %>%
+experiment_colours <- dna_experiment_metadata %>%
   arrange(desc(day)) %>% 
   mutate(treat_col = case_when(
            treatment == "potato" ~ treatment_colours[1],
@@ -51,7 +51,7 @@ experiment_colours <- experiment_metadata %>%
            Env == "byoc_calculus" ~ env_colours[1],
            Env == "medium" ~ env_colours[8]
          ))
-analysis_colours <- analysis_metadata %>%
+analysis_colours <- dna_analysis_metadata %>%
   mutate(env_col = case_when(
     Env == "saliva" ~ env_colours[5],
     Env == "byoc_calculus" ~ env_colours[1],
@@ -82,7 +82,7 @@ sample per row, and one column per taxon
 Metadata for the included samples are prepared,
 
 ```{r metadata}
-comp_metadata <- analysis_metadata %>%
+comp_metadata <- dna_analysis_metadata %>%
   filter(
     Env != "medium",
     Env != "sediment", 
@@ -95,8 +95,8 @@ comp_metadata <- analysis_metadata %>%
 and for samples from this study only.
 
 ```{r}
-sample_metadata <- experiment_metadata %>%
-  filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
+sample_metadata <- dna_experiment_metadata %>%
+  filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`)
 ```
 
 
@@ -122,7 +122,7 @@ Shannon index across the course of the experiment.
 #| tbl-cap: "Number of samples available per day."
 # plot shannon index across samples
 alpha_div %>% 
-  left_join(experiment_metadata, by = c("sample" = "#SampleID")) %>% 
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID")) %>% 
   mutate(day = as_factor(day)) %>% 
   filter(!is.na(day)) %>%
   count(day) 
@@ -159,15 +159,14 @@ alpha_div_long %>%
 
 Slight decrease in Shannon diversity over the course of the experiment.
 
+
 ### Sample types
-
-
 
 ```{r}
 #| label: fig-shannon
 #| fig-cap: "Shannon index compared between sample types."
 alpha_div %>%
-  left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>% 
+  left_join(dna_analysis_metadata, by = c("sample" = "#SampleID")) %>% 
   filter(Env != "sediment", 
          Env != "skin",  
          Env != "stool", 
@@ -194,7 +193,7 @@ Shannon `vegan::diversity(species_otu_matrix)` and unbiased Simpson
 
 ```{r}
 alpha_div %>%
-  left_join(analysis_metadata, by = c("sample" = "#SampleID")) %>% 
+  left_join(dna_analysis_metadata, by = c("sample" = "#SampleID")) %>% 
   filter(Env != "sediment", 
          Env != "skin",  
          Env != "stool", 
@@ -233,7 +232,7 @@ plot(spca_byoc, type = "l")
 ```{r}
 byoc_princomp <- spca_byoc$x %>%
   as_tibble(rownames = "sample") %>%
-  left_join(experiment_metadata, by = c("sample" = "#SampleID"))
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID"))
 byoc_princomp %>%
   ggplot(
     aes(
@@ -343,7 +342,7 @@ sPCA plots of PC1 on PC2 and PC1 on PC3.
 ```{r}
 spca_compar <- spca_species$x %>%
   as_tibble(rownames = "sample") %>%
-  left_join(metadata, by = c("sample" = "#SampleID"))
+  left_join(dna_metadata, by = c("sample" = "#SampleID"))
 compar_explain_var <- spca_species$prop_expl_var$X
 
 spca_compar %>%
@@ -508,7 +507,7 @@ cim(spca_species, cutoff = 0.5, row.sideColors = row_side_colours$env_col)
 ```{r}
 spca_compar_ext <- spca_species_ext$x %>%
   as_tibble(rownames = "sample") %>%
-  left_join(metadata, by = c("sample" = "#SampleID"))
+  left_join(dna_metadata, by = c("sample" = "#SampleID"))
 compar_ext_explain_var <- spca_species_ext$prop_expl_var$X
 
 spca_compar_ext %>%

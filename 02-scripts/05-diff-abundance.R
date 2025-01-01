@@ -7,8 +7,8 @@ library(tidyr)
 library(phyloseq)
 library(ANCOMBC)
 taxa_table <- readr::read_tsv("04-analysis/decontam/post-decontam_taxatable.tsv")
-analysis_metadata <- readr::read_tsv("01-documentation/analysis-metadata.tsv")
-experiment_metadata <- readr::read_tsv("01-documentation/experiment-metadata.tsv")
+analysis_metadata <- readr::read_tsv("01-documentation/dna-analysis-metadata.tsv")
+experiment_metadata <- readr::read_tsv("01-documentation/dna-experiment-metadata.tsv")
 source("02-scripts/functions.R")
 
 # Data prep ---------------------------------------------------------------

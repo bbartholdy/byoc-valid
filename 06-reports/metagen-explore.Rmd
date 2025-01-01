@@ -9,9 +9,9 @@ library(tidyr)
 library(stringi)
 library(ggplot2)
 library(here)
-metadata <- readr::read_tsv(here("01-documentation/metadata.tsv"))
-analysis_metadata <- readr::read_tsv(here("01-documentation/analysis-metadata.tsv"))
-experiment_metadata <- readr::read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+dna_metadata <- readr::read_tsv(here("01-documentation/dna-metadata.tsv"))
+dna_analysis_metadata <- readr::read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
+dna_experiment_metadata <- readr::read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 bac_properties <- readr::read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 otu_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv"))
@@ -25,8 +25,8 @@ clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
 
 # object to order plots by sampling day
-day_order <- experiment_metadata %>%
-  #filter(`#SampleID` %in% analysis_metadata$`#SampleID`) %>%
+day_order <- dna_experiment_metadata %>%
+  #filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`) %>%
   #filter(str_detect(`#SampleID`, "SYN")) %>% # only include samples from this study
   arrange(desc(day)) %>% # order by sampling day (ascending)
   .$`#SampleID` # isolate sample names
@@ -35,10 +35,10 @@ day_order <- experiment_metadata %>%
 # names(my_pallette2) <- levels(top_abundance_genus$top_genus)
 # my_scale2 <- scale_fill_manual(name = "top_genus", values = my_pallette2)
 
-treatment_colours <- viridisLite::inferno(n = length(unique(experiment_metadata$treatment))) # define pallette and number of colours
-env_colours <- viridisLite::magma(n = length(unique(analysis_metadata$Env))) # define pallette and number of colours
+treatment_colours <- viridisLite::inferno(n = length(unique(dna_experiment_metadata$treatment))) # define pallette and number of colours
+env_colours <- viridisLite::magma(n = length(unique(dna_analysis_metadata$Env))) # define pallette and number of colours
 
-experiment_colours <- experiment_metadata %>%
+experiment_colours <- dna_experiment_metadata %>%
   arrange(desc(day)) %>% 
   mutate(treat_col = case_when(
            treatment == "potato" ~ treatment_colours[1],
@@ -51,7 +51,7 @@ experiment_colours <- experiment_metadata %>%
            Env == "byoc_calculus" ~ env_colours[1],
            Env == "medium" ~ env_colours[8]
          ))
-analysis_colours <- analysis_metadata %>%
+analysis_colours <- dna_analysis_metadata %>%
   mutate(env_col = case_when(
     Env == "saliva" ~ env_colours[5],
     Env == "byoc_calculus" ~ env_colours[1],
@@ -198,7 +198,7 @@ Samples are ordered from left to right by sampling day.
 ```{r}
 #genus_abund_long
 top_genus %>% 
-  filter(sample %in% experiment_metadata$`#SampleID`) %>%
+  filter(sample %in% dna_experiment_metadata$`#SampleID`) %>%
   ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.001))) +
     geom_tile() +
     theme_void() +
@@ -226,7 +226,7 @@ sample.
 
 ```{r}
 top_species %>% 
-  filter(sample %in% experiment_metadata$`#SampleID`) %>%
+  filter(sample %in% dna_experiment_metadata$`#SampleID`) %>%
   ggplot(aes(x = sample, y = species, fill = log(rel_abund + 0.001))) +
     geom_tile() +
     theme_void() +
@@ -248,7 +248,7 @@ top_species %>%
 
 ```{r}
 clr_byoc_long %>% 
-  filter(#sample %in% experiment_metadata$`#SampleID`,
+  filter(#sample %in% dna_experiment_metadata$`#SampleID`,
          str_detect(species, "Streptococcus|Actinomyces|Fusobacterium|Haemo")) %>% # early colonisers
   ggplot(aes(x = sample, y = species, fill = clr_count)) +
     geom_tile() +
@@ -268,7 +268,7 @@ clr_byoc_long %>%
     scale_fill_viridis_c(option = "B")
 
 clr_byoc_long %>% 
-  filter(#sample %in% experiment_metadata$`#SampleID`,
+  filter(#sample %in% dna_experiment_metadata$`#SampleID`,
          str_detect(species, "Fusobacterium|Eubacterium|Treponema|Tannerella|Prevotella")) %>% # Late colonisers
   ggplot(aes(x = sample, y = species, fill = clr_count)) +
     geom_tile() +
@@ -307,7 +307,7 @@ species did not have a match on BacDive.
 
 ```{r}
 species_properties %>% 
-  filter(sample %in% experiment_metadata$`#SampleID`) %>% 
+  filter(sample %in% dna_experiment_metadata$`#SampleID`) %>% 
   ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
     geom_col() +
     theme_minimal() +
@@ -346,7 +346,7 @@ species_properties %>%
 ```
 
 ```{r}
-experiment_metadata %>%
+dna_experiment_metadata %>%
   dplyr::select(`#SampleID`, treatment)
 ```
 
@@ -364,13 +364,13 @@ samples. Top 30 taxa (relative abundance) were plotted.
 
 ```{r}
 genus_abund_long %>%
-  filter(sample %in% filter(analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(dna_analysis_metadata, str_detect(Env, "calculus|plaque"))$`#SampleID`) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(genus) %>%
   slice_head(n = 30) %>% # top 30 species across all samples
   left_join(species_abund_long, by = "genus") %>% # recombine with samples
-  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
+  filter(sample %in% filter(dna_analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
   ggplot(aes(x = sample, y = genus, fill = log(rel_abund + 0.0001))) +
     geom_tile() +
     theme_void() +
@@ -399,13 +399,13 @@ Relative abundance
 ```{r}
 # relative abundance
 species_abund_long %>%
-  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(dna_analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
   ungroup() %>%
   arrange(desc(rel_abund)) %>%
   distinct(species) %>%
   slice_head(n = 30) %>% # top 30 species across all samples
   left_join(species_abund_long, by = "species") %>% # recombine with samples
-  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
+  filter(sample %in% filter(dna_analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% #need to filter out samples again
   ggplot(aes(x = sample, y = species, fill = log(rel_abund + 0.001))) +
     geom_tile() +
     theme_void() +
@@ -500,7 +500,7 @@ oral reference samples.
 
 ```{r}
 species_properties %>% 
-  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(dna_analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
   #mutate(`Oxygen tolerance` = forcats::fct_explicit_na(`Oxygen tolerance`)) %>%
   ggplot(aes(y = sample, x = rel_abund, fill = `Oxygen tolerance`)) +
     geom_col() +
@@ -527,7 +527,7 @@ oxygen tolerance is unknown (`NA`).
 
 ```{r}
 species_properties %>% 
-  filter(sample %in% filter(analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
+  filter(sample %in% filter(dna_analysis_metadata, stri_detect(Env, regex = "calculus|plaque"))$`#SampleID`) %>% 
   ggplot(aes(y = sample, x = rel_abund, fill = abs)) +
     geom_col() +
     theme_minimal() +

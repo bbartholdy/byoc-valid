@@ -43,25 +43,26 @@ library(stringi)
 library(ggplot2)
 library(plotly)
 library(cuperdec)
+library(patchwork)
+library(mixOmics)
 knitr::opts_knit$set(root.dir = here())
-#knitr::opts_chunk$set(fig.path = "figures/supp-")
 
 # upload ftir data
 
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_data <- read_csv(here("05-results/ftir-data.csv"))
-ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
+ftir_data <- read_csv(here("05-results/ftir_full-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/ftir_grind-data.csv"))
 
 # upload dna data
 
-dna_metadata <- read_tsv(here("01-documentation/metadata.tsv"))
-dna_analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
-dna_experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv"))
+dna_metadata <- read_tsv(here("01-documentation/dna-metadata.tsv"))
+dna_analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
+dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv"))
 lib_conc <- read_tsv(here("05-results/SYN_DNA_concentrations.tsv"))
 software <- read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
-#otu_table <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 genus_oxytol <- read_tsv(here("04-analysis/bacdive/genus-O2tolerance.tsv"))
+list_of_contaminants <- read_tsv(here("04-analysis/decontam/list-of-contaminants.txt"), col_names = F)
 otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 kraken_otu <- read_tsv(here("04-analysis/OTUfilter_table.tsv"))
 load(here("05-results/spca_byoc.rda"))

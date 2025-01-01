@@ -7,7 +7,7 @@ library(readr)
 
 # Upload data -------------------------------------------------------------
 
-metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+metadata <- readr::read_tsv("01-documentation/dna-metadata.tsv")
 taxatable <- readr::read_tsv("04-analysis/decontam/post-decontam_taxatable.tsv")
 bacdive_oxytol <- readr::read_csv(
   "03-data/2022-12-12_bacdive-oxytol-search.csv",

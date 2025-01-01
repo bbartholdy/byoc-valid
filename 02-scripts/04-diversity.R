@@ -7,9 +7,9 @@ library(purrr)
 library(readr)
 
 otu_table <- read_tsv(here("04-analysis/decontam/post-decontam_taxatable.tsv"))
-metadata <- read_tsv(here("01-documentation/metadata.tsv"))
-analysis_metadata <- read_tsv(here("01-documentation/analysis-metadata.tsv"))
-experiment_metadata <- read_tsv(here("01-documentation/experiment-metadata.tsv")) %>%
+metadata <- read_tsv(here("01-documentation/dna-metadata.tsv"))
+analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
+experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 
 

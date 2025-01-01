@@ -10,7 +10,7 @@ library(tibble)
 source("02-scripts/functions.R")
 
 # upload data
-metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+metadata <- readr::read_tsv("01-documentation/dna-metadata.tsv")
 lib_sample <- readr::read_tsv("05-results/lib_sample.tsv") %>%
   rename("#OTU ID" = species)
 lib_conc <- readr::read_tsv("05-results/SYN_DNA_concentrations.tsv") # library concentrations

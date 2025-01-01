@@ -5,7 +5,7 @@ library(tidyr)
 # Data upload -------------------------------------------------------------
 
 kraken_otu_long <- readr::read_csv("03-data/kraken-OTU_long.csv")
-metadata <- readr::read_tsv("01-documentation/metadata.tsv")
+metadata <- readr::read_tsv("01-documentation/dna-metadata.tsv")
 
 # isolate library
 
