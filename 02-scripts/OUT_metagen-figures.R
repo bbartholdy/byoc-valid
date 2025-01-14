@@ -51,6 +51,34 @@ min_comp_PC2 <- min(compar_pca_loadings$PC2)
 max_comp_PC1 <- max(compar_pca_loadings$PC1)
 max_comp_PC2 <- max(compar_pca_loadings$PC2)
 
+# colours for plots
+treatment_colours <- viridisLite::inferno(n = length(unique(dna_experiment_metadata$treatment))) # define pallette and number of colours
+env_colours <- viridisLite::magma(n = length(unique(dna_analysis_metadata$Env))) # define pallette and number of colours
+
+experiment_colours <- dna_experiment_metadata %>%
+  arrange(desc(day)) %>% 
+  mutate(treat_col = case_when(
+           treatment == "potato" ~ treatment_colours[1],
+           treatment == "wheat" ~ treatment_colours[2],
+           treatment == "mix" ~ treatment_colours[3],
+           treatment == "control" ~ treatment_colours[4],
+           is.na(treatment) ~ "grey"),
+         env_col = case_when(
+           Env == "saliva" ~ env_colours[5],
+           Env == "byoc_calculus" ~ env_colours[1],
+           Env == "medium" ~ env_colours[8]
+         ))
+analysis_colours <- dna_analysis_metadata %>%
+  mutate(env_col = case_when(
+    Env == "saliva" ~ env_colours[5],
+    Env == "byoc_calculus" ~ env_colours[1],
+    Env == "medium" ~ env_colours[8],
+    Env == "buccal_mucosa" ~ env_colours[6],
+    Env == "subgingival_plaque" ~ env_colours[2],
+    Env == "supragingival_plaque" ~ env_colours[3],
+    Env == "modern_calculus" ~ env_colours[4]
+         ))
+
 ## Alpha-diversity
 
 # facet labels

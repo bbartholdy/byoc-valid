@@ -1,6 +1,6 @@
 library(readr)
 library(dplyr)
-library(stringi)
+library(stringr)
 library(here)
 source("02-scripts/functions.R")
 
@@ -34,15 +34,16 @@ ftir_analysis_metadata <- analysis_id %>%
   ) |>
   ungroup() |>
   distinct(sample_id, .keep_all = T) |>
-  select(!c(value, analysis)) |>
-  mutate(source = case_when(
-      stri_detect(analysis_id, fixed = "F") ~ "Artificial", 
-      stri_detect(analysis_id, fixed = "Arch") ~ "Archaeological",
-      stri_detect(analysis_id, fixed = "modern") ~ "Modern")
-  )
+  select(!c(value, analysis))
 
 ftir_metadata <- ftir_analysis_metadata |>
-  full_join(ftir_sample_metadata, by = c("sample_id" = "tube"))
+  full_join(ftir_sample_metadata, by = c("sample_id" = "tube")) |>
+  mutate(source = case_when(
+      str_detect(sample_id, "F") ~ "Artificial", 
+      str_detect(sample_id, "Arch") ~ "Archaeological",
+      str_detect(sample_id, "modern") ~ "Modern"),
+      sample = "dental_calculus"
+  )
 
 write_tsv(ftir_metadata, "01-documentation/ftir-metadata.tsv")
 
