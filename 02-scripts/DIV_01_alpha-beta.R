@@ -98,7 +98,7 @@ alpha_div <- lapply(alpha_div_list, as_tibble, rownames = "sample") %>%
   )
 
 write_tsv(alpha_div, here("04-analysis/alpha-diversity/alpha-diversity.tsv"))
-file.symlink("04-analysis/alpha-diversity/alpha-diversity.tsv", "05-results/metagenomics/alpha-diversity.tsv")
+file.symlink(here("04-analysis/alpha-diversity/alpha-diversity.tsv"), here("05-results/metagenomics/alpha-diversity.tsv"))
 
 
 # Beta diversity ----------------------------------------------------------
@@ -121,6 +121,7 @@ exp_pca_loadings <- spca_byoc$loadings$X %>%
   dplyr::select(species,PC1,PC2) %>%
   arrange(desc(abs(PC1)))
 
+write_tsv(clr_byoc_datf, here("04-analysis/beta-diversity/clr-byoc.tsv"))
 save(spca_byoc, file = here("04-analysis/beta-diversity/spca_byoc.rda"))
 file.symlink(here("04-analysis/beta-diversity/spca_byoc.rda"), here("05-results/metagenomics/spca_byoc.rda"))
 write_tsv(exp_pca_loadings, here("04-analysis/beta-diversity/experiment-pca-loadings.tsv"))

@@ -13,11 +13,11 @@ library(forcats)
 library(ggplot2)
 library(here)
 
-load(here("05-results/spca_byoc.rda"))
-load(here("05-results/spca_species.rda"))
-load(here("05-results/spca_species_ext.rda"))
+load(here("05-results/metagenomics/spca_byoc.rda"))
+load(here("05-results/metagenomics/spca_species.rda"))
+load(here("04-analysis/beta-diversity/spca_species_ext.rda"))
 
-alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
+alpha_div <- read_tsv(here("05-results/metagenomics/alpha-diversity.tsv"))
 dna_metadata <- read_tsv(here("01-documentation/dna-metadata.tsv"))
 dna_analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
 dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
