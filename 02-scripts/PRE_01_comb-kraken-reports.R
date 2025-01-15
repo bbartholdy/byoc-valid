@@ -5,7 +5,7 @@ library(here)
 
 # Upload data -------------------------------------------------------------
 
-metadata <- readr::read_tsv("01-documentation/dna-metadata.tsv")
+metadata <- readr::read_tsv(here("01-documentation/dna-metadata.tsv"))
 
 # Upload all kraken reports
 

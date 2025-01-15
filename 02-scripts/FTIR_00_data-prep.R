@@ -65,7 +65,7 @@ ftir_data_list_cleaned <- lapply(ftir_data_list, clean_ftir)
 ftir_data <- do.call(bind_rows, ftir_data_list_cleaned)
 
 write_csv(ftir_data, "04-analysis/FTIR/ftir_full-data.csv")
-file.symlink("04-analysis/FTIR/ftir_full-data.csv", "05-results/FTIR/ftir_full-data.csv")
+file.symlink(here("04-analysis/FTIR/ftir_full-data.csv"), here("05-results/FTIR/ftir_full-data.csv"))
 
 
 # Prepare grind data -----------------------------------------------------
@@ -92,4 +92,4 @@ grind_data <- grind_data_raw %>%
   )
 
 write_csv(grind_data, "04-analysis/FTIR/ftir_grind-data.csv")
-file.symlink("04-analysis/FTIR/ftir_grind-data.csv", "05-results/FTIR/ftir_grind-data.csv")
+file.symlink(here("04-analysis/FTIR/ftir_grind-data.csv"), here("05-results/FTIR/ftir_grind-data.csv"))

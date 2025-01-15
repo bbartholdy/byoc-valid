@@ -119,9 +119,6 @@ plaque_logf_full <- plaque_logf_change %>%
   rename(env = name)
 
 write_tsv(byoc_logf_full, "04-analysis/diff-abund/byoc_logf-full.tsv")
-file.symlink("04-analysis/diff-abund/byoc_logf-full.tsv", "05-results/metagenomics/byoc_logf-full.tsv")
+file.symlink(here("04-analysis/diff-abund/byoc_logf-full.tsv"), here("05-results/metagenomics/byoc_logf-full.tsv"))
 write_tsv(plaque_logf_full, "04-analysis/diff-abund/plaque_logf-full.tsv")
-file.symlink("04-analysis/diff-abund/plaque_logf-full.tsv", "05-results/metagenomics/plaque_logf-full.tsv")
-
-
-
+file.symlink(here("04-analysis/diff-abund/plaque_logf-full.tsv"), here("05-results/metagenomics/plaque_logf-full.tsv"))

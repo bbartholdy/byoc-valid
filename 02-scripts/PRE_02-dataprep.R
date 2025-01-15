@@ -63,5 +63,4 @@ st_map_nosedi <- st_map_plaque_comb %>%
   write_tsv(here("04-analysis/sourcetracker/ST_no-sedi.txt"))
 
 write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
-file.symlink("04-analysis/lib_sample.tsv", "05-results/metagenomics/lib_sample.tsv")
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))

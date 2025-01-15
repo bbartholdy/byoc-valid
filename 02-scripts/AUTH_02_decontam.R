@@ -202,7 +202,7 @@ write_tsv(analysis_metadata, "01-documentation/dna-analysis-metadata.tsv")
 # export decontam results
 write_tsv(neg_controls, here("04-analysis/decontam/negative-controls.tsv"))
 write_tsv(otu_decontam, here("04-analysis/decontam/post-decontam_taxatable.tsv"))
-file.symlink("04-analysis/decontam/post-decontam_taxatable.tsv", "05-results/metagenomics/post-decontam_taxatable.tsv")
+file.symlink(here("04-analysis/decontam/post-decontam_taxatable.tsv"), here("05-results/metagenomics/post-decontam_taxatable.tsv"))
 #write_tsv(otu_decontam, here("05-results/post-decontam_taxatable.tsv")) # copy for results dir
 write_tsv(as_tibble(true_contaminants), here("04-analysis/decontam/list-of-contaminants.txt"), col_names = F)
-file.symlink("04-analysis/decontam/list-of-contaminants.txt", "05-results/metagenomics/list-of-contaminants.txt")
+file.symlink(here("04-analysis/decontam/list-of-contaminants.txt"), here("05-results/metagenomics/list-of-contaminants.txt"))

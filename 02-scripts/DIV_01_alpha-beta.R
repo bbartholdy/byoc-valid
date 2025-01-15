@@ -122,9 +122,9 @@ exp_pca_loadings <- spca_byoc$loadings$X %>%
   arrange(desc(abs(PC1)))
 
 save(spca_byoc, file = here("04-analysis/beta-diversity/spca_byoc.rda"))
-file.symlink("04-analysis/beta-diversity/spca_byoc.rda", "05-results/metagenomics/spca_byoc.rda")
+file.symlink(here("04-analysis/beta-diversity/spca_byoc.rda"), here("05-results/metagenomics/spca_byoc.rda"))
 write_tsv(exp_pca_loadings, here("04-analysis/beta-diversity/experiment-pca-loadings.tsv"))
-file.symlink("04-analysis/beta-diversity/experiment-pca-loadings.tsv", "05-results/metagenomics/experiment-pca-loadings.tsv")
+file.symlink(here("04-analysis/beta-diversity/experiment-pca-loadings.tsv"), here("05-results/metagenomics/experiment-pca-loadings.tsv"))
 
 # Comparative samples
 
@@ -152,7 +152,7 @@ clr_genus_datf <- clr_genus_copy %>%
   as_tibble(rownames = "sample")
 
 write_tsv(clr_species_datf, "04-analysis/beta-diversity/clr-compar.tsv")
-file.symlink("04-analysis/beta-diversity/clr-compar.tsv", "05-results/metagenomics/clr-compar.tsv")
+file.symlink(here("04-analysis/beta-diversity/clr-compar.tsv"), here("05-results/metagenomics/clr-compar.tsv"))
 write_tsv(clr_species_ext_datf, "04-analysis/beta-diversity/clr-compar-extended.tsv")
 
 spca_species <- spca(clr_species, ncomp = 10, scale = F)
@@ -178,10 +178,10 @@ pca_loadings_ext <- spca_species_ext$rotation %>%
   arrange(desc(abs(PC1)))
 
 save(spca_species, file = here("04-analysis/beta-diversity/spca_species.rda"))
-file.symlink("04-analysis/beta-diversity/spca_species.rda", "05-results/metagenomics/spca_species.rda")
+file.symlink(here("04-analysis/beta-diversity/spca_species.rda"), here("05-results/metagenomics/spca_species.rda"))
 save(spca_species_ext, file = here("04-analysis/beta-diversity/spca_species_ext.rda"))
 write_tsv(pca_loadings, here("04-analysis/beta-diversity/all-pca-loadings.tsv"))
-file.symlink("04-analysis/beta-diversity/all-pca-loadings.tsv", "05-results/metagenomics/all-pca-loadings.tsv")
+file.symlink(here("04-analysis/beta-diversity/all-pca-loadings.tsv"), here("05-results/metagenomics/all-pca-loadings.tsv"))
 write_tsv(pca_loadings_ext, here("04-analysis/beta-diversity/all-pca-loadings_ext.tsv"))
 
 # Bray-Curtis
