@@ -79,9 +79,43 @@ clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
 pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
 
 source(here("02-scripts/functions.R"))
-source(here("02-scripts/99_setup-qmd.R"))
-source(here("02-scripts/99_ftir-figures.R"))
-source(here("02-scripts/99_metagen-figures.R"))
+source(here("02-scripts/OUT_setup-qmd.R"))
+source(here("02-scripts/OUT_ftir-figures.R"))
+source(here("02-scripts/OUT_metagen-figures.R"))
+```
+
+```{r}
+#| label: setup-2
+#| include: false
+# analysis results
+
+oral_taxa <- cuperdec_database_ex %>%
+  filter(isolation_source == "oral")
+otu_table <- read_tsv(here("04-analysis/decontam/post-decontam_taxatable.tsv"))
+clr_byoc <- read_tsv(here("05-results/clr-byoc.tsv"))
+clr_compar <- read_tsv(here("05-results/clr-compar.tsv"))
+```
+
+```{r}
+#| label: extra-setup-computations
+
+# eventually all computations should be in scripts or .qmd reports
+
+# helper object to organise byoc samples by day and whether or not they were removed during authentication
+day_order <- dna_experiment_metadata %>%
+  filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`) %>% 
+  mutate(Env = factor(
+    Env, 
+    levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
+    ) 
+  ) %>% 
+  group_by(Env) %>%
+  arrange(day, .by_group = T) %>%
+  filter(`#SampleID` %in% colnames(sourcetracker2)) %>%
+  mutate(
+    rm = if_else(`#SampleID` %in% dna_analysis_metadata$`#SampleID`, F, T),
+    col = case_when(rm == T ~ "red", # excluded samples coloured red
+                    rm == F ~ "black"))
 
 ```
 
@@ -166,7 +200,13 @@ knitr::kable(lib_conc)
 
 Processing of the raw DNA reads was conducted using the
 `r paste(filter(software, stri_detect(software, fixed = "eager")))`
-pipeline [@yatesEAGER2020].
+pipeline [@yatesEAGER2020], run on the [ALICE HPC cluster](https://pubappslu.atlassian.net/wiki/spaces/HPCWIKI/overview?homepageId=10748192) in Leiden .
+
+Separate batch scripts were created for artificial samples (*02-scripts/PRE_byoc-kraken.slurm*);
+saliva, plaque, stool, and sediment samples (*01-documentation/source_samples_key.csv*, *02-scripts/PRE_source-kraken.slurm*);
+indoor air and buccal mucosa samples (*02-scripts/PRE_indoor-mucosa-kraken.slurm*);
+and *in vitro* biofilm samples from Edlund et al. [-@edlundUncoveringComplex2018] (*02-scripts/PRE_vitro-biofilms-kraken.slurm*).
+
 Adapter removal and read merging was performed using
 `r paste(filter(software, stri_detect(software, fixed = "adapterremoval", opts_fixed = list("case_insensitive" = TRUE))))`
 [@AdapterRemovalv2]. Merged reads were mapped to the human reference genome,
@@ -180,11 +220,11 @@ Metagenomic classification was conducted in
 `r paste(filter(software, stri_detect(software, fixed = "kraken", opts_fixed = list("case_insensitive" = TRUE))))`
 using the Standard database (https://benlangmead.github.io/aws-indexes/k2).
 
-Kraken output reports were combined and converted to OTU tables, and only
+Kraken output reports from the EAGER output were combined and converted to OTU tables, and only
 species-level assignments were selected for downstream analysis
-[02-scripts/00-comb-kraken-reports.R](02-scripts/00-comb-kraken-reports.R).
+(*02-scripts/PRE_01_comb-kraken-reports.R*).
 The OTU tables were further filtered by removing species with relative abundance
-lower than 0.001%.
+lower than 0.001% (*02-scripts/PRE_02-dataprep.R*).
 
 ### Authentication
 
@@ -194,16 +234,15 @@ SourceTracker2 [@knightsSourceTracker2011] was used to estimate source compositi
 of the oral biofilm model samples using a Bayesian framework. Samples were compared
 with oral and environmental controls to detect potential external contamination.
 
-{{< include ../02-scripts/02_authentication-ST2.md >}}
+{{< include ../02-scripts/AUTH_01_ST2.md >}}
+
+*02-scripts/AUT_02_decontam.R*
 
 Plots were created of estimated contributions of various sources to the saliva,
 model calculus and medium samples. Samples are arranged from left to right by how
 late in the experiment they were sampled, with left being the earliest samples
 (@fig-sourcetracker2). The output from SourceTracker2 was compared to a dataset
 of known oral species (@fig-oral-sources).
-
-
-{{< embed ../02-scripts/02_metagen-authentication.qmd#fig-sourcetracker2 >}}
 
 Many of the later medium samples were assigned to the 'Unknown' and 'indoor_air'
 categories. To see whether this was the result of external
@@ -213,7 +252,7 @@ to the oral reference database from the **cuperdec** R package. Only samples wit
 a large proportion of oral taxa and a low proportion of indoor_air
 (`indoor_air + Unknown < oral` and `oral > 70%`) were included.
 
-{{< embed ../02-scripts/02_metagen-authentication.qmd#fig-oral-sources >}}
+{{< embed ../06-reports/metagen-authentication.qmd#fig-oral-sources >}}
 
 A large proportion of the species assigned to the various sources are known to
 be oral taxa. The samples do also seem to contain some external contamination.
@@ -229,17 +268,16 @@ large proportion of species from potential contaminants (indoor air) and of
 unknown origin. Potential contaminants were compared to a database of oral
 bacteria to see the proportion of known oral species were present in the samples.
 Many of the species assigned to `indoor_air` are known oral species
-(Figure \@ref(fig:st-plot)).
+(@fig-oral-sources).
 
 
 #### decontam
 
 Potential contaminants were identified using the frequency and prevalence method
-in the **decontam** v`r packageVersion("decontam")` [@R-decontam] R package.
-[02-scripts/02-authentication.R](../02-scripts/02-authentication.R). Samples
+in the **decontam** v`r packageVersion("decontam")` [@R-decontam] R package. Samples
 from *indoor_air*, *skin*, and *sediment* were used as negative controls for
 the prevalence method with a probability threshold of 0.01. 
-[DNA concentrations](../01-documentation/SYN_DNA_concentrations.tsv) were used
+DNA concentrations (*04-documentation/SYN_DNA_concentrations.tsv*) were used
 for the 'frequency' method with a probability threshold of 0.99
 and negative controls.
 
@@ -249,12 +287,9 @@ Putative contaminants were filtered out of the
 See [06-reports/metagen-authentication.Rmd](../06-reports/metagen-authentication.Rmd)
 for more details.
 
+See *06-reports/metagen-authentication.qmd* for more details.
 
 ```{r}
-# replaced by species_table_long in 99_setup-qmd.R
-# species_table_long <- otu_decontam %>%
-#   pivot_longer(cols = where(is.numeric), names_to = "sample", values_to = "count")
-
 byoc_counts_long <- species_counts_long %>% 
   filter(
     stri_detect(sample, fixed = "SYN"),
@@ -274,7 +309,7 @@ the samples contained between
 species with a mean of
 `r paste(round(mean(byoc_species_summ$count), 2))` (@fig-species-counts).
 
-{{< embed ../02-scripts/02_metagen-authentication.qmd#fig-species-counts >}}
+{{< embed ../06-reports/metagen-authentication.qmd#fig-species-counts >}}
 
 
 ### Community composition
@@ -282,6 +317,8 @@ species with a mean of
 Genus- and species-level OTU tables were prepared from the decontaminated OTU
 table, and relative abundance of species in a sample was calculated as recommended
 for compositional data [@gloorMicrobiomeDatasets2017].
+
+*02-scripts/DIV_01_alpha-beta.R*
 
 ```{r}
 #| label: species-profiles-setup

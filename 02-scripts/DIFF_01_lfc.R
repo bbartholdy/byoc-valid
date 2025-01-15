@@ -93,8 +93,8 @@ byoc_logf_full <- as_tibble(byoc_da$res$lfc, rownames = "species") %>%
 
 
 # table with log-fold change statistics between artificial calculus and others
-# negative lfc means higher abundance in artificial calculus
-# positive lfc means lower abundance in art calculus
+  # negative lfc means higher abundance in artificial calculus
+  # positive lfc means lower abundance in art calculus
 plaque_logf_change <- as_tibble(plaque_da$res$lfc, rownames = "species") #%>%
 plaque_logf_se <- as_tibble(plaque_da$res$se, rownames = "species") #%>%
 plaque_logf_q <- as_tibble(plaque_da$res$q_val, rownames = "species")
@@ -119,9 +119,9 @@ plaque_logf_full <- plaque_logf_change %>%
   rename(env = name)
 
 write_tsv(byoc_logf_full, "04-analysis/diff-abund/byoc_logf-full.tsv")
-write_tsv(byoc_logf_full, "05-results/byoc_logf-full.tsv")
+file.symlink("04-analysis/diff-abund/byoc_logf-full.tsv", "05-results/metagenomics/byoc_logf-full.tsv")
 write_tsv(plaque_logf_full, "04-analysis/diff-abund/plaque_logf-full.tsv")
-write_tsv(plaque_logf_full, "05-results/plaque_logf-full.tsv")
+file.symlink("04-analysis/diff-abund/plaque_logf-full.tsv", "05-results/metagenomics/plaque_logf-full.tsv")
 
 
 

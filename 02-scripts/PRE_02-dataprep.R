@@ -4,7 +4,7 @@ library(tidyr)
 
 # Data upload -------------------------------------------------------------
 
-kraken_otu_long <- readr::read_csv("03-data/kraken-OTU_long.csv")
+kraken_otu_long <- readr::read_csv("04-analysis/kraken/kraken-OTU_long.csv")
 metadata <- readr::read_tsv("01-documentation/dna-metadata.tsv")
 
 # isolate library
@@ -63,5 +63,5 @@ st_map_nosedi <- st_map_plaque_comb %>%
   write_tsv(here("04-analysis/sourcetracker/ST_no-sedi.txt"))
 
 write_tsv(lib_sample, here("04-analysis/lib_sample.tsv"))
+file.symlink("04-analysis/lib_sample.tsv", "05-results/metagenomics/lib_sample.tsv")
 write_tsv(kraken_otufilter_table, here("04-analysis/OTUfilter_table.tsv"))
-

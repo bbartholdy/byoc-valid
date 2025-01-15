@@ -32,4 +32,4 @@ kraken_otu_long <- kraken_data %>%
   rename(count = X2,
          species = X8)
 
-readr::write_csv(kraken_otu_long, here("03-data/kraken-OTU_long.csv"))
+readr::write_csv(kraken_otu_long, here("04-analysis/kraken/kraken-OTU_long.csv"))
