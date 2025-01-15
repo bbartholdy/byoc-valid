@@ -20,35 +20,31 @@ dna_analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.t
 dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv"))
 bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 genus_oxytol <- read_tsv(here("04-analysis/bacdive/genus-O2tolerance.tsv"))
-sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
+#sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
 otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
 pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
 load(here("05-results/spca_byoc.rda"))
 load(here("05-results/spca_species.rda"))
-alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
-byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
-plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
-clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
+alpha_div <- read_tsv(here("05-results/metagenomics/alpha-diversity.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/metagenomics/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/metagenomics/plaque_logf-full.tsv"))
+clr_compar_long <- readr::read_tsv(here("05-results/metagenomics/clr-compar.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
-clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
+clr_byoc_long <- readr::read_tsv(here("05-results/metagenomics/clr-byoc.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
 
-source(here("02-scripts/99_setup-qmd.R"))
-source(here("02-scripts/99_metagen-figures.R"))
+source(here("02-scripts/OUT_setup-qmd.R"))
+source(here("02-scripts/OUT_metagen-figures.R"))
+source(here("02-scripts/OUT_tables.R"))
 
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 #ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
-ftir_data <- read_csv(here("05-results/ftir_full-data.csv"))
-ftir_grind_data <- read_csv(here("05-results/ftir_grind-data.csv"))
-#ftir_grind_data <- read_csv(here("05-results/grind-data_cleaned.csv"))
-
-source(here("02-scripts/99_tables.R"))
-#source(here("02-scripts/99_figures.R"))
-source(here("02-scripts/99_ftir-figures.R"))
+ftir_data <- read_csv(here("05-results/FTIR/ftir_full-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/FTIR/ftir_grind-data.csv"))
+source(here("02-scripts/OUT_ftir-figures.R"))
 
 # upload names and versions of software used
 software_versions <- readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
-
 
 # set ggplot theme options
 options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
