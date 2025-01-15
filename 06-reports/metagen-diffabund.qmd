@@ -1,6 +1,5 @@
 ---
 title: "Differential abundance"
-output: html_notebook
 ---
 
 ```{r}
@@ -13,21 +12,21 @@ library(ggplot2)
 library(phyloseq)
 library(microbiome)
 library(ANCOMBC)
-taxatable <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+taxatable <- read_tsv(here("05-results/metagenomics/post-decontam_taxatable.tsv"))
 analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
 experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
-pca_loadings <- read_tsv(here("05-results/all-pca-loadings.tsv"))
-exp_pca_loadings <- read_tsv(here("05-results/experiment-pca-loadings.tsv"))
-bac_properties <- read_tsv(here("01-documentation/species-properties.tsv"))
-byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
-plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
+pca_loadings <- read_tsv(here("05-results/metagenomics/all-pca-loadings.tsv"))
+exp_pca_loadings <- read_tsv(here("05-results/metagenomics/experiment-pca-loadings.tsv"))
+bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/metagenomics/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/metagenomics/plaque_logf-full.tsv"))
 ```
 
 Data are converted to `phyloseq` format. Experiment samples are first run on
 their own, and then artificial calculus samples are run together with calculus
 and plaque reference samples
-(see [02-scripts/05-diff-abundance.R](../02-scripts/05-diff-abundance.R)).
+(see *02-scripts/DIFF_01_abundance.R*).
 
 ## ANCOM-BC
 

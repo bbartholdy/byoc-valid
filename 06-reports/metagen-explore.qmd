@@ -1,9 +1,10 @@
 ---
 title: "Exploratory data analysis"
-output: html_notebook
 ---
 
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
 library(dplyr)
 library(tidyr)
 library(stringi)
@@ -14,26 +15,20 @@ dna_analysis_metadata <- readr::read_tsv(here("01-documentation/dna-analysis-met
 dna_experiment_metadata <- readr::read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
   filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
 bac_properties <- readr::read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
-otu_decontam <- readr::read_tsv(here("05-results/post-decontam_taxatable.tsv"))
-pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
-load(here("05-results/spca_species.rda"))
+otu_decontam <- readr::read_tsv(here("05-results/metagenomics/post-decontam_taxatable.tsv"))
+pca_loadings <- readr::read_tsv(here("05-results/metagenomics/all-pca-loadings.tsv"))
+load(here("05-results/metagenomics/spca_species.rda"))
 
-clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
+clr_compar_long <- readr::read_tsv(here("05-results/metagenomics/clr-compar.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
 
-clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
+clr_byoc_long <- readr::read_tsv(here("05-results/metagenomics/clr-byoc.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
 
 # object to order plots by sampling day
 day_order <- dna_experiment_metadata %>%
-  #filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`) %>%
-  #filter(str_detect(`#SampleID`, "SYN")) %>% # only include samples from this study
   arrange(desc(day)) %>% # order by sampling day (ascending)
   .$`#SampleID` # isolate sample names
-
-# my_pallette2 <- c(viridisLite::magma(n = length(top_genus_names)), "grey") 
-# names(my_pallette2) <- levels(top_abundance_genus$top_genus)
-# my_scale2 <- scale_fill_manual(name = "top_genus", values = my_pallette2)
 
 treatment_colours <- viridisLite::inferno(n = length(unique(dna_experiment_metadata$treatment))) # define pallette and number of colours
 env_colours <- viridisLite::magma(n = length(unique(dna_analysis_metadata$Env))) # define pallette and number of colours
