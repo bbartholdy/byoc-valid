@@ -42,14 +42,18 @@ was calculated.
 ### Across experiment
 
 ```{r}
-exp_logf_full <- byoc_logf_full
-exp_logf_full %>%
+#| label: tbl-byoc-diff
+#| tbl-cap: "Top 20 largest absolute log-fold changes in artificial samples."
+byoc_logf_full %>%
   arrange(desc(abs(lfc))) %>%
   slice_head(n = 20) %>%
   dplyr::select(species, lfc)#, `Oxygen tolerance`, abs)
+```
 
-# highest absolute log-fold changes
-exp_logf_full %>% 
+```{r}
+#| label: fig-byoc-lfc
+#| fig-cap: "Top 20 largest absolute log-fold changes in artificial samples."
+byoc_logf_full %>% 
   group_by(env) %>% 
   arrange(desc(abs(lfc))) %>%
   slice_head(n = 20) %>% # causes loss of some env values
@@ -57,7 +61,7 @@ exp_logf_full %>%
   arrange(desc(abs(lfc))) %>%
   slice_head(n = 20) %>% # extract top 20 lfc from modern_calculus
   bind_rows(filter( # recombine with other env values so all are included in plot
-    exp_logf_full, 
+    byoc_logf_full, 
     env != "saliva",
     species %in% .$species
     )
@@ -67,9 +71,12 @@ exp_logf_full %>%
     geom_linerange(aes(xmin = lower, xmax = upper)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
     facet_wrap(~ env)
+```
 
-# top 30 species from PC1
-exp_logf_full %>%
+```{r}
+#| label: fig-byoc-lfcPC1
+#| fig-cap: "Log-fold changes for the 20 species in artificial samples with largest loading on PC1."
+byoc_logf_full %>%
   filter(species %in% exp_pca_loadings$species[1:20]) %>% 
   slice_head(n = 60) %>% 
   ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
@@ -78,9 +85,12 @@ exp_logf_full %>%
     geom_vline(xintercept = 0, linetype = "dashed") +
     facet_wrap(~ env) +  
     theme_bw()
+```
 
-# top 30 species from PC2
-exp_logf_full %>%
+```{r}
+#| label: fig-byoc-lfcPC2
+#| fig-cap: "Log-fold changes for the 20 species in artificial samples with largest loading on PC2."
+byoc_logf_full %>%
   filter(species %in% exp_pca_loadings$species[1:20]) %>% 
   slice_head(n = 60) %>% 
   ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
@@ -94,49 +104,51 @@ exp_logf_full %>%
 Species with the highest log-fold change mainly see a reduction from saliva to
 medium, and then a slight further reduction from medium to calculus. The largest
 reduction of species occurs in
-`r filter(exp_logf_full, lfc == max(lfc))$species`
-(LFC = `r filter(exp_logf_full, lfc == max(lfc))$lfc`).
+`r filter(byoc_logf_full, lfc == max(lfc))$species`
+(LFC = `r filter(byoc_logf_full, lfc == max(lfc))$lfc`).
 
 ### Artificial vs. modern calculus
 
 ```{r}
-head(calc_logf_full)
+head(plaque_logf_full)
 ```
 
-Plots of log-fold change between samples
+Plots of log-fold change between oral reference samples
 
 ```{r}
-#| label: fig-log-fold-largest
-#| fig-cap: "Plot of largest absolute log-fold changes."
-calc_logf_full %>%
+#| label: fig-plaque-lfc
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, triangles are enriched in modern calculus, diamonds in subgingival plaque, and squares in supragingival plaque. Plot shows the top 30 absolute log-fold changes between model calculus and other sample types. Bars within shapes are standard error."
+plaque_logf_full %>%
   group_by(env) %>% 
   arrange(desc(abs(lfc))) %>%
-    slice_head(n = 20) %>% # causes loss of some env values
+    slice_head(n = 30) %>% # causes loss of some env values
     ungroup() %>%
-  slice_head(n = 20) %>% # extract top 20 lfc from modern_calculus
+  slice_head(n = 30) %>% # extract top 20 lfc from modern_calculus
   bind_rows(filter( # recombine with other env values so all are included in plot
-    calc_logf_full, 
+    plaque_logf_full, 
     env != "modern_calculus",
     species %in% .$species
     )
   ) %>% 
-   ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
+  left_join(bac_properties, by = "species") %>% # combine with species properties
+   ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
     geom_point(size = 2) +
     geom_linerange(aes(xmin = lower, xmax = upper), size = 1) +
     geom_vline(xintercept = 0, linetype = "dashed") +
     facet_wrap(~ env) +
     theme_bw() +
     theme(
-      legend.position = "none",
+      #legend.position = "none",
       axis.title.y = element_blank()
-          )
+          ) +
+  scale_shape_manual(values = c(1,2,5,7))
 ```
 
 ```{r}
-#| label: fig-top30-pc1
-#| fig-cap: "Top 30 loadings from PC1."
+#| label: fig-ref-lfcPC1
+#| fig-cap: "Log-fold changes for the 20 species in oral reference samples with largest loading on PC1."
 
-calc_logf_full %>%
+plaque_logf_full %>%
   filter(species %in% pca_loadings$species[1:20]) %>% 
   slice_head(n = 60) %>% # pca_loadings already arranged by PC1
   ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
@@ -152,9 +164,9 @@ calc_logf_full %>%
 ```
 
 ```{r}
-#| label: fig-top30-pc2
-#| fig-cap: "Top 30 loadings from PC2."
-calc_logf_full %>%
+#| label: fig-ref-lfcPC2
+#| fig-cap: "Log-fold changes for the 20 species in oral reference samples with largest loading on PC2."
+plaque_logf_full %>%
   filter(species %in% arrange(pca_loadings, desc(abs(PC2)))$species[1:20]) %>%
   slice_head(n = 60) %>% # pca_loadings already arranged by PC1
   ggplot(aes(x = lfc, y = reorder(species, lfc), col = abn)) +
@@ -169,30 +181,8 @@ calc_logf_full %>%
           )
 ```
 
-### Bias-corrected log observed abundances
 
-Bias-corrected log observed abundances were calculated by following the example
-in `vignette("ANCOMBC")`.
-
-```{r}
-# from vignette("ANCOMBC")
-calc_samp_frac <- calculus_da$samp_frac
-# Replace NA with 0
-calc_samp_frac[is.na(calc_samp_frac)] = 0 
-# add 1 to counts for log-transformation
-calc_log_exp_otu <- log(microbiome::abundances(calculus_otu) + 1)
-
-# Adjust the log observed abundances
-# Bias-corrected (log) observed abundances
-calc_log_abn <- t(t(calc_log_exp_otu) - calc_samp_frac) %>%
-  as_tibble(rownames = "species")
-
-# need to convert counts back to zero (counts that are = samp_frac)
-
-calc_log_abn
-```
-
-# Discussion
+## Discussion
 
 *Enterococcus faecalis* has the highest log-fold change, with a higher abundance
 in the artificial calculus samples compared to the reference samples and

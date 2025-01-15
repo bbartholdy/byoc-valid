@@ -139,20 +139,18 @@ Days were grouped for increased sample sizes.
 ```{r}
 #| label: fig-alpha-experiment
 #| fig-cap: "Alpha diversity indices of experimental samples including the grouped categories, inoculation, treatment, and final product."
-alpha_div_long %>% 
-  mutate(day = as_factor(day)) %>% 
-  filter(!is.na(day)) %>% 
+alpha_div_long %>%
+  filter(stri_detect(sample, fixed = "SYN")) %>%
+  #mutate(day = as.factor(day)) %>%
   ggplot(aes(x = day_grouped, y = value)) +
-    geom_boxplot(outlier.colour = NA, col = "darkgrey") +
-    geom_jitter(aes(col = day_grouped), width = 0.2) +
+    geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
+    geom_boxplot(width = 0.12) +
     facet_wrap(~ index, scales = "free_y") +
-    scale_colour_viridis_d(option = "D") +
-    theme_minimal() +
+    theme_bw() +
     theme(
-      legend.position = "none",
-      panel.grid.major.x = element_blank(),
-      panel.grid.minor.y = element_blank(),
-      axis.title.x = element_blank()
+      axis.title = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
     )
 
 ```
