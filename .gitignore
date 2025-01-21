@@ -34,7 +34,6 @@ vignettes/*.pdf
 # knitr and R markdown default cache directories
 *_cache/
 /cache/
-07-publication/_freeze
 
 # Temporary files created by R markdown
 *.utf8.md
@@ -42,6 +41,7 @@ vignettes/*.pdf
 
 # Output created by Quarto
 /.quarto/
+*_files/
 
 # R Environment Variables
 .Renviron
