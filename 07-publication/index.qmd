@@ -21,26 +21,26 @@ dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metada
 bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 genus_oxytol <- read_tsv(here("04-analysis/bacdive/genus-O2tolerance.tsv"))
 #sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
-otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
-pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
-load(here("05-results/spca_byoc.rda"))
-load(here("05-results/spca_species.rda"))
+otu_decontam <- read_tsv(here("05-results/metagenomics/post-decontam_taxatable.tsv"))
+pca_loadings <- readr::read_tsv(here("05-results/metagenomics/all-pca-loadings.tsv"))
+load(here("05-results/metagenomics/spca_byoc.rda"))
+load(here("05-results/metagenomics/spca_species.rda"))
 alpha_div <- read_tsv(here("05-results/metagenomics/alpha-diversity.tsv"))
 byoc_logf_full <- read_tsv(here("05-results/metagenomics/byoc_logf-full.tsv"))
 plaque_logf_full <- read_tsv(here("05-results/metagenomics/plaque_logf-full.tsv"))
 clr_compar_long <- readr::read_tsv(here("05-results/metagenomics/clr-compar.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
-clr_byoc_long <- readr::read_tsv(here("05-results/metagenomics/clr-byoc.tsv")) %>%
-  pivot_longer(-sample, values_to = "clr_count", names_to = "species")
-
-source(here("02-scripts/OUT_setup-qmd.R"))
-source(here("02-scripts/OUT_metagen-figures.R"))
-source(here("02-scripts/OUT_tables.R"))
+# clr_byoc_long <- readr::read_tsv(here("05-results/metagenomics/clr-byoc.tsv")) %>%
+#   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
 
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
 #ftir_data_raw <- read_csv(here("05-results/ftir-data.csv"))
 ftir_data <- read_csv(here("05-results/FTIR/ftir_full-data.csv"))
 ftir_grind_data <- read_csv(here("05-results/FTIR/ftir_grind-data.csv"))
+
+source(here("02-scripts/OUT_setup-qmd.R"))
+source(here("02-scripts/OUT_metagen-figures.R"))
+source(here("02-scripts/OUT_tables.R"))
 source(here("02-scripts/OUT_ftir-figures.R"))
 
 # upload names and versions of software used
@@ -92,7 +92,7 @@ are available on GitHub (<https://github.com/bbartholdy/byoc-valid>)
 and archived on 4TU.ResearchData ([10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0](https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0)).
 FTIR data and spectra are available on 4TU.ResearchData
 ([10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b](https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b)).
-Detailed protocols for growing the oral biofilm are available on protocols.io
+Detailed protocols for growing the oral biofilm and experimental procedures are available on protocols.io
 ([10.17504/protocols.io.dm6gpj9rdgzp/v1](https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1)).
 
 # References {-}

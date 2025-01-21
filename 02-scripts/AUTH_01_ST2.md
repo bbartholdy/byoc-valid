@@ -1,5 +1,3 @@
-Steps taken for SourceTracker analysis.
-
 OTU table was filtered for relative abundance. Percent abundance of each taxon
 across all samples was calculated and then taxa with lower than 0.001% abundance
 were filtered out. See */02-scripts/01-dataprep.R*.
@@ -73,4 +71,4 @@ sourcetracker2 \
     --per_sink_feature_assignments
 ```
 
-The full results can be found in `04-analysis/sourcetracker/sourcetracker2_output`
+The full results can be found in *04-analysis/sourcetracker/sourcetracker2_output*

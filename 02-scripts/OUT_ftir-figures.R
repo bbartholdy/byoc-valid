@@ -99,11 +99,10 @@ grind_all_plot <- ftir_grind_data %>%
   ggplot(aes(x = FWHM, y = IRSF, col = Sample_day, shape = Sample_day)) +
   geom_point(size = 2, alpha = 0.6) +
   geom_smooth(method = "lm", se = F) +
-  geom_function(fun = asscher_enamel_1, xlim = c(100,210), aes(col = "grey60", linetype = "dotted"), alpha = 0.2) + #Qesem   
-  geom_function(fun = asscher_enamel_2, xlim = c(100,210), aes(col = "grey60", linetype = "dotted"), alpha = 0.2) + #Ateret
-  geom_function(fun = asscher_enamel_3, xlim = c(100,210), aes(col = "grey60", linetype = "dotted"), alpha = 0.2) + #Neve-Yarak
-  geom_function(fun = asscher_enamel_4, xlim = c(100,210), aes(col = "grey60", linetype = "dashed"), alpha = 0.2) + #Modern
-  #stat_function(fun = asscher_enamel_1, col = "grey60", xlim = c(100,200)) +
+  geom_function(inherit.aes = F, fun = asscher_enamel_1, xlim = c(100,200), aes(col = "grey20", linetype = "dotted"), alpha = 0.3) + #Qesem   
+  geom_function(inherit.aes = F, fun = asscher_enamel_2, xlim = c(100,200), aes(col = "grey20", linetype = "dotted"), alpha = 0.3) + #Ateret
+  geom_function(inherit.aes = F, fun = asscher_enamel_3, xlim = c(100,200), aes(col = "grey20", linetype = "dotted"), alpha = 0.3) + #Neve-Yarak
+  geom_function(inherit.aes = F, fun = asscher_enamel_4, xlim = c(100,200), aes(col = "grey20", linetype = "dashed"), alpha = 0.3) + #Modern
   theme_minimal()
 
 # isolate calculus samples to see diffs between days and the 'real deal'
@@ -120,11 +119,9 @@ grind_calc_plot <- ftir_grind_data %>%
     axis.text = element_blank(),
     axis.title = element_blank(),
     axis.ticks = element_blank(),
-    #legend.position = "none",
     panel.border = element_rect(
       colour = "grey", 
       fill = "transparent", linewidth = 1),
     panel.background = element_rect(fill = "white")
   ) +
-  #scale_colour_viridis_d(end = 0.4)
   scale_colour_viridis_d()

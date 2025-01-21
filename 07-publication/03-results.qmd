@@ -26,7 +26,7 @@ loading_theme_pc1 <-
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       panel.grid.major.y = element_blank(),
-      axis.ticks.x.bottom = element_line(size = 1),
+      axis.ticks.x.bottom = element_line(linewidth = 1),
       axis.text.y.left = element_text(size = 8, vjust = 0, face = "italic"),
       #axis.text.x = element_text(size = 8, vjust = 0),
       axis.line.x = element_line(),
@@ -39,7 +39,7 @@ loading_theme_pc2 <-
       panel.grid.major.y = element_blank(),
       panel.grid.minor.y = element_blank(),
       panel.grid.major.x = element_blank(),
-      axis.ticks.x.bottom = element_line(size = 1),
+      axis.ticks.x.bottom = element_line(linewidth = 1),
       #axis.text.x = element_text(face = "italic"),
       axis.text.x.top = element_text(size = 8, angle = 90, vjust = 0, hjust = 0, face = "italic"),
       axis.line.y = element_line(),
@@ -511,10 +511,6 @@ calc_compar <- calc_compar +
     x = expression("wavenumber ("*cm^{-1}*")"),
     col = "Analysis ID"
   )
-
-#ftir_data <- left_join(ftir_metadata, ftir_data_id, by = c("sample_id" = "sample"))
-
-#ftir_data_long <- inner_join(ftir_metadata, ftir_data, by = c("analysis_id" = "sample"))
 ```
 
 To determine whether the model dental calculus is comparable to natural dental calculus,
@@ -591,51 +587,21 @@ ordered structure in enamel compared to dental calculus.
 ```{r}
 #| label: fig-grind-curve
 #| fig-cap: "Grinding curves of our biofilm and model calculus compared to published trendlines (dashed light grey lines) for archaeological (dotted line) and modern (dashed line) enamel."
-# grind_all_plot + inset_element(grind_calc_plot, left = 0.4, bottom = 0.48, right = 1, top = 1.03) + 
-#   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+
 grind_all_plot + 
   scale_colour_manual(
-    values = c(viridisLite::viridis(4), "grey60"),
+    values = c(viridisLite::viridis(4), "grey20", "grey20"),
     labels = c(
       "Archaeological calculus", 
       "Artificial calculus day 16", 
       "Artificial calculus day 20",
       "Artificial calculus day 24", 
-      "Enamel (Asscher et al. 2011)",
-      "And another one"
+      "Enamel (Asscher et al. 2011)"
     )
   ) +
   guides(shape = "none", linetype = "none") +
-  # scale_shape_manual(
-  #   values = c(1:4, NA),
-  #   labels = c(
-  #     "Archaeological calculus", 
-  #     "Artificial calculus day 16", 
-  #     "Artificial calculus day 20",
-  #     "Artificial calculus day 24", 
-  #     "Enamel (Asscher et al. 2011)"
-  #   )
-  # ) +
-  scale_linetype_manual(
-    values = c("dashed", "dotted"),
-    # limits = c(
-    #   "Archaeological calculus",
-    #   "Artificial calculus",
-    #   "Enamel (Asscher et al. 2011)",
-    #   "And another one"
-    # ),
-    labels = c(
-      "Arch",
-      "Model",
-      "Modern enamel",
-      "Arch enamel"
-    )
-  ) +
-  #scale_x_continuous(limits = c(75,250)) +
-  #scale_y_continuous(limits = c(2,6)) +
   labs(
     col = "Sample", shape = "Sample",
-    #linetype = "Type",
     x = "FWHM of the 1035 peak",
     y = "Splitting factor"
   )
