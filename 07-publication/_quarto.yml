@@ -26,8 +26,6 @@ format:
       text: |
         \linenumbers
         \setlength{\parindent}{15pt}
-  docx: 
-    output-file: "bioRxiv-manuscript-2.1"
 execute: 
   freeze: auto
   echo: false
@@ -153,3 +151,34 @@ abstract: |
   have great potential to validate current methods used in the analysis of archaeological
   dental calculus, and should be used to complement, rather than replace current
   *in vivo* studies.
+plain-summary: |
+  Archaeologists have been using dental calculus (or tartar) for many decades
+  to find traces of food from the past. What makes dental calculus so well suited
+  for this task is that it forms on our teeth, and is therefore in direct
+  contact with what we eat. It also hardens to form a strong, solid material
+  that can survive for long periods of time and preserve what's inside.
+  While we have been able to extract a lot of information from archaeological 
+  dental calculus, there are still many things we don't know about the context
+  of this information.
+  For example, we have no way to confirm exactly what people were eating,
+  we can only infer this from what we see; but, there are many factors that
+  influence what actually ends up in dental calculus, and it's not all food.
+
+  To address some of these issues, we have grow our own
+  dental calculus in a lab under controlled conditions. This will allow
+  us to conduct experiments to test what we see and how it relates to the
+  interpretations we make.
+  In this study, we examine our lab-grown dental calculus to make sure it
+  looks and behaves like naturally-occurring dental calculus, specifically
+  the bacterial and mineral content. We found some differences in bacterial
+  content, which is not uncommon for lab-grown dental plaque and calculus.
+  Overall, though, the lab-grown model has the makeup of
+  an oral microbiome, and the mineral content is very similar to natural
+  dental calculus.
+
+  We recommend using lab-grown models to mitigate some of the
+  issues we encounter when using archaeological dental
+  calculus to reconstruct past diets, while we also acknowledge that the model
+  is not a replacement for research on natural calculus, both
+  archaeological and modern.
+
