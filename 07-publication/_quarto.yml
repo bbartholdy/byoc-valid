@@ -3,7 +3,7 @@ project:
   type: default
   output-dir: _output
   execute-dir: project
-  #pre-render: _bib.R # only works when main author renders
+  #pre-render: _bib.R # only works when first author renders
 format: 
   arxiv-pdf:
     output-file: "bioRxiv-manuscript-2.1"
@@ -11,6 +11,8 @@ format:
     linenumbers: false
     doublespacing: false
     runninghead: "Validity of a calcifying oral biofilm model"
+  ore-pdf:
+    output-file: "ore-manuscript_v1"
   html:
     keep-md: true
   pdf:
@@ -111,46 +113,28 @@ keywords:
   - ftir
 abstract-title: Abstract
 abstract: |
-  Dental calculus is increasingly used by researchers to study dietary patterns
-  in past populations. The benefits of using dental calculus for this purpose
-  have been clearly demonstrated in previous studies, with dental calculus
-  harbouring a wealth of microremains and biomarkers for health and diet
-  within its mineral matrix.
-  Previous studies have demonstrated some of the limitations and
-  biases of how methods of processing may overlook, or even remove,
-  some of the important information contained within the mineralised matrix.
-  However, there are many factors that are
-  impossible to account for *in vivo* and in archaeological material, such as
-  exact dietary intake, and individual factors such as pH and enzyme activity,
-  leaving some limitations that may not be addressed through these types of studies
-  and will require a different approach.  
-  
-  We present a protocol for creating a calcifying oral biofilm model
-  that can be used to explore the biases and
-  limitations of dental calculus as a medium for paleodietary reconstructions.
-  We report the microbial and mineral composition of our model in an effort to
-  validate the model calculus as an appropriate proxy to natural dental calculus.
-  The microbial profile and species diversity of our model was determined using
-  metagenomic classification with the nf-core/eager pipeline and Kraken2, and
-  compared to various reference samples from oral sites, including
-  saliva, plaque, and dental calculus. We then
-  assessed whether our model calculus mineralises in a manner similar to natural
-  dental calculus using Fourier transform infrared (FTIR) spectroscopy.
-  The metagenomic classification showed a microbial
-  profile predominantly made up of (facultative) anaerobes, with a community
-  structure that was somewhat distinct from other oral reference samples.
-  The core genera of the model consisted of oral species, but clustered
-  separately from oral reference samples, with a higher abundance of anaerobes.  
-  Mineral and organic components of our model mimic that of the modern and archaeological
-  reference calculus that was used as a comparison. There was an overall increase
-  in the inorganic component relative to
-  organic over the course of the experiment, with carbonated hydroxyapatite as
-  the principal compound, consistent with natural human-derived calculus.
-  
-  We conclude that oral biofilm models, such as the one presented in this study,
-  have great potential to validate current methods used in the analysis of archaeological
-  dental calculus, and should be used to complement, rather than replace current
-  *in vivo* studies.
+  Dental calculus is increasingly used by researchers to study dietary patterns in past populations.
+  The benefits of using dental calculus for this purpose have been clearly demonstrated, with dental
+  calculus harbouring a wealth of microremains and biomarkers for health and diet. Previous studies
+  have demonstrated some of the limitations and biases of how methods of processing may overlook,
+  or even remove, some of the important information contained within the mineralised matrix. However,
+  there are many factors that are impossible to account for *in vivo* and in archaeological material,
+  such as exact dietary intake, and individual factors such as pH and enzyme activity, leaving some
+  limitations that require a different approach.
+
+  We present a protocol for creating a calcifying oral biofilm model that can be used to explore the
+  biases and limitations of dental calculus as a medium for paleodietary reconstructions. We report
+  the microbial and mineral composition, using metagenomic classification and Fourier transform infrared
+  (FTIR) spectroscopy, respectively, in an effort to validate the model calculus as an appropriate proxy
+  to natural dental calculus. Metagenomic classification showed a microbial profile predominantly made up
+  of (facultative) anaerobes, with a community structure that was somewhat distinct from other oral
+  reference samples. The core genera of the model consisted of oral species, but clustered separately from
+  oral reference samples due to a higher abundance of anaerobes. Mineral and organic components of our
+  model mimic that of the modern and archaeological reference calculus, with carbonated hydroxyapatite as
+  the principal compound, consistent with natural human-derived calculus. Overall our model is indicative
+  of an oral environment, and has potential to validate current methods used in the analysis of
+  archaeological dental calculus, and should be used to complement, rather than replace current *in vivo*
+  studies.
 plain-summary: |
   Archaeologists have been using dental calculus (or tartar) for many decades
   to find traces of food from the past. What makes dental calculus so well suited
