@@ -1,11 +1,7 @@
 ---
 title: "Supplementary Material: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus"
 #author: "B.P.Bartholdy, I.M.Velsko, S.Gur-Arieh, Z.Fagernäs, C.Warinner, A.G.Henry" # should use _quarto metadata?
-crossref: 
-  #fig-prefix: S
-  fig-title: Figure S
-  #fig-labels: roman
-  #labels: arabic
+
 format:
   html: 
     toc: true
@@ -26,9 +22,14 @@ knitr:
     collapse: true
     warning: false
     fig-path: "figures/supp-"
+crossref:
+  fig-prefix: "Supplementary Figure"
+  tbl-prefix: "Supplementary Table"
+number-sections: true
 prefer-html: true
 editor_options: 
   chunk_output_type: console
+bibliography: references.bib
 ---
 
 ```{r}
@@ -45,38 +46,38 @@ library(plotly)
 library(cuperdec)
 library(patchwork)
 library(mixOmics)
-knitr::opts_knit$set(root.dir = here())
+#knitr::opts_knit$set(root.dir = here())
 
 # upload ftir data
 
 ftir_metadata <- read_tsv(here("01-documentation/ftir-metadata.tsv"))
-ftir_data <- read_csv(here("05-results/ftir_full-data.csv"))
-ftir_grind_data <- read_csv(here("05-results/ftir_grind-data.csv"))
+ftir_data <- read_csv(here("05-results/FTIR/ftir_full-data.csv"))
+ftir_grind_data <- read_csv(here("05-results/FTIR/ftir_grind-data.csv"))
 
 # upload dna data
 
 dna_metadata <- read_tsv(here("01-documentation/dna-metadata.tsv"))
 dna_analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
 dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv"))
-lib_conc <- read_tsv(here("05-results/SYN_DNA_concentrations.tsv"))
+lib_conc <- read_tsv(here("04-analysis/SYN_DNA_concentrations.tsv"))
 software <- read_tsv(here("01-documentation/software_versions.csv"), col_names = c("software", "version"))
 bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 genus_oxytol <- read_tsv(here("04-analysis/bacdive/genus-O2tolerance.tsv"))
-list_of_contaminants <- read_tsv(here("04-analysis/decontam/list-of-contaminants.txt"), col_names = F)
-otu_decontam <- read_tsv(here("05-results/post-decontam_taxatable.tsv"))
+list_of_contaminants <- read_tsv(here("05-results/metagenomics/list-of-contaminants.txt"), col_names = F)
+otu_decontam <- read_tsv(here("05-results/metagenomics/post-decontam_taxatable.tsv"))
 kraken_otu <- read_tsv(here("04-analysis/OTUfilter_table.tsv"))
-load(here("05-results/spca_byoc.rda"))
-load(here("05-results/spca_species.rda"))
-alpha_div <- read_tsv(here("05-results/alpha-diversity.tsv"))
-byoc_logf_full <- read_tsv(here("05-results/byoc_logf-full.tsv"))
-plaque_logf_full <- read_tsv(here("05-results/plaque_logf-full.tsv"))
+load(here("05-results/metagenomics/spca_byoc.rda"))
+load(here("05-results/metagenomics/spca_species.rda"))
+alpha_div <- read_tsv(here("05-results/metagenomics/alpha-diversity.tsv"))
+byoc_logf_full <- read_tsv(here("05-results/metagenomics/byoc_logf-full.tsv"))
+plaque_logf_full <- read_tsv(here("05-results/metagenomics/plaque_logf-full.tsv"))
 sourcetracker2 <- read_tsv(here("04-analysis/sourcetracker/sourcetracker2_output/mixing_proportions.txt"))
 all_data_long <- read_tsv(here("04-analysis/sourcetracker/source-comb_long.tsv"))
-clr_compar_long <- readr::read_tsv(here("05-results/clr-compar.tsv")) %>%
+clr_compar_long <- readr::read_tsv(here("05-results/metagenomics/clr-compar.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
-clr_byoc_long <- readr::read_tsv(here("05-results/clr-byoc.tsv")) %>%
+clr_byoc_long <- readr::read_tsv(here("04-analysis/beta-diversity/clr-byoc.tsv")) %>%
   pivot_longer(-sample, values_to = "clr_count", names_to = "species")
-pca_loadings <- readr::read_tsv(here("05-results/all-pca-loadings.tsv"))
+pca_loadings <- readr::read_tsv(here("05-results/metagenomics/all-pca-loadings.tsv"))
 
 source(here("02-scripts/functions.R"))
 source(here("02-scripts/OUT_setup-qmd.R"))
@@ -85,25 +86,10 @@ source(here("02-scripts/OUT_metagen-figures.R"))
 ```
 
 ```{r}
-#| label: setup-2
-#| include: false
-# analysis results
-
-oral_taxa <- cuperdec_database_ex %>%
-  filter(isolation_source == "oral")
-otu_table <- read_tsv(here("04-analysis/decontam/post-decontam_taxatable.tsv"))
-clr_byoc <- read_tsv(here("05-results/clr-byoc.tsv"))
-clr_compar <- read_tsv(here("05-results/clr-compar.tsv"))
-```
-
-```{r}
 #| label: extra-setup-computations
-
-# eventually all computations should be in scripts or .qmd reports
 
 # helper object to organise byoc samples by day and whether or not they were removed during authentication
 day_order <- dna_experiment_metadata %>%
-  filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`) %>% 
   mutate(Env = factor(
     Env, 
     levels = c("saliva", "medium", "byoc_calculus") # force level order so it doesn't order alphabetically
@@ -119,52 +105,61 @@ day_order <- dna_experiment_metadata %>%
 
 ```
 
-## Samples
+## Introduction
 
-Samples taken for DNA sequencing and FTIR analysis. Samples for DNA were collected
+Metagenomic analysis was conducted on our oral biofilm model to assess the
+viability of the model as a proxy for dental calculus.
+To determine the mineral composition and level of crystallisation of the model
+dental calculus samples, we used Fourier Transform Infrared (FTIR) spectroscopy.
+
+## Materials
+
+Samples for DNA were collected
 from a seperate experimental run than samples for DNA, but experimental conditions
 were the same in each. Samples for DNA were medium collected from the bottom of
 each well after three days of growth (before medium was refreshed). Samples for
 FTIR were taken directly from the biofilm and dried prior to analysis.
 
-### DNA
-
 ```{r}
 #| label: tbl-byoc-samples
-#| tbl-cap: "Table of biofilm samples from this study. Includes which day in the experiment the sample was taken, and sample type (Env)."
+#| tbl-cap: "Table of biofilm samples taken for metagenomic analysis. Includes which day in the experiment the sample was taken, and sample type (Env)."
 dna_experiment_metadata %>% 
   #filter(str_detect(`#SampleID`, "LIB|SYN", negate = F)) %>% 
-  select(c(`#SampleID`, day, Env)) %>% 
+  dplyr::select(c(`#SampleID`, day, Env)) %>% 
   arrange(day, Env) %>% 
   knitr::kable()
 ```
 
-### FTIR
 
 ```{r}
 #| label: tbl-ftir-samples
-#| tbl-cap: "Table of oral reference samples. Includes which day in the experiment the sample was taken, and sample type."
-ftir_metadata %>% 
-  #filter(str_detect(sample_id, "", negate = T)) %>% 
-  select(c(sample_id, day, sample_type)) %>% 
+#| tbl-cap: "Table of samples taken for FTIR analysis, including the day the sample was taken and what was sampled."
+ftir_metadata %>% #| 
+  filter(
+    !is.na(analysis_id),
+    source != "Modern"
+  ) %>%
+  dplyr::select(c(sample_id, day, source)) %>% 
   arrange(day) %>% 
   knitr::kable()
 ```
 
 
-## Reference database and sequences
+## Metagenomic analysis
+
+### Reference database and sequences
 
 The reference database used in the EAGER pipeline was the Standard Kraken 2 database,
 downloaded from <https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20210517.tar.gz>
 
 ```sh
-wget https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20210517.tar.gz
+wget https://genome-idx.s3.amazonaws.com/kraken/k2_standard_20210517.tar.gz -P 03-data/reference_genomes/
 ```
 
 The human reference genome GRCh38 was downloaded on 2022-04-22.
 
 ```sh
-wget ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/GRCh38_latest/refseq_identifiers/GRCh38_latest_genomic.fna.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/GRCh38_latest/refseq_identifiers/GRCh38_latest_genomic.fna.gz -P 03-data/reference-genomes/
 ```
 
 ```{r}
@@ -172,10 +167,12 @@ wget ftp://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/GRCh38_latest/refseq
 #| tbl-cap: "Table of oral reference samples. Includes sample type (Env), and associated project and study with DOI."
 dna_metadata %>% 
   filter(
-   str_detect(`#SampleID`, "LIB|SYN", negate = T),
+    Study != "this_study",
     !Env %in% env_controls
   ) %>% 
-  select(!c(SourceSink, download_link, Study)) %>% 
+  dplyr::select(
+    !c(SourceSink, Study)
+  ) %>% 
   arrange(Env) %>% 
   knitr::kable()
 ```
@@ -185,7 +182,7 @@ dna_metadata %>%
 #| tbl-cap: "Table of environmental reference samples (contamination testing). Includes sample type (Env), and associated project and study with DOI."
 dna_metadata %>% 
   filter(Env %in% env_controls) %>%
-  dplyr::select(!c(SourceSink, download_link, Study)) %>% 
+  dplyr::select(!c(SourceSink, Study)) %>% 
   arrange(Env) %>% 
   knitr::kable()
 ```
@@ -234,14 +231,16 @@ SourceTracker2 [@knightsSourceTracker2011] was used to estimate source compositi
 of the oral biofilm model samples using a Bayesian framework. Samples were compared
 with oral and environmental controls to detect potential external contamination.
 
+The following steps were taken to authenticate sequences:
+
 {{< include ../02-scripts/AUTH_01_ST2.md >}}
 
 *02-scripts/AUT_02_decontam.R*
 
 Plots were created of estimated contributions of various sources to the saliva,
 model calculus and medium samples. Samples are arranged from left to right by how
-late in the experiment they were sampled, with left being the earliest samples
-(@fig-sourcetracker2). The output from SourceTracker2 was compared to a dataset
+late in the experiment they were sampled, with left being the earliest samples.
+The output from SourceTracker2 was compared to a dataset
 of known oral species (@fig-oral-sources).
 
 Many of the later medium samples were assigned to the 'Unknown' and 'indoor_air'
@@ -274,7 +273,7 @@ Many of the species assigned to `indoor_air` are known oral species
 #### decontam
 
 Potential contaminants were identified using the frequency and prevalence method
-in the **decontam** v`r packageVersion("decontam")` [@R-decontam] R package. Samples
+in the **decontam** v`r packageVersion("decontam")` [@Rdecontam] R package. Samples
 from *indoor_air*, *skin*, and *sediment* were used as negative controls for
 the prevalence method with a probability threshold of 0.01. 
 DNA concentrations (*04-documentation/SYN_DNA_concentrations.tsv*) were used
@@ -282,10 +281,7 @@ for the 'frequency' method with a probability threshold of 0.99
 and negative controls.
 
 Putative contaminants were filtered out of the
-[OTU tables](../05-results/post-decontam_taxatable.tsv) for all downstream analyses.
-
-See [06-reports/metagen-authentication.Rmd](../06-reports/metagen-authentication.Rmd)
-for more details.
+OTU tables (*05-results/post-decontam_taxatable.tsv*) for all downstream analyses.
 
 See *06-reports/metagen-authentication.qmd* for more details.
 
@@ -324,44 +320,13 @@ for compositional data [@gloorMicrobiomeDatasets2017].
 #| label: species-profiles-setup
 #| include: false
 # which species had no match on BacDive?
-# join species counts and bacterial properties (oxygen tolerance and ABS)
-  # genus oxygen tolerance used in cases where no information exists at species level
-
-### already computed in 99_setup-qmd.R ###
-# species_properties <- bac_properties %>%
-#   right_join(species_counts_long, by = "species") %>%
-#   mutate(genus = stri_extract(species, regex = "\\w+")) %>%
-#   left_join(
-#     rename(genus_oxytol, genus_oxytol = `Oxygen tolerance`), by = "genus"
-#     ) %>%
-#   mutate(`Oxygen tolerance` = case_when(
-#     is.na(`Oxygen tolerance`) ~ genus_oxytol, # if no species-level info available
-#     TRUE ~ `Oxygen tolerance`)
-#     ) %>%
-#   group_by(sample) %>%
-#   mutate(
-#     abs = if_else(is.na(abs), FALSE, abs), # is ABS species? TRUE/FALSE
-#     rel_abund = count / sum(count)
-#     ) %>%
-#   ungroup()
 
 no_match <- unique(
   filter(species_properties, is.na(`Oxygen tolerance`))$species
 )
 ```
 
-<!-- species profiles -->
-
-Information on the oxygen tolerance of bacterial species was downloaded from 
-[BacDive](https://bacdive.dsmz.de) on
-`r stri_extract(list.files("../03-data/", pattern = "bacdive"), regex = "\\d{4}-\\d{2}-\\d{2}")`.
-A total of **`r length(no_match)`** out of
-**`r length(unique(species_counts_long$species))`**
-(`r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`)
-species did not have a match on BacDive. These were assigned oxygen tolerance
-based on the most common occurrence within the genus they belong.
-A list of amylase-binding streptococci (ABS) was created based on
-[@nikitkovaStarchBiofilms2013].
+#### Alpha-diversity
 
 <!-- community composition: alpha diversity -->
 Alpha-diversity, specifically the Shannon Index, was calculated to compare species
@@ -369,24 +334,7 @@ richness and diversity across experimental and comparative oral samples. Shannon
 Index was calculated using the R package **vegan** v`r packageVersion("vegan")`
 [@Rvegan].
 
-<!-- community composition: beta diversity -->
-Sparse principal components analysis (sPCA) was conducted on centered-log-ratio
-(CLR) transformed species-level counts using the R package **mixOmics**
-v`r packageVersion("mixOmics")` [@RmixOmics]. The **mixOmics** implementation of
-sPCA uses a LASSO penalisation to eliminate unimportant variables.
-Two separate analyses were conducted: 1) on experiment samples to assess the
-difference in sample types and biofilm age; and 2) on oral comparative samples
-and biofilm model end-products to explore community differences between *in vitro*
-and *in vivo* biofilms.
-
-Loadings obtained from the sPCA analyses were used in combination with
-CLR-transformed counts to create heatmaps of species- and genus-level counts
-within the experiment and across comparative samples.
-
-<!--Beta-diversity, Bray Curtis dissimilarity.-->
-
-
-### Alpha-diversity
+##### Within experiment
 
 Days are grouped to increase sample sizes:
 
@@ -398,28 +346,6 @@ Days are grouped to increase sample sizes:
 ```{r}
 #| label: alpha-div-setup
 #| include: false
-
-### already computed in 99_setup-qmd.R ###
-# alpha_div_long <- alpha_div %>%
-#   pivot_longer(cols = where(is.numeric), names_to = "index") %>%
-#   left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
-#   left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
-#   mutate(day_grouped = case_when( # group days to increase sample size
-#     day < 6 ~ "inoc",
-#     day > 6 & day < 24 ~ "treatm",
-#     day == 24 ~ "final"),
-#     day_grouped = factor(day_grouped, levels = c("inoc", "treatm", "final"))
-#     )
-
-# more simplified version of the above. Does it have all needed variables?
-  # needs day_grouped
-# alpha_div_long <- alpha_div |>
-#   pivot_longer(
-#     -sample,
-#     names_to = "index",
-#     values_to = "value"
-#     ) |>
-#   inner_join(dna_metadata, by = c("sample" = "#SampleID"))
 
 alpha_div_byoc <- filter(alpha_div_long, stri_detect(sample, fixed = "SYN"))
 
@@ -449,85 +375,38 @@ shan_saliva <- alpha_div_long %>%
 
 ```
 
-
-### Within experiment
-
-There was a slight decrease in mean Shannon Index between inoculation
-(mean [M] = `r signif(filter(shan_byoc, day_grouped == "inoc")$mean, 3)` $\pm$ `r signif(filter(shan_byoc, day_grouped == "inoc")$sd, 3)`)
-and treatment samples
-(M = `r signif(filter(shan_byoc, day_grouped == "treatm")$mean, 3)`
-$\pm$ `r signif(filter(shan_byoc, day_grouped == "treatm")$sd, 3)`),
-followed by a slight increase to model calculus samples
-(M = `r signif(filter(shan_byoc, day_grouped == "model")$mean, 3)`
-$\pm$ `r signif(filter(shan_byoc, day_grouped == "model")$sd, 3)`),
-as well as a decrease in variance within samples types.
-The Pielou Evenness Index showed a similar pattern
-(M = `r signif(filter(pielou_byoc, day_grouped == "inoc")$mean, 3)`
-$\pm$ `r signif(filter(pielou_byoc, day_grouped == "inoc")$sd, 3)`;
-M = `r signif(filter(pielou_byoc, day_grouped == "treatm")$mean, 3)`
-$\pm$ `r signif(filter(pielou_byoc, day_grouped == "treatm")$sd, 3)`;
-M = `r signif(filter(pielou_byoc, day_grouped == "model")$mean, 3)`
-$\pm$ `r signif(filter(pielou_byoc, day_grouped == "model")$sd, 3)`),
-while number of species increased between the treatment period and the final model
-calculus
-(M = `r signif(filter(richness_byoc, day_grouped == "inoc")$mean, 3)`
-$\pm$ `r signif(filter(richness_byoc, day_grouped == "inoc")$sd, 3)`;
-M = `r signif(filter(richness_byoc, day_grouped == "treatm")$mean, 3)`
-$\pm$ `r signif(filter(richness_byoc, day_grouped == "treatm")$sd, 3)`;
-M = `r signif(filter(richness_byoc, day_grouped == "model")$mean, 3)`
-$\pm$ `r signif(filter(richness_byoc, day_grouped == "model")$sd, 3)`).
-
-The model calculus is less variable than the initial and middle biofilm samples.
-
 ```{r}
 #| label: tbl-alpha-experiment
-alpha_summ_byoc
+#| tbl-cap: "Mean alpha diversity values of experiment samples, with standard deviation, grouped by index and days."
+knitr::kable(alpha_summ_byoc)
 ```
 
+There was a slight decrease in mean Shannon Index between inoculation
+and treatment samples,
+followed by a slight increase to model calculus samples,
+as well as a decrease in variance within samples types.
+The Pielou Evenness Index showed a similar pattern
+while number of species increased between the treatment period and the final model
+calculus (@fig-alpha-experiment and @tbl-alpha-experiment).
+The model calculus is less variable than the initial and middle biofilm samples.
 
-```{r}
-#| label: fig-alpha-experiment
-#| fig-cap: "Plot of alpha-diversity indices across experiment samples grouped by sampling time."
+{{< embed ../06-reports/metagen-diversity.qmd#fig-alpha-experiment >}}
 
-alpha_div_long %>%
-  filter(stri_detect(sample, fixed = "SYN")) %>%
-  #mutate(day = as.factor(day)) %>%
-  ggplot(aes(x = day_grouped, y = value)) +
-    geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
-    geom_boxplot(width = 0.12) +
-    facet_wrap(~ index, scales = "free_y") +
-    theme_bw() +
-    theme(
-      axis.title = element_blank(),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank()
-    )
-```
-
-#### Compared to oral reference samples
+##### Compared to oral reference samples
 
 We used the Shannon Index to compare alpha-diversity in our model to oral
 reference samples. The mean Shannon Index of model
-samples---medium, model calculus, reference *in vitro* biofilm
-(M = `r signif(shan_model$mean[[1]], 3)` $\pm$ `r signif(shan_model$sd[[1]], 3)`;
-M = `r signif(shan_model$mean[[2]], 3)` $\pm$ `r signif(shan_model$sd[[2]], 3)`;
-M = `r signif(shan_model$mean[[3]], 3)` $\pm$ `r signif(shan_model$sd[[3]], 3)`,
-respectively) were consistently lower than the means of oral reference
-samples---mucosa,
-modern reference dental calculus, saliva, and subgingival and subgingival plaque
-(`r paste0("M = ", signif(shan_oral$mean, 3), " ± ", signif(shan_oral$sd, 3), collapse = "; ")`).
+samples---medium, model calculus, reference *in vitro* biofilm 
+were consistently lower than the means of oral reference samples---mucosa,
+modern reference dental calculus, saliva, and subgingival and subgingival plaque.
 The Pielou species evenness index has a similar
 distribution, although the comparative biofilm samples have a higher mean
 than biofilm samples from this study.
 Saliva inoculate samples from this study
-(M = `r signif(filter(shan_saliva, Study == "this_study")$mean, 3)` $\pm$
-`r signif(filter(shan_saliva, Study == "this_study")$sd, 3)`
 have a lower mean Shannon index than reference samples
-(M = `r signif(filter(shan_saliva, Study == "HMP")$mean, 3)` $\pm$
-`r signif(filter(shan_saliva, Study == "HMP")$sd, 3)`),
 which may have
 contributed to the lower alpha-diversity in model samples compared to reference
-samples.
+samples (@fig-alpha-compar and @tbl-alpha-all).
 
 Compared to other oral samples, there is lower species diversity and richness
 in the medium and model calculus.
@@ -553,6 +432,7 @@ alpha_div_long %>%
 
 ```{r}
 #| label: tbl-alpha-all
+#| tbl-cap: "Mean alpha diversity values of experiment and comparative samples, with standard deviation, grouped by index and type (Env)."
 alpha_div_long %>%
   filter(!Env %in% env_controls) %>%
   group_by(index, Env) %>%
@@ -560,10 +440,11 @@ alpha_div_long %>%
     mean = mean(value),
     sd = sd(value)
   ) %>%
-  arrange(desc(mean))
+  arrange(desc(mean)) %>%
+  knitr::kable()
 ```
 
-### Species profiles
+#### Species profiles
 
 ```{r}
 #| label: species-properties-plots
@@ -572,8 +453,7 @@ alpha_div_long %>%
 oxy_tol <- species_properties %>%
   distinct(species, .keep_all = T) %>% 
   count(`Oxygen tolerance`) %>%
-  mutate(#`Oxygen tolerance` = replace_na(`Oxygen tolerance`, "unknown"),
-         perc = scales::percent(n / sum(n), accuracy = 0.1)) %>%
+  mutate(perc = scales::percent(n / sum(n), accuracy = 0.1)) %>%
   ggplot(aes(x = "", y = n, fill = `Oxygen tolerance`)) +
     geom_col(colour = "white") + 
     coord_polar(theta = "y") +
@@ -610,19 +490,30 @@ byoc_abs <- species_properties %>%
       )
 ```
 
+<!-- species profiles -->
+
+Information on the oxygen tolerance of bacterial species was downloaded from 
+[BacDive](https://bacdive.dsmz.de) on
+`r stri_extract(list.files("../03-data/", pattern = "bacdive"), regex = "\\d{4}-\\d{2}-\\d{2}")[length(list.files("../03-data/", pattern = "bacdive"))]`.
+A total of **`r length(no_match)`** out of
+**`r length(unique(species_counts_long$species))`**
+(`r scales::percent(length(no_match) / length(unique(species_counts_long$species)), accuracy = 0.1)`)
+species did not have a match on BacDive. These were assigned oxygen tolerance
+based on the most common occurrence within the genus they belong.
+A list of amylase-binding streptococci (ABS) was created based on
+[@nikitkovaStarchBiofilms2013].
+
+The most notable differences between model calculus and oral samples are the
+lower proportion of ABS in and higher proportion of anaerobes in model calculus,
+as well as the absence of aerobes (@fig-byoc-properties).
+
 ```{r}
 #| label: fig-byoc-properties
 #| fig-cap: "The distribution of oxygen tolerance (left) and ABS (right) in experimental samples."
 byoc_oxytol + byoc_abs + plot_layout(guides = "collect")
 ```
 
-### Species composition
-
-```{r}
-#| label: scree-byoc
-#| fig-cap: "Scree plot of principal components from the sPCA on experiment samples."
-plot(spca_byoc, type = "l")
-```
+#### Species composition
 
 ```{r}
 #| label: spca-setup
@@ -634,10 +525,10 @@ compar_explain_var <- spca_species$prop_expl_var$X # comparative samples
 # loadings of samples
 byoc_princomp <- spca_byoc$x %>% # experiment samples
   as_tibble(rownames = "sample") %>%
-  left_join(experiment_metadata, by = c("sample" = "#SampleID"))
+  left_join(dna_experiment_metadata, by = c("sample" = "#SampleID"))
 spca_compar <- spca_species$x %>% # comparative samples
   as_tibble(rownames = "sample") %>%
-  left_join(metadata, by = c("sample" = "#SampleID"))
+  left_join(dna_metadata, by = c("sample" = "#SampleID"))
 
 # loadings of species
 exp_pca_loadings <- spca_byoc$loadings$X %>% # experiment samples
@@ -658,13 +549,72 @@ comp_pca_loadings <- spca_species$rotation %>% # comparative samples
 ```
 
 
+Sparse principal components analysis (sPCA) was conducted on centered-log-ratio
+(CLR) transformed species-level counts using the R package **mixOmics**
+v`r packageVersion("mixOmics")` [@RmixOmics]. The **mixOmics** implementation of
+sPCA uses a LASSO penalisation to eliminate unimportant variables.
+Two separate analyses were conducted: 1) on experiment samples to assess the
+difference in sample types and biofilm age; and 2) on oral comparative samples
+and biofilm model end-products to explore community differences between *in vitro*
+and *in vivo* biofilms.
+
+```{r}
+#| label: fig-scree
+#| fig-cap: "Scree plot of principal components from the sPCA on experiment samples and comparative samples and model calculus."
+#| fig-subcap: 
+#|   - "Experiment samples"
+#|   - "Comparative samples and model calculus"
+plot(spca_byoc$prop_expl_var$X, type = "l", ylab = "Proportion explained variance")
+plot(spca_species$prop_expl_var$X, type = "l", ylab = "Proportion explained variance")
+```
+
+The main overlap between the model calculus and oral comparative
+samples are the high relative abundance of *Streptococcus*.
+Model calculus consists mostly of *Enterococcus*
+and *Veillonella* spp., while oral comparative samples are more
+diverse (consistent with results from alpha diversity).
+
+PC1 separates *in vivo* (negative) from *in vitro* (positive) oral samples.
+PC2 separates the model calculus (positive) from the comparative *in vitro* biofilm
+(negative). The positive PC1 loadings are dominated by *Enterococcus* spp.,
+*Lactobacillus* spp., and aerobes. Negative PC1 loadings are mixed oxygen tolerant
+and dominated by *Capnocytophaga* and *Neisseria* spp. Model calculus has a
+unique signature on PC1 and PC2, driven largely by *Enterococcus* spp (@fig-spca-comp).
+
+
+```{r}
+#| label: fig-spca-comp
+#| fig-cap: "sPCA of model calculus samples and oral reference samples. Contributions of species to each dimension are shown as directed arrows, where the length of the arrow is the weight of the contribution. Only shows correlations of 0.9 or higher."
+#| fig-height: 7
+#| fig-width: 7
+
+biplot(
+  spca_species,
+  group = spca_compar$Env,
+  comp = 1:2,
+  cutoff = 0.90,
+  ind.names = F, 
+  var.names.size = 3
+) +
+  theme(legend.position = "bottom")
+```
+
+Loadings obtained from the sPCA analyses were used in combination with
+CLR-transformed counts to create heatmaps of species- and genus-level counts
+within the experiment and across comparative samples.
+
 Counts from model biofilm and oral reference samples were transformed with a
-centered ratio log-transform and ordered by PC1 loading
+centered ratio log-transform and ordered by PC1 loading.
+*Enterococcus faecalis*, *Enterococcus casseliflavus*, and *Enterococcus durans*
+are more abundant in the *in vitro* biofilm samples than
+*in vivo* samples of plaque and calculus. Conversely, *Neisseria*, *Actinomyces*,
+and *Capnocytophaga* spp. are deficient in the *in vitro* samples
 (@fig-species-pos1 & @fig-species-neg1).
+
 
 ```{r}
 #| label: fig-species-pos1
-#| fig-cap: "Centered ratio log-transform abundance of the top 200 species with the highest positive loading on PC1."
+#| fig-cap: "Heat map of centered ratio log-transform abundances of the top 200 species with the highest positive loading on PC1. Light is more abundant."
 #| fig-height: 12
 #| fig-width: 9
 # top positive loadings on PC1
@@ -682,7 +632,7 @@ species_pos_pc1 +
 
 ```{r}
 #| label: fig-species-neg1
-#| fig-cap: "Centered ratio log-transform abundance of the top 200 species with the highest negative loading on PC1."
+#| fig-cap: "Heat map of centered ratio log-transform abundances of the top 200 species with the highest negative loading on PC1. Light is more abundant."
 #| fig-height: 12
 #| fig-width: 9
 # Top negative loadings on PC1
@@ -699,9 +649,182 @@ species_neg_pc1 +
 ```
 
 
-## FTIR spectra
+### Differential abundance
 
-Select FTIR spectra not shown in the main manuscript (@fig-ftir-spectra).
+*02-scripts/DIFF_01_lfc.R*
+
+#### Within experiment
+
+There seems to be a gradual decline in species counts rather than a sharp dropoff, supporting that
+differences btw medium and calculus are related to maturation stage of biofilm [@velskoMicrobialDifferences2019; @fig-trend-clr; @fig-trend-clr2; @fig-trend-clr3].
+
+```{r}
+#| label: fig-trend-clr
+#| fig-cap: "CLR-transformed counts of species over the duration of the experiment. Select species with highest 'drop-off' between medium and calculus"
+
+top_da_species <- byoc_logf_full %>%
+  filter(abn == "medium") %>%
+  arrange(desc(lfc)) %>%
+  distinct(species) %>%
+  slice_head(n = 15) %>%
+  .$species
+
+clr_byoc_long %>%
+  right_join(dna_experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% top_da_species) %>%
+  ggplot(aes(x = day, y = clr_count, col = species)) +
+    geom_jitter(width = 0.2, show.legend = FALSE) +
+    facet_wrap(~ species, ncol = 2) +
+    theme_minimal()
+```
+
+
+```{r}
+#| label: fig-trend-clr2
+#| fig-cap: "CLR-transformed counts of species over the duration of the experiment. Select species with highest increase in the model calculus."
+
+top_da_species2 <- byoc_logf_full %>%
+  filter(abn == "byoc_calculus" |
+           stri_detect(species, fixed = "Enterococcus")) %>%
+  arrange(desc(lfc)) %>%
+  distinct(species) %>%
+  slice_head(n = 15) %>%
+  .$species
+
+top_species_counts <- clr_byoc_long %>%
+  arrange(desc(clr_count)) %>%
+  distinct(species) %>%
+  slice_head(n = 15) %>%
+  .$species
+
+clr_byoc_long %>%
+  right_join(dna_experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% top_species_counts) %>%
+  ggplot(aes(x = day, y = clr_count, col = species)) +
+  geom_jitter(width = 0.2, show.legend = FALSE) +
+  facet_wrap(~ species, ncol = 2) +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-trend-clr3
+#| fig-cap: "CLR-transformed counts of species over the duration of the experiment. Select Enterococcus species."
+clr_byoc_long %>%
+  right_join(dna_experiment_metadata, by = c("sample" = "#SampleID")) %>%
+  filter(species %in% top_da_species2) %>%
+  ggplot(aes(x = day, y = clr_count, col = species, shape = Env)) +
+  geom_jitter(width = 0.2, show.legend = FALSE) +
+  facet_wrap(~ species) +
+  theme_minimal()
+```
+
+Species enriched in saliva compared to model calculus are largely aerobic, while
+species enriched in model calculus compared to saliva are mainly anaerobes [@fig-byoc-lfc].
+
+{{< embed ../06-reports/metagen-diffabund.qmd#fig-byoc-lfc >}}
+
+#### Comparative samples
+
+
+{{< embed ../06-reports/metagen-diffabund.qmd#fig-plaque-lfc >}}
+
+None of the species enriched in model calculus are aerobes. The top two species
+(**Corynebacterium matruchotii** and **Rothia dentocariosa**)
+enriched in plaque and calculus comparative samples are aerobes, while the rest
+are more balanced between the various types of oxygen tolerance. The abundance
+of anaerobes in model calculus compared to oral comparative samples is consistent
+with the sPCA analysis [@fig-plaque-lfc].
+
+```{r}
+plaque_logf_pc1 <- plaque_logf_full %>%
+  filter(species %in% comp_pca_loadings$species[1:30]) %>% 
+  left_join(bac_properties, by = "species") %>% 
+  #slice_head(n = 60) %>% 
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    facet_wrap(~ env) +  
+    theme_bw() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_blank()
+          ) +
+    scale_shape_manual(values = c(1,2,5,7))
+
+plaque_logf_pc2 <- plaque_logf_full %>%
+  filter(species %in% arrange(comp_pca_loadings, abs(PC2))$species[1:40]) %>% # not sure why I have to select 40 to get 30... I should look into that
+  left_join(bac_properties, by = "species") %>% 
+  ggplot(aes(x = lfc, y = reorder(species, lfc), col = `Oxygen tolerance`, shape = abn)) +
+    geom_point() +
+    geom_linerange(aes(xmin = lower, xmax = upper)) +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    theme_bw() +
+    facet_wrap(~ env) +
+    theme(axis.title.y = element_blank()) +
+    scale_shape_manual(values = c(1,2,5,7)) +
+    scale_x_continuous(limits = layer_scales(plaque_logf_pc1)$x$get_limits())
+```
+
+```{r}
+#| label: fig-diffabund-plaque2
+#| fig-cap: "Log-fold changes between sample types. Circles are species enriched in the model calculus, triangles in modern calculus, diamonds are enriched in subgingival plaque, and squares in supragingival plaque. Plot shows the top 30 species in PC1 (A) and PC2 (B) between model calculus and other sample types. Bars represent standard error."
+#| fig-height: 8
+#| fig-width: 7
+
+plaque_logf_pc1 / plaque_logf_pc2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect") & labs(shape = "Type") & theme(axis.text.y = element_text(size = 7))
+```
+
+
+### Discussion
+
+<!-- from metagen-diversity -->
+Main takeaway is the loss of diversity from donated saliva to model calculus, and
+when compared to oral reference samples. The donated saliva for the experiment
+had a lower diversity than the reference saliva samples, and may have contributed
+to a lower diversity in experiment samples. Community profile of model calculus
+differs from
+the oral reference samples, while modern calculus mostly resembles oral reference
+samples. The main difference between model and reference samples seems to be
+a lack of aerobes in model samples and a dominance by *Enterococcus* spp.
+
+<!-- from metagen-diffabund -->
+*Enterococcus faecalis* has the highest log-fold change, with a higher abundance
+in the model calculus samples compared to the reference samples and
+may represent one of the main differences between model calculus and other
+reference samples, especially modern calculus, consistent with the results of the
+sPCA analysis. The high relative abundance of *E. faecalis* may represent
+contamination despite it being commonly found in the oral cavity. It was also
+abundant in the comparative *in vitro* biofilm study.
+*Enterococcus* spp. out-competing other species may be a problem in
+model biofilm studies, but more comparative studies are needed to confirm
+(and there are not many WGS studies out there).
+*Capnocytophaga*, *Actinomyces*, and *Neisseria* spp. deficient in model samples
+(both this study and comparative).
+Very few aerobes made it into the model. Apart from the donated saliva, very few
+aerobes were detected in any of the experimental samples. *Rothia* spp. disappeared
+between saliva and medium samples. We may need to reduce the frequency of
+medium replacement (currently every three days) to help promote the
+growth of slower growing organisms.
+
+*Capnocytophaga* and *Actinomyces* spp. are
+predominantly
+(facultative) anaerobes, so their deficiency must be attributed to different
+reasons. Both *Capnocytophaga* and *Neisseria* spp. are fastidious and
+require an atmosphere with at least 5% carbon dioxide to thrive, so the model
+may have a low carbon dioxide atmosphere [@tonjumNeisseria2017].
+
+ABS are also underrepresented in the experimental samples
+compared to the modern calculus and plaque reference samples. There was a
+relatively low frequency of ABS in the model samples compared to the reference
+samples, which may be attributed to the presence of sucrose in the treatment
+solutions, potentially eliminating the niche for ABS.
+
+
+## FTIR analysis
+
+Select FTIR spectra not shown in the main manuscript (@fig-ftir-spectra). These can
+also be explored in an interactive dashboard (<https://websaur.shinyapps.io/byocDashboard/>).
+
 
 ```{r}
 #| label: fig-ftir-spectra
@@ -713,12 +836,16 @@ Select FTIR spectra not shown in the main manuscript (@fig-ftir-spectra).
 #|   - "Day 7"
 #|   - "Day 12"
 #|   - "Day 12"
+#|   - "Day 16"
+#|   - "Day 16"
+#|   - "Day 20"
+#|   - "Day 20"
+#|   - "Day 24"
+#|   - "Day 24"
 ftir_spect_plot(ftir_data, "F7.2D1")
 ftir_spect_plot(ftir_data, "F7.1A6")
 ftir_spect_plot(ftir_data, "F12.1A5+F12.B1")
 ftir_spect_plot(ftir_data, "F12.1D1+F12.1D2")
-
-
 ftir_spect_plot(ftir_data, "F16.1B2")
 ftir_spect_plot(ftir_data, "F16.1D6")
 ftir_spect_plot(ftir_data, "F20.1A1")
@@ -727,41 +854,49 @@ ftir_spect_plot(ftir_data, "F24.1B3")
 ftir_spect_plot(ftir_data, "F24.2A4")
 ```
 
-::: {.content-visible when-format="pdf"}
-Interactive plots are available in the HTML output file.
-:::
 
-::: {.content-visible when-format="html:js"}
+### Discussion
 
-Interactive plots to explore FTIR spectra.
+<!-- from 06-reports/FTIR-analysis.qmd -->
 
-```{r eval=!knitr::is_latex_output()}
-#| label: fig-ftir-int7
-ftir_spect_plot(ftir_data, "F7.1A6_b") %>% 
-  ggplotly()
-```
+Experimental samples are indicative of biofilm growth and maturation, including
+mineralisation, represented by a reduction in proteins and lipids (1460, 1420, 870)
+and the increasing intensity of peaks related to carbonated hydroxyapatite (1040,
+600-550 cm$^{-1}$) over the course of the experiment.
 
-```{r eval=!knitr::is_latex_output()}
-#| label: fig-ftir-int12
-ftir_spect_plot(ftir_data, "F12.1A5+F12.B1_B") %>% 
-  ggplotly()
-```
+The presence of collagen in dental calculus (and saliva) is still not clear. It
+may be a result of external contamination [@mackiePreservationMetaproteome2017]
+or end-products
+of collagen degradation (e.g. carboxyterminal telopeptide of type I collagen, ICTP)
+which may or may not be related to periodontitis
+[@gursoySalivaryCollagen2013]. It is more likely that the proline-rich proteins
+(secondary amine) present in the samples are attributed to the biofilm
+matrix.
 
-```{r eval=!knitr::is_latex_output()}
-#| label: fig-ftir-int16
- ftir_spect_plot(ftir_data, "F16.1C6") %>% 
-  ggplotly()
-```
+The artificial samples from day 24 resemble both the modern reference samples and
+the archaeological sample in mineral composition and crystallinity. The steeper
+slope of the archaeological sample may suggest larger crystals, which is to be
+expected, as the inorganic crystals expand into the space left by degrading
+organic matter over time [@weinerBiologicalMaterials2010]. 
+Overall, the spectra of the artificial calculus show an increase in the
+inorganic component and a decrease in the organic component over time.
+The grinding curves for days 16, 20, and 24 were very similar, suggesting
+that the CPMU solution (introduced on day 16) may not have much of an effect.
 
-```{r eval=!knitr::is_latex_output()}
-#| label: fig-ftir-int24
-ftir_spect_plot(ftir_data, "F24.1A3") %>% 
-  ggplotly()
-```
+The archaeological and modern reference spectra are largely indistinguishable and
+consist of a broad O–H absorbance band (3400 cm$^{-1}$) related to hydroxyl group,
+weak CH3 bands (3000–2900 cm$^{-1}$) , carbonate (1420, 1458-1450, 875-870 cm$^{-1}$),
+amide I band (1650 cm$^{-1}$) which is related to the protein content, and phosphates
+(1036-1040, 602-4, 563-566 cm$^{-1}$) which together withthe hydroxyl and the carbonate
+can be identified as derived from carbonate hydroxyapatite, the main mineral found
+in mature dental calculus (Hayashizaki et al., 2008; [@jinSupragingivalCalculus2002]).
+The model
+calculus samples from the end of the experiment are similar to both the modern and
+archaeological reference samples. The main difference is a lower organic component
+in reference samples seen as a reduced amide I peak at around 1637 compared to the
+carbonate peak at around 1420, and an absence of amide II and III. Also a reduction
+in CH3 bands at 3000-2900 cm$^{-1}$.
 
-:::
-
-<!-- host interactive plot somewhere online? -->
 
 ## Software versions
 
@@ -770,8 +905,8 @@ ftir_spect_plot(ftir_data, "F24.1A3") %>%
 Software versions:
 
 ```{r}
-readr::read_tsv(here("01-documentation/software_versions.csv"), col_names = c("Software", "Version")) %>%
-  knitr::kable()
+software %>%
+  knitr::kable(col.names = c("Software", "Version"))
 ```
 
 ### R
@@ -790,7 +925,9 @@ print(sessionInfo(), locale = F)
 renv_packages_list <- jsonlite::read_json(here("renv.lock"))
 do.call(rbind, renv_packages_list$Packages) %>% 
   as.data.frame() %>%
-  select(Package, Version, Source) %>%
+  dplyr::select(Package, Version, Source) %>%
   knitr::kable(row.names = F)
 ```
 
+
+## References cited
