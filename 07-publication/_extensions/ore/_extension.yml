@@ -1,0 +1,20 @@
+title: Open Research Europe
+author: Me
+version: 0.0.0
+quarto-required: ">=1.4.0"
+contributes:
+  formats:
+    common:
+      knitr:
+        opts_chunk:
+          echo: false
+    pdf:
+      documentclass: article
+      block-headings: false
+      keep-tex: true
+      link-citations: true
+      number-sections: false
+      template: oretemplate.tex
+      format-resources:
+        - ORE Header.png
+        - f1000_styles.sty
