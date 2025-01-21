@@ -14,6 +14,9 @@ contributes:
       keep-tex: true
       link-citations: true
       number-sections: false
+      numcite: true
+      cite-method: natbib
+      natbiboptions: numbers
       template: oretemplate.tex
       format-resources:
         - ORE Header.png
