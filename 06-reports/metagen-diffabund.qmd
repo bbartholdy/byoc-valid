@@ -70,7 +70,8 @@ byoc_logf_full %>%
     geom_point() +
     geom_linerange(aes(xmin = lower, xmax = upper)) +
     geom_vline(xintercept = 0, linetype = "dashed") +
-    facet_wrap(~ env)
+    facet_wrap(~ env) +
+    theme_bw()
 ```
 
 ```{r}
@@ -107,7 +108,7 @@ reduction of species occurs in
 `r filter(byoc_logf_full, lfc == max(lfc))$species`
 (LFC = `r filter(byoc_logf_full, lfc == max(lfc))$lfc`).
 
-### Artificial vs. modern calculus
+### model vs. modern calculus
 
 ```{r}
 head(plaque_logf_full)

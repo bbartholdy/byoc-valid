@@ -7,6 +7,7 @@ title: "PCA and diversity analysis"
 #| include: false
 #library(vegan)
 library(mixOmics)
+library(readr)
 library(dplyr)
 library(tibble)
 library(forcats)
@@ -21,14 +22,14 @@ alpha_div <- read_tsv(here("05-results/metagenomics/alpha-diversity.tsv"))
 dna_metadata <- read_tsv(here("01-documentation/dna-metadata.tsv"))
 dna_analysis_metadata <- read_tsv(here("01-documentation/dna-analysis-metadata.tsv"))
 dna_experiment_metadata <- read_tsv(here("01-documentation/dna-experiment-metadata.tsv")) %>%
-  filter(`#SampleID` %in% analysis_metadata$`#SampleID`)
-bac_properties <- readr::read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
+  filter(`#SampleID` %in% dna_analysis_metadata$`#SampleID`)
+bac_properties <- read_tsv(here("04-analysis/bacdive/species-properties.tsv"))
 
 treatment_colours <- viridisLite::inferno(n = length(unique(dna_experiment_metadata$treatment))) # define pallette and number of colours
 env_colours <- viridisLite::magma(n = length(unique(dna_analysis_metadata$Env))) # define pallette and number of colours
 
 alpha_div_long <- alpha_div %>%
-  pivot_longer(cols = where(is.numeric), names_to = "index") %>%
+  tidyr::pivot_longer(cols = where(is.numeric), names_to = "index") %>%
   left_join(dna_metadata, by = c("sample" = "#SampleID")) %>%
   left_join(dna_experiment_metadata, by = c("sample" = "#SampleID", "Env")) %>%
   mutate(day_grouped = case_when( # group days to increase sample size
@@ -140,7 +141,7 @@ Days were grouped for increased sample sizes.
 #| label: fig-alpha-experiment
 #| fig-cap: "Alpha diversity indices of experimental samples including the grouped categories, inoculation, treatment, and final product."
 alpha_div_long %>%
-  filter(stri_detect(sample, fixed = "SYN")) %>%
+  filter(stringi::stri_detect(sample, fixed = "SYN")) %>%
   #mutate(day = as.factor(day)) %>%
   ggplot(aes(x = day_grouped, y = value)) +
     geom_violin(aes(col = day_grouped, fill = day_grouped), alpha = 0.5) +
