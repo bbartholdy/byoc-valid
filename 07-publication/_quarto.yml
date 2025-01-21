@@ -1,8 +1,9 @@
+title: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus
 project:
   type: default
   output-dir: _output
   execute-dir: project
-  pre-render: _bib.R
+  #pre-render: _bib.R # only works when main author renders
 format: 
   arxiv-pdf:
     output-file: "bioRxiv-manuscript-2.1"
@@ -14,7 +15,7 @@ format:
     keep-md: true
   pdf:
     keep-tex: true
-    output-file: "bioRxiv-manuscript-2.1"
+    output-file: "draft-manuscript_v1"
     documentclass: article
     link-citations: true
     geometry:
@@ -23,7 +24,6 @@ format:
       - heightrounded
     include-in-header: 
       text: |
-        \usepackage{lineno}
         \linenumbers
         \setlength{\parindent}{15pt}
   docx: 
@@ -35,8 +35,8 @@ execute:
 knitr:
   opts_chunk: 
     message: false
-    fig.align: "center"
-title: Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus
+    fig-align: "center"
+    fig-path: "figures/"
 author: 
   - name: Bjørn Peare Bartholdy
     email: b.p.bartholdy@arch.leidenuniv.nl
@@ -52,7 +52,7 @@ author:
     orcid: 0000-0003-2015-7817
     affiliations:
       - ref: haifa
-      - ref: mun
+      - ref: kiel
   - name: Zandra Fagernäs
     orcid: 0000-0003-2667-3556
     affiliations:
@@ -88,16 +88,21 @@ affiliations:
     department: The Leon Recanati Institute for Maritime Studies
     city: Haifa
     country: Israel
-  - id: mun
-    name: Ludwig Maximilian University
-    department: Institute for Pre- and Protohistoric Archaeology and Archaeology of the Roman Provinces
-    city: Munich
+  - id: kiel
+    name: University of Kiel
+    department: Institute of Pre- and Protohistoric Archaeology
+    city: Kiel
     country: Germany
   - id: harv
     name: Department of Anthropology, Harvard University
     department: Department of Anthropology
     city: Cambridge, MA
     country: USA
+  - id: naturalis
+    name: Naturalis Biodiversity Center
+    department: Tropical Botany Group
+    city: Leiden
+    country: The Netherlands
 bibliography: references.bib
 csl: apa.csl
 keywords:
