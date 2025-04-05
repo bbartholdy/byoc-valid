@@ -3,16 +3,16 @@
 <!-- using the Opinionated Bioinformatics Project Directory Structure
 https://github.com/paleobiotechnology/analysis-project-structure -->
 
-![GitHub Release](https://img.shields.io/github/v/release/bbartholdy/byoc-valid)
+[![GitHub Release](https://img.shields.io/github/v/release/bbartholdy/byoc-valid)](https://github.com/bbartholdy/byoc-valid/releases/tag/v23.05.0) [![DOI](https://img.shields.io/badge/DOI-10.12688/openreseurope.19129.1-blue)](https://doi.org/10.12688/openreseurope.19129.1)
+
 
 ## Table of Contents
 
 <!-- TOC depthfrom:2 depthto:2 -->
 
 - [Table of Contents](#table-of-contents)
-- [Preamble](#preamble)
-- [General Organisation](#general-organisation)
 - [Structure](#structure)
+- [Computational reproducibility](#computational-reproducibility)
 - [Directory Descriptions](#directory-descriptions)
 
 <!-- /TOC -->
@@ -26,32 +26,61 @@ The overall structure is as in the tree structure below, with the main top-level
 Brief summary descriptions of the main folders are as follows ([more details here](#directory-descriptions)):
 
 - `01-documentation`: Contains initial metadata about samples and data files that are used for downstream analysis. This includes locations of comparative data.
-- `02-scripts`: Contains all scripts and code notebooks used in the day-to-day analysis during the project. Can optionally include sub-directories for each language (e.g., R, python).
-- `03-data`: Contains all the large raw, or common-starting point files for all downstream analyses. For (meta)genomics these are normally files such as BAM, SAM, FASTQ, FASTA etc.
+- `02-scripts`: Contains all scripts used in the analysis during the project.
+- `03-data`: Contains all the large raw, or common-starting point files for all downstream analyses. **These are too big to include in the GitHub repository**.
 - `04-analysis`: Contains all the output from software, tools, and notebooks of all analyses. This is the main 'working' directory of the project.
 - `05-results`: Contains copies of all final output from all `04-analysis` (i.e., without intermediate files). These will be used for the bare-minimal reproducible results for reports and publication.
 - `06-reports`: Contains presentations, summary notebooks of particular stages or packages of the project. Used for informing the final publication.
 - `07-publication`: Contains main text, figures, supplementary files and data. Optionally can formatted with bookdown for pretty online rendering with direct links to intermediate files in `04-analysis`.
 
 
+## Computational reproducibility
+
+To the best of my ability, I have provided all the code needed to reproduce the analysis. I welcome
+all attempts to reproduce/replicate this study, and I am happy to hear about any issues that were
+encountered by the reproducer and any ways that I can improve this work.
+
 ### `renv.lock`
 
 This is a file that captures the R environment using the [**renv**](https://rstudio.github.io/renv/articles/renv.html), including packages and R version.
 
-When reproducing the R code, you can use the **renv** package and the function `renv::restore()` to restore the R packages that are needed to
-run the R code.
+When reproducing the R code, you can use the **renv** package and the function `renv::restore()` to restore
+the R packages that are needed to run the R code.
+
+### `01-documentation/software_versions.csv`
+
+This file contains the software and versions that were used to run the DNA preprocessing in [EAGER](https://nf-co.re/eager/) (using
+[Kraken2](https://github.com/DerrickWood/kraken2) for metagenomic classification).
+
+### `01-documentation/conda_versions.tsv`
+
+This file contains the dependencies for QIIME2 and SourceTracker2.
 
 
-### `.conda_environment.yml`
+### Analysis
 
-This is a file that utilises the [`conda`](https://docs.conda.io/en/latest/) (mostly) portable packaging system. You use this, or multiple files, to define all software, and specific versions of said software, used in the project or analysis packages.
+Pre-processing of the DNA was done using EAGER, with the SLURM scripts
+in `02-scripts/` prefixed with 'PRE'. The output files from EAGER and Kraken were
+combined in R (`02-scripts/01-comb-kraken-reports.R`).
+OTU table was filtered for relative abundance. Percent abundance of each taxon
+across all samples was calculated and then taxa with lower than 0.001% abundance
+were filtered out (`02-scripts/01-dataprep.R`).
 
-After installation of conda, the environment can be created and activated as follows
+Authentication was done using QIIME2 (and `filter_samples_from_otu_table.py` from QIIME) and SourceTracker2.
+The steps are presented in `02-scripts/AUTH_01_ST2.md`.
 
-```bash
-conda env create -f conda_environment.yml
-conda activate <NAME_OF_PROJECT>
-```
+Oxygen tolerance for bacterial species was retrieved from [BacDive](https://bacdive.dsmz.de) on
+2022-08-26. Alpha and Beta diversity were calculated using the [**vegan**](https://vegandevs.github.io/vegan/) and
+[mixOmics](https://mixomics.org/) R packages (`02-scripts/DIV_01_alpha-beta.R). More details can
+be found in `06-reports/metagen-diversity.qmd`.
+
+Differential abundance was calculated using the [ANCOMBC](https://bioconductor.org/packages/release/bioc/html/ANCOMBC.html) R package
+(`02-scripts/DIFF_01_lfc.R`). More details can be found in `06-reports/metagen-diffabund.qmd`.
+
+FTIR data were cleaned and processed in R (`02-scripts/FTIR_00_data-prep.R`). More details can be found in `06-reports/FTIR-analysis.qmd`.
+
+Preparation of analysis, figures, and tables for the manuscript can be found in the scripts with the prefix 'OUT' (`02-scripts/OUT_*),
+and the manuscript source file is `07-publication/index.qmd`.
 
 
 ## Directory Descriptions
@@ -66,14 +95,10 @@ Most of these files will be simple text files in tabular format, such as CSV, TS
 
 ### `02-scripts/`
 
-This contains all scripts and notebooks used in the 'day-to-day' analysis of the project. All of these scripts/notebooks produce both intermediate and final files used in the analysis of the project.
-
-These can be things such as simple shell/bash scripts (`.sh`) or R (`.R`) scripts, or notebooks such as RMarkdown/Notebooks (`.Rmd`) or Jupyter notebooks (`.ipynb`). It is optional how this is structured internally, whether by analysis component prefixes, directories per analysis component, or by programming language.
-
-These scripts and notebooks should only use relative links to refer to input and output files present in the directory, and not to point to anything else present on your given machine or infrastructure.
-
-File names should be descriptive so readers can find relevant files. Abbreviations or acronyms are not recommended, as these are often difficult to understand for people not intimately involved in the project.
-
+This contains all scripts and notebooks used in the 'day-to-day' analysis of the project. All of these scripts/notebooks produce both intermediate and final files used in the analysis of the project. These contain .slurm, .R, and .md files.
+Naming of the scripts is according to stage of analysis. PRE =
+Pre-processing; AUTH = authentication; DIV = diversity; DIFF = differential abundance; FTIR = FTIR analysis; OUT = output-related files (used in publication).
+Most of the outputs from these scripts can be found in `04-analysis/`.
 
 ### `04-analysis/`
 
