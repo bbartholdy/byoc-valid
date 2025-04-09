@@ -8,60 +8,104 @@
 %
 % For more information on the Open Research Europe publishing model please see:  https://open-research-europe.ec.europa.eu/about
 
+% This is a completely unlicensed, unwanted modification of the official LaTeX template. Use at own risk.
+
 \documentclass[10pt,a4paper]{article}
 \usepackage{f1000_styles}
 
-%% Default: numerical citations
 \usepackage[numbers]{natbib}
 
-%% Uncomment this lines for superscript citations instead
-% \usepackage[super]{natbib}
+\bibliographystyle{plainnat}
 
-%% Uncomment these lines for author-year citations instead
-% \usepackage[round]{natbib}
-% \let\cite\citep
+\usepackage{longtable}
+\usepackage{booktabs}
+
+% remove numbering
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 
 \begin{document}
 \pagestyle{fancy}
 
-\title{Assessing the validity of a calcifying oral biofilm model as a suitable proxy for dental calculus}
+\title{Assessing the validity of a calcifying oral biofilm model as a
+suitable proxy for dental calculus}
 %\titlenote{Please provide a concise and specific title that clearly reflects the content of the article.}
-\author[1]{Bjørn Peare Bartholdy}
-\author[2]{Irina M. Velsko}
-\author[3,4]{Shira Gur-Arieh}
-\author[5]{Zandra Fagernäs}
-\author[2,6]{Christina Warinner}
-\author[1,7]{Amanda G. Henry}
-\affil[1]{Faculty of Archaeology, Leiden University, Leiden, The Netherlands}
-\affil[2]{Max Planck Institute for Evolutionary Anthropology, Department of Archaeogenetics, Leipzig, Germany}
-\affil[3]{Globe Institute, University of Copenhagen, Copenhagen, Denmark}
-\affil[4]{The Leon Recanati Institute for Maritime Studies, University of Haifa, Haifa, Israel}
-\affil[5]{Institute of Pre- and Protohistoric Archaeology, University of Kiel, Kiel, Germany}
-\affil[6]{Department of Anthropology, Harvard University, Cambridge, USA}
-\affil[7]{Tropical Botany Group, Naturalis Biodiversity Center, Leiden, The Netherlands}
+
+\author[]{
+Bjørn Peare Bartholdy,
+Irina M. Velsko,
+Shira Gur-Arieh,
+Zandra Fagernäs,
+Christina Warinner,
+Amanda G. Henry}
+\affil[]{
+Faculty of Archaeology, Leiden University\\
+\\Department of Archaeogenetics, Max Planck Institute for Evolutionary
+Anthropology\\
+\\The Leon Recanati Institute for Maritime Studies, University of
+Haifa\\
+Institute of Pre- and Protohistoric Archaeology, University of Kiel\\
+\\Department of Archaeogenetics, Max Planck Institute for Evolutionary
+Anthropology\\
+Globe Institute, University of Copenhagen\\
+\\Department of Anthropology, Department of Anthropology, Harvard
+University\\
+Department of Archaeogenetics, Max Planck Institute for Evolutionary
+Anthropology\\
+\\Faculty of Archaeology, Leiden University\\
+}
 
 \maketitle
 \thispagestyle{fancy}
 
 \begin{abstract}
 
-\subsection*{Background}
+\subsection{Background}\label{background}
 
-Dental calculus is increasingly used by researchers to study dietary patterns in past populations. The benefits of using dental calculus for this purpose have been clearly demonstrated, with dental calculus harbouring a wealth of microremains and biomarkers for health and diet. Previous studies have demonstrated some of the limitations and biases of how methods of processing may overlook, or even remove, some of the important information contained within the mineralised matrix. However, there are many factors that are impossible to account for *in vivo* and in archaeological material, such as exact dietary intake, and individual factors such as pH and enzyme activity, leaving some limitations that require a different approach.
+Dental calculus is increasingly used by researchers to study dietary
+patterns in past populations. The benefits of using dental calculus for
+this purpose have been clearly demonstrated, with dental calculus
+harbouring a wealth of microremains and biomarkers for health and diet.
+Previous studies have demonstrated some of the limitations and biases of
+how methods of processing may overlook, or even remove, some of the
+important information contained within the mineralised matrix. However,
+there are many factors that are impossible to account for \emph{in vivo}
+and in archaeological material, such as exact dietary intake, and
+individual factors such as pH and enzyme activity, leaving some
+limitations that require a different approach.
 
-\subsection*{Methods}
+\subsection{Methods}\label{methods}
 
-We present a protocol for creating a calcifying oral biofilm model that can be used to explore the biases and limitations of dental calculus as a medium for paleodietary reconstructions. We report the microbial and mineral composition, using metagenomic classification and Fourier transform infrared (FTIR) spectroscopy, respectively, in an effort to validate the model calculus as an appropriate proxy to natural dental calculus.
+We present a protocol for creating a calcifying oral biofilm model that
+can be used to explore the biases and limitations of dental calculus as
+a medium for paleodietary reconstructions. We report the microbial and
+mineral composition, using metagenomic classification and Fourier
+transform infrared (FTIR) spectroscopy, respectively, in an effort to
+validate the model calculus as an appropriate proxy to natural dental
+calculus.
 
-\subsection*{Results}
+\subsection{Results}\label{results}
 
-Metagenomic classification showed a microbial profile predominantly made up of (facultative) anaerobes, with a community structure that was somewhat distinct from other oral reference samples. The core genera of the model consisted of oral species, but clustered separately from oral reference samples due to a higher abundance of anaerobes. Mineral and organic components of our model mimic that of the modern and archaeological reference calculus, with carbonated hydroxyapatite as the principal compound, consistent with natural human-derived calculus.
+Metagenomic classification showed a microbial profile predominantly made
+up of (facultative) anaerobes, with a community structure that was
+somewhat distinct from other oral reference samples. The core genera of
+the model consisted of oral species, but clustered separately from oral
+reference samples due to a higher abundance of anaerobes. Mineral and
+organic components of our model mimic that of the modern and
+archaeological reference calculus, with carbonated hydroxyapatite as the
+principal compound, consistent with natural human-derived calculus.
 
-\subsection*{Conclusions}
+\subsection{Conclusions}\label{conclusions}
 
-Overall our model is indicative of an oral environment, and has potential to validate current methods used in the analysis of archaeological dental calculus, and should be used to complement, rather than replace current *in vivo* studies.
+Overall our model is indicative of an oral environment, and has
+potential to validate current methods used in the analysis of
+archaeological dental calculus, and should be used to complement, rather
+than replace current \emph{in vivo} studies.
+
 \end{abstract}
 
+\section*{\color{OREblue}Keywords}
+
+oral biofilm, dental calculus, microbiome, metagenomics, ftir
 
 
 \clearpage
@@ -69,124 +113,125 @@ Overall our model is indicative of an oral environment, and has potential to val
 
 \section*{Plain language summary}
 
-Archaeologists have been using dental calculus (or tartar) for many decades
-to find traces of food from the past. What makes dental calculus so well suited
-for this task is that it forms on our teeth, and is therefore in direct
-contact with what we eat. It also hardens to form a strong, solid material
-that can survive for long periods of time and preserve what's inside.
-While we have been able to extract a lot of information from archaeological 
-dental calculus, there are still many things we don't know about the context
-of this information.
-For example, we have no way to confirm exactly what people were eating,
-we can only infer this from what we see; but, there are many factors that
-influence what actually ends up in dental calculus, and it's not all food.
+Archaeologists have been using dental calculus (or tartar) for many
+decades to find traces of food from the past. What makes dental calculus
+so well suited for this task is that it forms on our teeth, and is
+therefore in direct contact with what we eat. It also hardens to form a
+strong, solid material that can survive for long periods of time and
+preserve what's inside. While we have been able to extract a lot of
+information from archaeological dental calculus, there are still many
+things we don't know about the context of this information. For example,
+we have no way to confirm exactly what people were eating, we can only
+infer this from what we see; but, there are many factors that influence
+what actually ends up in dental calculus, and it's not all food.
 
-To address some of these issues, we have grow our own
-dental calculus in a lab under controlled conditions. This will allow
-us to conduct experiments to test what we see and how it relates to the
-interpretations we make.
-In this study, we examine our lab-grown dental calculus to make sure it
-looks and behaves like naturally-occurring dental calculus, specifically
-the bacterial and mineral content. We found some differences in bacterial
-content, which is not uncommon for lab-grown dental plaque and calculus.
-Overall, though, the lab-grown model has the makeup of
-an oral microbiome, and the mineral content is very similar to natural
-dental calculus.
+To address some of these issues, we have grow our own dental calculus in
+a lab under controlled conditions. This will allow us to conduct
+experiments to test what we see and how it relates to the
+interpretations we make. In this study, we examine our lab-grown dental
+calculus to make sure it looks and behaves like naturally-occurring
+dental calculus, specifically the bacterial and mineral content. We
+found some differences in bacterial content, which is not uncommon for
+lab-grown dental plaque and calculus. Overall, though, the lab-grown
+model has the makeup of an oral microbiome, and the mineral content is
+very similar to natural dental calculus.
 
-We recommend using lab-grown models to mitigate some of the
-issues we encounter when using archaeological dental
-calculus to reconstruct past diets, while we also acknowledge that the model
-is not a replacement for research on natural calculus, both
-archaeological and modern.
+We recommend using lab-grown models to mitigate some of the issues we
+encounter when using archaeological dental calculus to reconstruct past
+diets, while we also acknowledge that the model is not a replacement for
+research on natural calculus, both archaeological and modern.
 
-\section*{Introduction}
+% temporary fix for pandocbounded error
+\newcommand{\pandocbounded}[1]{#1}
+
+\section{Introduction}\label{introduction}
 
 Dental calculus is becoming an increasingly popular substance for
 exploring health and diet in past populations
-\cite{warinnerNewEra2015}. During life, dental plaque undergoes
+\citep{warinnerNewEra2015}. During life, dental plaque undergoes
 periodic mineralisation, trapping biomolecules and microfossils that are
 embedded within the dental plaque biofilm in the newly-formed dental
 calculus. This process is repeated as new plaque is deposited and
 subsequently mineralises, resulting in a layered structure representing
 a temporal record of biofilm growth and development
-\cite{warinnerPathogensHost2014}. The calculus serves as a protective
+\citep{warinnerPathogensHost2014}. The calculus serves as a protective
 casing for the entrapped biomolecules and microfossils, preserving them
 for thousands of years after death and burial
-\cite{yatesOralMicrobiome2021}. Studies using archaeological dental
+\citep{yatesOralMicrobiome2021}. Studies using archaeological dental
 calculus span a wide range of topics in different regions and time
 periods. These include characterisation of the oral microbiome and its
 evolution in past populations
-\cite{velskoMicrobialDifferences2019, adlerSequencingAncient2013, warinnerPathogensHost2014, kazarinaPostmedievalMicrobial2021, yatesOralMicrobiome2021},
+\citep{velskoMicrobialDifferences2019, adlerSequencingAncient2013, warinnerPathogensHost2014, kazarinaPostmedievalMicrobial2021, yatesOralMicrobiome2021},
 as well as extraction of microbotanical remains
-\cite{henryCalculusSyria2008, hardyStarchGranules2009, mickleburghNewInsights2012, maHumanDiet2022}
+\citep{henryCalculusSyria2008, hardyStarchGranules2009, mickleburghNewInsights2012, maHumanDiet2022}
 and other residues to infer dietary patterns and nicotine use
-\cite{buckleyDentalCalculus2014, hendyProteomicCalculus2018, eerkensDentalCalculus2018, bartholdyMultiproxyAnalysis2023, velskoDentalCalculus2017}.
+\citep{buckleyDentalCalculus2014, hendyProteomicCalculus2018, eerkensDentalCalculus2018, bartholdyMultiproxyAnalysis2023, velskoDentalCalculus2017}.
 Dental calculus has already provided a unique and valuable insight into
 the past, but the exact mechanism of the incorporation, retention, and
 preservation of microfossils and biomolecules exogenous to the microbial
 biofilm is largely unknown; even the process of plaque mineralisation is
 not fully understood
-\cite{omelonReviewPhosphate2013, jinSupragingivalCalculus2002}. This
+\citep{omelonReviewPhosphate2013, jinSupragingivalCalculus2002}. This
 means that there may be hidden biases affecting our interpretations of
 dietary/activity patterns extrapolated from ancient dental calculus.
 These biases have been explored archaeologically
-\cite{fagernasMicrobialBiogeography2022, trompEDTACalculus2017} as well
-as in contemporary humans \cite{leonardPlantMicroremains2015} and
-non-human primates \cite{powerChimpCalculus2015}, but not
+\citep{fagernasMicrobialBiogeography2022, trompEDTACalculus2017} as well
+as in contemporary humans \citep{leonardPlantMicroremains2015} and
+non-human primates \citep{powerChimpCalculus2015}, but not
 experimentally.
 
 Dental plaque is an oral biofilm and is part of the normal state of the
 oral cavity. However, when left unchecked, plaque can lead to
 infections, such as dental caries and periodontitis, and/or
-mineralisation \cite{marshDentalPlaque2006}. The dental plaque biofilm
+mineralisation \citep{marshDentalPlaque2006}. The dental plaque biofilm
 grows in a well-characterized manner before mineralisation, in a process
 that repeats regularly to build up dental calculus. Shortly after teeth
 are cleaned (whether mechanically or otherwise), salivary components
 adsorb to the crown or root and form the acquired dental pellicle. The
 pellicle provides a viable surface for bacteria to attach, especially
 early-coloniser species within the genera \emph{Streptococcus} and
-\emph{Actinomyces} \cite{marshDentalPlaque2006}. Once the tooth surface
+\emph{Actinomyces} \citep{marshDentalPlaque2006}. Once the tooth surface
 has been populated by specialists in surface-attachment, other species
 of bacteria can attach to the adherent cells, increasing the biofilm
 density and diversity. The bacterial species secrete polysaccharides,
 proteins, lipids, and nucleic acids, into their immediate environment to
 form a matrix that provides structural support, nutrition, and allows
 for environmental niche partitioning
-\cite{flemmingBiofilmsEmergent2016}.
+\citep{flemmingBiofilmsEmergent2016}.
 
 Biofilms can become susceptible to calcification under certain
 microenvironmental conditions, including an increased concentration of
 salts and a decrease in statherin and proline-rich proteins in saliva,
 rises in local plaque pH, and increased hydrolysis of urea
-\cite{whiteDentalCalculus1997, wongCalciumPhosphate2002}. These
+\citep{whiteDentalCalculus1997, wongCalciumPhosphate2002}. These
 conditions can cause increased precipitation and decreased dissolution
 of calcium phosphate salts within saliva and the plaque biofilm. The
 resulting supersaturation of calcium phosphate salts is the main driver
-of biofilm mineralisation \cite{jinSupragingivalCalculus2002}. The
+of biofilm mineralisation \citep{jinSupragingivalCalculus2002}. The
 primary minerals in dental calculus are hydroxyapatite, octacalcium
 phosphate, whitlockite, and brushite. During initial mineralisation the
 main mineral component is brushite, which shifts to hydroxyapatite in
 more mature dental calculus
-\cite{jinSupragingivalCalculus2002, hayashizakiSiteSpecific2008}. The
+\citep{jinSupragingivalCalculus2002, hayashizakiSiteSpecific2008}. The
 exact elemental composition of dental calculus varies among individuals
 due to various factors, including diet
-\cite{hayashizakiSiteSpecific2008, jiFluorideMagnesium2000}.
+\citep{hayashizakiSiteSpecific2008, jiFluorideMagnesium2000}.
 
 Dental plaque can also be grown \emph{in vitro}, and these oral biofilm
 models are commonly used in dental research to assess the efficacy of
 certain treatments on dental pathogens
-\cite{filochePlaqueMicrocosm2007, extercateAAA2010} without the ethical
+\citep{filochePlaqueMicrocosm2007, extercateAAA2010} without the ethical
 issues of inducing plaque accumulation in study participants and the
 complexity of access and sampling in humans or animals. Oral biofilm
 models are often short-term models grown over a few days, but longer
 term models also exist (up to six weeks) which are used to develop
 mature plaque or dental calculus
-\cite{middletonVitroCalculus1965, sissonsMultistationPlaque1991, wongCalciumPhosphate2002, velskoConsistentReproducible2018}.
+\citep{middletonVitroCalculus1965, sissonsMultistationPlaque1991, wongCalciumPhosphate2002, velskoConsistentReproducible2018}.
 A well-known limitation of biofilm models is the difficulty in capturing
 the diversity and complexity of bacterial communities and metabolic
 dependencies, micro-environments, nutrient availability, and host
 immune-responses in the natural oral biome
-\cite{edlundUncoveringComplex2018, bjarnsholtVivoBiofilm2013, velskoConsistentReproducible2018, velskoCytokineResponse2017}.
+\citep{edlundUncoveringComplex2018, bjarnsholtVivoBiofilm2013, velskoConsistentReproducible2018, velskoCytokineResponse2017}.
 These limitations can be overcome by complex experimental setups, but at
 the cost of lower throughput and increased requirements for laboratory
 facilities.
@@ -201,7 +246,7 @@ calculus and the retention of dietary components in the biofilm, as well
 as a means to identify how the methods used in archaeology may
 inadvertently bias the interpretations. This type of research has, so
 far, been limited, but has the potential to greatly benefit
-archaeological research on past diet \cite{radiniDirtyTeeth2022}.
+archaeological research on past diet \citep{radiniDirtyTeeth2022}.
 
 We present an oral biofilm model that can serve as a viable proxy for
 dental calculus for archaeology-oriented research questions. It is a
@@ -231,7 +276,7 @@ explore many of the currently unexplained processes we see in the
 archaeological material, when working within the limitations of an oral
 biofilm model.
 
-\section*{Methods}\label{materials-and-methods}
+\section{Methods}\label{methods}
 
 Our biofilm setup consists of whole saliva as the inoculate to
 approximate natural microbial communities within the human oral cavity,
@@ -245,15 +290,21 @@ calculus. These results are presented in a separate article
 \citep{bartholdyInvestigatingBiases2022}.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/Exp_protocol.png}
-    \caption{\label{fig-met-protocol}Overview of the protocol for biofilm
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/Exp_protocol.png}}
+
+}
+
+\caption{\label{fig-met-protocol}Overview of the protocol for biofilm
 growth. The samples for metagenomic analysis were grown in a separate
 experimental plate than the FTIR samples under the same experimental
 conditions. Biofilm (B) and calculus (C) samples were used for FTIR
 spectroscopy, and saliva (S), artificial saliva (M), and calculus
 samples were used for metagenomic analysis.}
-\end{figure}
+
+\end{figure}%
 
 To determine the composition of microbial communities, we sampled the
 medium from the biofilm wells over the course of the experiment. We
@@ -266,19 +317,19 @@ modern and archaeological. Samples were taken from both controls and
 starch treatments, but differences between these samples were not
 explored in this study.
 
-\subsubsection*{Biofilm growth}\label{biofilm-growth}
+\subsubsection{Biofilm growth}\label{biofilm-growth}
 
 We employ a multispecies oral biofilm model following a modified
 protocol from Sissons and colleagues
-\citep{sissonsMultistationPlaque1991} and Shellis
-\citep{shellisSyntheticSaliva1978}. The setup comprises a
+\citeyearpar{sissonsMultistationPlaque1991} and Shellis
+\citeyearpar{shellisSyntheticSaliva1978}. The setup comprises a
 polypropylene 24 deepwell PCR plate (KingFisher 97003510) with a lid
 containing 24 pegs (substrata), which are autoclaved at
 120\(^{\circ}\)C, 1 bar overpressure, for 20 mins.
 
 The artificial saliva (hereafter referred to as medium) is a modified
 version of the basal medium mucin (BMM) described by Sissons and
-colleagues \citep{sissonsMultistationPlaque1991}. It is a complex
+colleagues \citeyearpar{sissonsMultistationPlaque1991}. It is a complex
 medium containing 2.5 g/l partially purified mucin from porcine stomach
 (Type III, Sigma M1778), 5 g/l trypticase peptone (Roth 2363.1), 10 g/l
 proteose peptone (Oxoid LP0085), 5 g/l yeast extract (BD 211921), 2.5
@@ -352,29 +403,35 @@ flow hood to prevent starch and bacterial contamination. Starch-free
 control samples that were only fed sucrose were included to detect
 starch contamination.
 
-\subsubsection*{Metagenomics}\label{metagenomics}
+\subsubsection{Metagenomics}\label{metagenomics}
 
-\begin{table}
-    \hrule height 0.05cm  \vspace{0.1cm}
-	\caption{\label{tbl-dna-samples}Number of samples taken during the
+\begin{longtable}[]{@{}lrr@{}}
+
+\caption{\label{tbl-dna-samples}Number of samples taken during the
 experiment, separated by sampling day and sample type.}
-	\centering
-	\begin{tabledata}{$l^l^r} 
-		\header Sample type & Sampling day & n \\
-        \row saliva & 0 & 1 \\
-        \row saliva & 3 & 1 \\
-        \row saliva & 5 & 1 \\
-        \row medium & 5 & 2 \\
-        \row medium & 7 & 2 \\
-        \row medium & 9 & 2 \\
-        \row medium & 12 & 2 \\
-        \row medium & 15 & 2 \\
-        \row medium & 18 & 2 \\
-        \row medium & 21 & 2 \\
-        \row medium & 24 & 2 \\
-        \row model\_calculus & 24 & 16 \\
-	\end{tabledata}
-\end{table}
+
+\tabularnewline
+
+\toprule\noalign{}
+Sample type & Sampling day & n \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+saliva & 0 & 1 \\
+saliva & 3 & 1 \\
+saliva & 5 & 1 \\
+medium & 5 & 2 \\
+medium & 7 & 2 \\
+medium & 9 & 2 \\
+medium & 12 & 2 \\
+medium & 15 & 2 \\
+medium & 18 & 2 \\
+medium & 21 & 2 \\
+medium & 24 & 2 \\
+model\_calculus & 24 & 16 \\
+
+\end{longtable}
 
 A total of 35 samples were taken during the experiment from the donated
 saliva, artificial saliva, and from the biofilm end-product on day 24
@@ -388,7 +445,7 @@ Focused-ultrasonicator. Double-stranded libraries were prepared
 \citep{aronHalfUDG2020} and dual indexed
 \citep{stahlDoublestrandedIndexing2019}, with the indexing protocol
 being adapted for longer DNA fragments. Briefly, the modifications
-consisted of adding 3 \(\mu\)l of DMSO to the indexing reaction, and extending
+consisted of adding 3 μl of DMSO to the indexing reaction, and extending
 the amplification cycles to 95\(^{\circ}\)C for 60 s, 58\(^{\circ}\)C
 for 60 s, and 72\(^{\circ}\)C for 90 s. The libraries were paired-end
 sequenced on a NextSeq 500 to 150bp, and demultiplexed by an in-house
@@ -409,10 +466,10 @@ metagenomic classification, was conducted in kraken, v2.1.2
 Environmental reference samples were downloaded directly from ENA and
 from NCBI using the SRA Toolkit. Oral reference samples were downloaded
 from the Human Metagenome Project (HMP), and modern calculus samples
-from Velsko et al. \citep{velskoDentalCalculus2017}. From the HMP
+from Velsko et al. \citeyearpar{velskoDentalCalculus2017}. From the HMP
 data, only paired reads were processed, singletons were removed.
 \emph{In vitro} biofilm model samples from
-\citep{edlundUncoveringComplex2018} were used as a reference. Links to
+\citet{edlundUncoveringComplex2018} were used as a reference. Links to
 the specific sequences are included in the metadata. Human-filtered
 reads produced in this study were uploaded to ENA under accession number
 PRJEB61886.
@@ -475,7 +532,7 @@ visualised the log-fold change of the top 30 species in each of
 principal components 1 and 2, allowing us to see which species are
 enriched in the different samples and causing clustering in the sPCA.
 
-\subsubsection*{FTIR}\label{ftir}
+\subsubsection{FTIR}\label{ftir}
 
 To determine the mineral composition and level of crystallisation of the
 model dental calculus samples, we used Fourier Transform Infrared (FTIR)
@@ -491,38 +548,43 @@ was conducted with a Thermo Scientific Nicolet is5 spectrometer in
 transmission, at 4 cm\(^{-1}\) resolution, with an average of 32 scans
 between 4000 and 400 cm\(^{-1}\) wavenumbers.
 
-\begin{table}
-    \hrule height 0.05cm  \vspace{0.1cm}
-	\caption{\label{tbl-ftir-byoc}Summary of biofilm samples used in the
+\begin{longtable}[]{@{}rrr@{}}
+
+\caption{\label{tbl-ftir-byoc}Summary of biofilm samples used in the
 FTIR analysis, including which day during the experiment the sample was
 taken, number of samples taken from that day (n), and mean weight in
 mg.}
-	\centering
-	\begin{tabledata}{$l^l^r} 
-		\header Sampling day & n & Weight (mg) \\
-        \row 7 & 2 & 0.79 \\
-        \row 12 & 4 & 1.09 \\
-        \row 16 & 7 & 2.00 \\
-        \row 20 & 6 & 3.50 \\
-        \row 24 & 8 & 3.87
-	\end{tabledata}
-\end{table}
 
+\tabularnewline
 
-Analysis was conducted on 27 model calculus samples from days 7, 12, 16,
+\toprule\noalign{}
+Sampling day & n & Weight (mg) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+7 & 2 & 0.79 \\
+12 & 4 & 1.09 \\
+16 & 7 & 2.00 \\
+20 & 6 & 3.50 \\
+24 & 8 & 3.87 \\
+
+\end{longtable}
+
+Analysis was conducted on 37 model calculus samples from days 7, 12, 16,
 20, and 24 (Table~\ref{tbl-ftir-byoc}). Some samples from the same
 sampling day had to be combined to provide enough material for analysis.
 Samples analysed with FTIR were grown during a separate experimental run
 from the samples sequenced for DNA, but following the same setup and
 protocol (as described above). Samples were analysed following the
-method presented in \citep{asscherAtomicDisorder2011} and
-\citep{asscherVariationsAtomic2011}. A few \(\mu\)g of each sample were
+method presented in \citet{asscherAtomicDisorder2011} and
+\citet{asscherVariationsAtomic2011}. A few \(\mu\)g of each sample were
 repeatedly ground together with KBr and pressed in a 7 mm die under two
 tons of pressure using a Specac mini-pellet press (Specac Ltd.,
 GS01152). Repeated measurements of the splitting factor (SF) of the
-absorbance bands at 605 and 567 cm\(^{-1}\) wavenumbers were taken after each
+absorbance bands at 605 and 567 cm−1 wavenumbers were taken after each
 grind, and a grind curve was produced following
-\citep{asscherAtomicDisorder2011} to try and detect changes in the
+\citet{asscherAtomicDisorder2011} to try and detect changes in the
 hydroxyapatite crystallinity over time. Samples were ground and analysed
 up to six times (sample suffix a-f) for the grinding curve. Grinding
 curves were prepared for samples from days 16, 20, and 24. No grind
@@ -530,17 +592,17 @@ curves were produced for samples from days 7 and 12. These were largely
 composed of organics and proteins, and did not form enough mineral
 (hydroxyapatite) for analysis. The splitting factor of carbonate
 hydroxyapatite was calculated using a macro script, following
-\citep{weinerStatesPreservation1990}. The calculation involves dividing
+\citet{weinerStatesPreservation1990}. The calculation involves dividing
 the sum of the height of the absorptions at 603 cm\(^{-1}\) and 567
 cm\(^{-1}\) by the height of the valley between them. Following
-\citep{asscherAtomicDisorder2011} and
-\citep{asscherVariationsAtomic2011}, we plotted the splitting factor
+\citet{asscherAtomicDisorder2011} and
+\citet{asscherVariationsAtomic2011}, we plotted the splitting factor
 against the full width at half maximum (FWHM) of the main absorption at
 1035-1043 cm\(^{-1}\) to explore crystallinity (crystal size) and the
 order and disorder of hydroxyapatite. We then compared our grinding
 curve slopes and FWHM to the ones produced by
-\citep{asscherVariationsAtomic2011}. \citep{asscherVariationsAtomic2011}
-and \citep{asscherAtomicDisorder2011} demonstrated that while the
+\citet{asscherVariationsAtomic2011}. \citet{asscherVariationsAtomic2011}
+and \citet{asscherAtomicDisorder2011} demonstrated that while the
 decrease in FWHM of each grinding in the curve reflects a decrease in
 particle size due to grinding, the location of the curves within a plot
 of the FWHM against the splitting factor expresses the disorder effect.
@@ -548,17 +610,16 @@ Thus the curves with steeper slopes, higher splitting factor, and lower
 FWHM represent lower levels of disorder in the mineral \citep[Figure 2
 in][]{asscherVariationsAtomic2011}.
 
-\subsubsection*{Statistics}\label{statistics}
+\subsubsection{Statistics}\label{statistics}
 
-Statistical analysis was conducted in R version 4.4.2 (2024-10-31) (Pile
-of Leaves) \citep{Rbase}. Data cleaning and wrangling performed with
+Statistical analysis was conducted in R version 4.4.3 (2025-02-28)
+(Trophy Case) \citep{Rbase}. Data cleaning and wrangling performed with
 packages from tidyverse \citep{tidyverse2019}. Plots were created using
 ggplot2 v3.5.1 \citep{ggplot2}.
 
+\section{Results}\label{results}
 
-\section*{Results}\label{results}
-
-\subsubsection*{Metagenomic analysis}\label{metagenomic-analysis}
+\subsubsection{Metagenomic analysis}\label{metagenomic-analysis}
 
 \paragraph{Sample authentication}\label{sample-authentication}
 
@@ -586,13 +647,19 @@ removal, samples consisted of between 88 and 284 species with a mean of
 experiment}\label{decrease-in-community-diversity-across-experiment}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/fig-diversity-byoc-1.pdf}
-    \caption{\label{fig-diversity-byoc}Plot of Shannon Index, Pielou
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-diversity-byoc-1.pdf}}
+
+}
+
+\caption{\label{fig-diversity-byoc}Plot of Shannon Index, Pielou
 Evenness Index, and number of species across experiment samples grouped
 by sampling time. inoc = samples from days 0-5; treatm = samples from
 days 6-23; model = model calculus samples from day 24.}
-\end{figure}
+
+\end{figure}%
 
 To monitor the development of microbial communities over the course of
 the experiment, we used the Shannon Index to assess the species
@@ -610,12 +677,18 @@ calculus (Figure~\ref{fig-diversity-byoc}).
 inoculate}\label{medium-and-model-calculus-samples-are-distinct-from-the-inoculate}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/fig-spca-byoc-1.pdf}
-    \caption{\label{fig-spca-byoc}sPCA on species-level counts and oxygen
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-spca-byoc-1.pdf}}
+
+}
+
+\caption{\label{fig-spca-byoc}sPCA on species-level counts and oxygen
 tolerance in samples from this study only. Figure shows the main sPCA
 plot (A), species loadings on PC2 (B), and species loadings on PC1 (C).}
-\end{figure}
+
+\end{figure}%
 
 We next examined whether there is a change in the species composition
 over time in our samples by assessing the beta-diversity in a PCA. The
@@ -636,14 +709,20 @@ are more diverse, and seemingly unrelated to aerotolerance
 (Figure~\ref{fig-spca-byoc}).
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/fig-diffabund-byoc-1.pdf}
-    \caption{\label{fig-diffabund-byoc}Log-fold changes between sample
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-diffabund-byoc-1.pdf}}
+
+}
+
+\caption{\label{fig-diffabund-byoc}Log-fold changes between sample
 types. Circles are species enriched in the medium, triangles are
 enriched in model calculus, and diamonds are enriched in saliva. Lines
 are standard error. Plot shows the top 30 absolute log-fold changes
 between model calculus and saliva.}
-\end{figure}
+
+\end{figure}%
 
 We determined whether there are species that are differentially abundant
 between our sample types using the ANCOMBC R package
@@ -659,12 +738,18 @@ pronounced than between medium and model calculus, which is expected
 references}\label{lower-diversity-in-artificial-samples-than-oral-references}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.74\textwidth]{figures/fig-shannon-compar-1.pdf}
-    \caption{\label{fig-shannon-compar}Shannon Index for model calculus and
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-shannon-compar-1.pdf}}
+
+}
+
+\caption{\label{fig-shannon-compar}Shannon Index for model calculus and
 medium samples, as well as oral reference samples and comparative
 \emph{in vitro} study.}
-\end{figure}
+
+\end{figure}%
 
 We used the Shannon Index to compare alpha-diversity in our model to
 oral reference samples. The mean Shannon Index of model
@@ -677,19 +762,25 @@ mean than biofilm samples from this study. Saliva inoculate samples from
 this study have a lower mean Shannon index than reference samples, which
 may have contributed to the lower alpha-diversity in model samples
 compared to reference samples. The number of species follows the same
-trend.
+trend (Figure~\ref{fig-shannon-compar}).
 
 \paragraph{Model calculus is distinct from dental calculus and other
 oral
 samples}\label{model-calculus-is-distinct-from-dental-calculus-and-other-oral-samples}
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/fig-core-genera-1.pdf}
-    \caption{\label{fig-core-genera}Core genera within the different types
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-core-genera-1.pdf}}
+
+}
+
+\caption{\label{fig-core-genera}Core genera within the different types
 of samples represented as mean relative abundances at the genus level.
 Other = other genera present in lower than 5\% relative abundance.}
-\end{figure}
+
+\end{figure}%
 
 We calculated the mean relative abundances of the genera in each sample
 to compare the core genera of model calculus with oral reference
@@ -708,12 +799,18 @@ environment with at least 5\% carbon dioxide to thrive
 \citep{tonjumNeisseria2017}.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.74\textwidth]{figures/fig-spca-compar-1.pdf}
-    \caption{\label{fig-spca-compar}sPCA on species-level counts from model
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-spca-compar-1.pdf}}
+
+}
+
+\caption{\label{fig-spca-compar}sPCA on species-level counts from model
 calculus and reference samples. Figure shows (A) the main sPCA plot, (B)
 the species loadings from PC2, and (C) species loadings on PC1.}
-\end{figure}
+
+\end{figure}%
 
 To directly compare the beta-diversity of our model calculus with oral
 reference samples, including modern dental calculus, we used an sPCA
@@ -733,16 +830,22 @@ PC2 are a mix of aerotolerances, with many \emph{Streptococcus} spp
 (Figure~\ref{fig-spca-compar}).
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/fig-diffabund-comp-1.pdf}
-    \caption{\label{fig-diffabund-comp}Log-fold changes between sample
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-diffabund-comp-1.pdf}}
+
+}
+
+\caption{\label{fig-diffabund-comp}Log-fold changes between sample
 types. Circles are species enriched in the model calculus, triangles in
 modern calculus, diamonds are enriched in subgingival plaque, and
 squares in supragingival plaque. Plot shows the top 30 loadings
 (absolute value) in PC1 (A) and PC2 (B) between model calculus and other
 sample types, ordered by decreasing log-fold change. Bars represent
 standard error.}
-\end{figure}
+
+\end{figure}%
 
 To investigate which species are enriched in different sample types, and
 compare the final product of our model with naturally occurring plaque
@@ -762,7 +865,7 @@ anaerobes, and the largest differences occurring in
 \emph{Cryptobacterium curtum}, \emph{Eggerthella lenta}, and
 \emph{Mogibacterium diversum} (Figure~\ref{fig-diffabund-comp}B).
 
-\subsubsection*{Samples show an increased mineralisation over the course
+\subsubsection{Samples show an increased mineralisation over the course
 of the
 experiment}\label{samples-show-an-increased-mineralisation-over-the-course-of-the-experiment}
 
@@ -806,7 +909,7 @@ also becoming more crystallised. There is a decreased variability
 between the spectra, with most spectra exhibiting a higher
 phosphate-to-protein/lipid ratio (Figure~\ref{fig-ftir-spectra}C and D).
 
-\subsubsection*{Model calculus has a similar mineral composition to
+\subsubsection{Model calculus has a similar mineral composition to
 natural
 calculus}\label{model-calculus-has-a-similar-mineral-composition-to-natural-calculus}
 
@@ -822,22 +925,29 @@ hydroxyapatite, the main mineral found in mature dental calculus
 \citep{hayashizakiSiteSpecific2008, jinSupragingivalCalculus2002}.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/fig-ftir-spectra-1.pdf}
-    \caption{\label{fig-ftir-spectra}Select spectra from all experiment
-sampling days; (A) day 7, (B) day 12, (C) day 16, and (D) day 24.
-Absorbance bands in stretching mode around 3400 cm\(^{-1}\) typical of the
-hydroxyl group. F12.1A5 was sampled on day 12 from multiwell plate 1, row A, column 5.}
-\end{figure}
 
-\subsubsection*{Samples show similar crystallinity and order to reference
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-ftir-spectra-1.pdf}}
+
+}
+
+\caption{\label{fig-ftir-spectra}Select spectra from all experiment
+sampling days; (A) day 7, (B) day 12, (C) day 16, and (D) day 24.
+Absorbance bands in stretching mode around 3400 cm−1 typical of the
+hydroxyl group. Analysis ID for model samples is constructed as: F{[}day
+sampled{]}.{[}well sampled{]}\_{[}grind sample{]}.}
+
+\end{figure}%
+
+\subsubsection{Samples show similar crystallinity and order to reference
 calculus}\label{samples-show-similar-crystallinity-and-order-to-reference-calculus}
 
 We determined the level of crystallinity and order of the carbonate
 hydroxyapatite in our samples as an indication for its maturity by using
 the grinding curves method presented by
-\citep{asscherAtomicDisorder2011} and
-\citep{asscherVariationsAtomic2011}.\\
+\citet{asscherAtomicDisorder2011} and
+\citet{asscherVariationsAtomic2011}.\\
 Samples were compared to published trendlines for archaeological and
 modern enamel \citep{asscherAtomicDisorder2011}. We see no appreciable
 differences between days 16, 20, and 24. The archaeological dental
@@ -848,16 +958,21 @@ due to more complete crystalisation. The steeper slope of enamel samples
 is consistent with a more ordered structure in enamel compared to dental
 calculus.
 
-
 \begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{figures/fig-grind-curve-1.pdf}
-    \caption{\label{fig-grind-curve}Grinding curves of our biofilm and model
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-grind-curve-1.pdf}}
+
+}
+
+\caption{\label{fig-grind-curve}Grinding curves of our biofilm and model
 calculus compared to published trendlines (dashed light grey lines) for
 archaeological (dotted line) and modern (dashed line) enamel.}
-\end{figure}
 
-\section*{Discussion}\label{discussion}
+\end{figure}%
+
+\section{Discussion}\label{discussion}
 
 In this study we present a calcifying oral biofilm model to produce
 artificial dental calculus. Our proposed use of the model is to address
@@ -873,7 +988,7 @@ model as a proxy for dental calculus using metagenomic classification
 and FTIR analysis to explore the bacterial and mineral composition, and
 compare with oral reference samples.
 
-\subsubsection*{Microbiome}\label{microbiome}
+\subsubsection{Microbiome}\label{microbiome}
 
 Model calculus has lower species diversity than inocula saliva and oral
 reference samples, which is a common limitation in biofilm models
@@ -916,7 +1031,7 @@ produce, will affect the retention of dietary particles in plaque
 remains to be seen, but is an important question to address in the
 future.
 
-\subsubsection*{Mineralisation}\label{mineralisation}
+\subsubsection{Mineralisation}\label{mineralisation}
 
 FTIR analysis allowed us to address the mineralisation process of the
 model, which showed an increasing mineral composition over the course of
@@ -958,7 +1073,7 @@ structure that dental calculus is built upon
 \citep{rohanizadehUltrastructuralStudy2005}, while the exact species
 composition of the biofilm communities may be less important.
 
-\subsubsection*{Replicability}\label{replicability}
+\subsubsection{Replicability}\label{replicability}
 
 Model calculus displayed similar species diversity and microbial
 profiles across all samples, indicating a high level of replicability
@@ -973,7 +1088,7 @@ the FTIR spectra. The use of a simple multiwell plate setup allows us to
 submit many samples to the same conditions, increasing replicability
 between samples \citep{extercateAAA2010}.
 
-\subsubsection*{Limitations}\label{limitations}
+\subsubsection{Limitations}\label{limitations}
 
 While our in vitro model calculus system provides reproducible and
 consistent artificial dental calculus for archaeological research, as
@@ -1019,7 +1134,7 @@ biofilms. The samples may therefore not fully reflect the composition of
 the biofilm itself. Going forward we recommend sampling from the actual
 biofilm, as this is the sample type under investigation.
 
-\subsubsection*{Future work}\label{future-work}
+\subsubsection{Future work}\label{future-work}
 
 Further protocol optimisation will also be necessary to address some of
 the limitations of our current model, such as reducing the frequency of
@@ -1038,7 +1153,7 @@ of bacteria, to see if metabolic behaviour of bacteria is consistent
 with \emph{in vivo} conditions, and whether this is affected by the
 presence/absence of amylase and starch treatments. The absence of host
 salivary \(\alpha\)-amylase activity in our model (as shown in
-\citep{bartholdyInvestigatingBiases2022}) provides an opportunity to
+\citet{bartholdyInvestigatingBiases2022}) provides an opportunity to
 explore the effect of various amylase levels on biofilm growth and
 composition, as well as the incorporation of dietary compounds in dental
 calculus.
@@ -1049,7 +1164,7 @@ end, sucrose and raw starch treatments can be replaced with other
 dietary components of interest, such as cooked starches, whole plant
 extracts, and various proteins.
 
-\section*{Conclusions}\label{conclusions}
+\subsection{Conclusions}\label{conclusions}
 
 The bacterial profile of our model calculus is not an exact match to the
 natural modern or archaeological reference calculus, but species
@@ -1070,113 +1185,94 @@ biofilm model in a controlled environment with known dietary input, we
 can learn more about how different methods of food processing in the
 past may affect results of dental calculus analyses, and how the methods
 we use may further distort this picture. Our method can be used to test
-methods (e.g., DNA, proteomics, etc.), decontamination protocols, as well
+methods (e.g.~DNA, proteomics, etc.), decontamination protocols, as well
 as training on these methods and protocols without depleting limited
 archaeological resources. The purpose of our model is not to replace
 studies conducted on archaeological and natural dental calculus, but
 rather to balance limitations of each method and serve as a
 complementary approach to expand our toolkit.
 
+\section*{Ethical approval and
+consent}\label{ethical-approval-and-consent}
+\addcontentsline{toc}{section}{Ethical approval and consent}
 
-\section*{Data availability} % Required
-\subsection*{Underlying data}
+The study was conducted in accordance with the ethics and integrity
+requirements in Article 14 of the Model Grant Agreement of Horizon
+Europe, which determined that ethics and consent were not required.
 
-ENA: Human-filtered DNA sequencing data. Accession number PRJEB61886.\\
-\href{https://www.ebi.ac.uk/ena/browser/view/PRJEB61886}{https://www.ebi.ac.uk/ena/browser/view/PRJEB61886}
-\\
-\\
-4TU.ResearchData: FTIR data and spectra.\\
-\href{https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b}{https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b}
-\citep{byocValidData2023}
-\\
-\\
-Data are available under the terms of the Creative Commons Zero "No rights reserved" data waiver (CC0 1.0 Public domain dedication).
+\section*{Data availability}\label{data-availability}
+\addcontentsline{toc}{section}{Data availability}
 
+\subsection*{Underlying data}\label{underlying-data}
+\addcontentsline{toc}{subsection}{Underlying data}
 
-\subsection*{Extended data}
-Detailed protocols for growing the oral biofilm and experimental procedures are available on protocols.io.\\
-\href{https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1}{https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1}
-\citep{byocProtocols}
-\\
+Human-filtered DNA sequencing data have been deposited in the ENA
+database under accession
+\href{https://www.ebi.ac.uk/ena/browser/view/PRJEB61886}{PRJEB61886}.
+Analysis scripts and source code for the manuscript and supplementary
+materials are available on GitHub
+(\url{https://github.com/bbartholdy/byoc-valid}) and archived on
+4TU.ResearchData
+(\href{https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0}{10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0}).
+FTIR data and spectra are available on 4TU.ResearchData
+\citep[\href{https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b}{10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b},][]{byocValidData2023}.
 
-Data can be further explored using the dashboard accompanying this article.\\
-\href{https://websaur.shinyapps.io/byocDashboard/}{https://websaur.shinyapps.io/byocDashboard/}
+\subsection*{Extended data}\label{extended-data}
+\addcontentsline{toc}{subsection}{Extended data}
 
-\section*{Software availability}
-Analysis scripts and source code for the manuscript and supplementary materials
-are available on GitHub.\\
-\href{https://github.com/bbartholdy/byoc-valid}{https://github.com/bbartholdy/byoc-valid}\\
-\\
-The analysis scripts and source code are also archived on 4TU.ResearchData.\\
-\href{https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0}{https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0}\\
+Detailed protocols for growing the oral biofilm and experimental
+procedures are available on protocols.io
+(\href{https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1}{10.17504/protocols.io.dm6gpj9rdgzp/v1}).
+
+Data can be further explored using the dashboard accompanying this
+article.
+
+https://websaur.shinyapps.io/byocDashboard/
+
+\section*{Software availability}\label{software-availability}
+\addcontentsline{toc}{section}{Software availability}
+
+Analysis scripts and source code for the manuscript and supplementary
+materials are available on GitHub.
+
+https://github.com/bbartholdy/byoc-valid
+
+The analysis scripts and source code are also archived on
+4TU.ResearchData.
+
+https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0
 
 License: \href{https://opensource.org/license/MIT}{MIT}
 
-\section*{Ethical approval and consent}
+\section*{Acknowledgements}\label{acknowledgements}
+\addcontentsline{toc}{section}{Acknowledgements}
 
-The study was conducted in accordance with the ethics and integrity requirements in Article 14 of the Model Grant Agreement of Horizon Europe,
-which determined that ethics and consent were not required.
+We would like to thank the nf-core/eager community for assistance with
+the EAGER pipeline, especially Dr.~James Fellows Yates. We also thank
+Sophie Seng for involvement in the DNA extraction. This work was
+performed using the compute resources from the Academic Leiden
+Interdisciplinary Cluster Environment (ALICE) provided by Leiden
+University, with special thanks to Dr.~Robert Schulz. The FTIR analysis
+was conducted at the Laboratory for Sedimentary Archaeology, Haifa
+University, courtesy of Prof.~Ruth Shahack-Gross, with additional help
+from Dr.~Yotam Asscher.
 
-\section*{Acknowledgements}
+\section{Funding}\label{funding}
 
-We would like to thank the nf-core/eager community for assistance with the
-EAGER pipeline, especially Dr. James Fellows Yates. We also thank Sophie Seng
-for involvement in the DNA extraction. This work was performed using the compute
-resources from the Academic Leiden Interdisciplinary Cluster Environment (ALICE)
-provided by Leiden University, with special thanks to Dr. Robert Schulz.
-The FTIR analysis was conducted at the Laboratory for Sedimentary Archaeology,
-Haifa University, courtesy of Prof. Ruth Shahack-Gross, with additional help from
-Dr. Yotam Asscher.
+This project has received funding from the European Research Council
+under the European Union's Horizon 2020 research and innovation program,
+grant agreement number 677576 (Plant foods in human evolution: Factors
+affecting the harvest of nutrients from the floral environment
+{[}HARVEST{]}) (funding BPB and AGH), and grant agreement number 948365
+(Hominin phyloproteomics for the Pleistocene: PalaeoPROteomics of
+Skeletal Parts for Evolutionary Research {[}PROSPER{]} (funding ZF).
+This project also received funding from Werner Siemens Foundation
+(``PALEOBIOTECHNOLOGY''), funding IMV and CW).
 
-{\small\bibliographystyle{unsrtnat}
-\bibliography{references}}
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
 
-%Include a reference list in your .tex file - if using a .bib file this can be generated with \textbackslash bibliography as demonstrated above. References can be listed in any standard referencing style and should be consistent between references within a given article. In-line references should be formatted using \textbackslash cite, for example \cite{Smith:2012qr} and \cite{Smith:2013jd} 
-
-
-
-%\begin{figure}
-%	\centering
-%\includegraphics[width=0.8\textwidth]{ORE Header.png}
-%	\caption{\label{fig:your-figure}Your figure legend goes here; it should be succinct, while still explaining all symbols and abbreviations. }
-%\end{figure}
-
-
-
-%\section*{Using LaTeX}
-%In order to ensure smooth and successful processing of your LaTeX manuscript, please follow these guidelines. Before submitting ensure that your PDF appears correctly on Overleaf, to avoid delays in processing. You can view and outstanding errors on the Logs and Output Files tab, just to the right of the green Recompile button.
-
-%As you prepare your LaTeX manuscript, please bear in mind the following general guidelines.  
-%Keep it simple:
-
-%\begin{enumerate}
-%    \item[~]
-%	\begin{enumerate}
-%		\item Keep your LaTeX files as simple as possible; do not use elaborate local macros or highly customized style files. Preferably, use the template provided for formatting your paper.
-	%	\item Preferably prepare only one .tex file. 
-	%	\item Do not use external style files or packages, except for f1000styles.sty and those packages already referenced in the main.tex template. If you need additional macros, please keep them simple and include them in the .tex document preamble.
-	%	\item Source code should be structured so that all .sty and .bst files called by the main .tex file are in the same directory as the main .tex file.
-	%	\item AMS math commands are recommended when inserting math equations into your manuscript.
-	%	\item When using URLs in the text these should be incorporated as hyperlinks using the \textbackslash hyperref package and \textbackslash href\{\}\{\} function where possible.
-	%	\item References to figures and tables within the manuscript should use \textbackslash autoref\{\}
-%	\end{enumerate}
-%\end{enumerate}
-
-%References:
-%\begin{itemize}
-%	\item Reference management systems provide options for exporting bibliographies as BibTEX files (.bib). This template contains an example of such a file, sample.bib, which can be replaced with your own.
-%	\item Use only the generic \textbackslash cite\{\} command for referencing in the text (like this [1] and this [2]), not other commands built on special macros. Also, make sure that there is no space between reference keynames within the braces (i.e., \textbackslash cite\{refone,reftwo,refthree\}, not \textbackslash cite\{refone, reftwo, refthree\}).
-%\end{itemize}
-
-%\section*{Submitting your article}
-%Generate a PDF file of your project and submit this alongside a zip file containing all project files (including the source files, style files, and PDF) using our \href{https://open-research-europe.ec.europa.eu/for-authors/publish-your-research}{online submission form}. 
-
-% See this guide for more information on BibTeX:
-% http://libguides.mit.edu/content.php?pid=55482&sid=406343
-
-% Please note that this template results in a draft pre-submission PDF document.
-% Articles will be professionally typeset when accepted for publication.
-
-% We hope you find the Open Research Europe LaTex template useful, please contact us if you have any feedback.
+\renewcommand{\bibsection}{}
+\bibliography{references.bib}
 
 \end{document}

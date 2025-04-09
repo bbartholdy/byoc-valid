@@ -12,7 +12,8 @@ format:
     doublespacing: false
     runninghead: "Validity of a calcifying oral biofilm model"
   ore-pdf:
-    output-file: "ore-manuscript_v1"
+    output-file: "ore-manuscript_v1.1"
+    keep-tex: true
   html:
     keep-md: true
   pdf:
@@ -113,6 +114,7 @@ keywords:
   - ftir
 abstract-title: Abstract
 abstract: |
+  ## Background
   Dental calculus is increasingly used by researchers to study dietary patterns in past populations.
   The benefits of using dental calculus for this purpose have been clearly demonstrated, with dental
   calculus harbouring a wealth of microremains and biomarkers for health and diet. Previous studies
@@ -122,16 +124,23 @@ abstract: |
   such as exact dietary intake, and individual factors such as pH and enzyme activity, leaving some
   limitations that require a different approach.
 
+  ## Methods
   We present a protocol for creating a calcifying oral biofilm model that can be used to explore the
   biases and limitations of dental calculus as a medium for paleodietary reconstructions. We report
   the microbial and mineral composition, using metagenomic classification and Fourier transform infrared
   (FTIR) spectroscopy, respectively, in an effort to validate the model calculus as an appropriate proxy
-  to natural dental calculus. Metagenomic classification showed a microbial profile predominantly made up
+  to natural dental calculus.
+  
+  ## Results
+  Metagenomic classification showed a microbial profile predominantly made up
   of (facultative) anaerobes, with a community structure that was somewhat distinct from other oral
   reference samples. The core genera of the model consisted of oral species, but clustered separately from
   oral reference samples due to a higher abundance of anaerobes. Mineral and organic components of our
   model mimic that of the modern and archaeological reference calculus, with carbonated hydroxyapatite as
-  the principal compound, consistent with natural human-derived calculus. Overall our model is indicative
+  the principal compound, consistent with natural human-derived calculus.
+  
+  ## Conclusions
+  Overall our model is indicative
   of an oral environment, and has potential to validate current methods used in the analysis of
   archaeological dental calculus, and should be used to complement, rather than replace current *in vivo*
   studies.

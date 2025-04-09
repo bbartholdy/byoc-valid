@@ -304,7 +304,7 @@ distribution, although the comparative biofilm samples have a higher mean
 than biofilm samples from this study. Saliva inoculate samples from this study
 have a lower mean Shannon index than reference samples, which may have
 contributed to the lower alpha-diversity in model samples compared to reference
-samples. The number of species follows the same trend.
+samples. The number of species follows the same trend (@fig-shannon-compar).
 
 #### Model calculus is distinct from dental calculus and other oral samples
 

@@ -55,7 +55,7 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
 
 {{< include 01-intro.qmd >}}
 
-# Materials and Methods
+# Methods
 
 {{< include 02-matmet.qmd >}}
 
@@ -66,6 +66,45 @@ options(ggplot2.discrete.colour = function() scale_colour_viridis_d(),
 # Discussion
 
 {{< include 04-disc.qmd >}}
+
+# Ethical approval and consent {-}
+
+The study was conducted in accordance with the ethics and integrity requirements in Article 14 of the Model Grant Agreement of Horizon Europe,
+which determined that ethics and consent were not required.
+
+# Data availability {-}
+
+## Underlying data {-}
+
+Human-filtered DNA sequencing data have been deposited in the ENA database under
+accession [PRJEB61886](https://www.ebi.ac.uk/ena/browser/view/PRJEB61886).
+Analysis scripts and source code for the manuscript and supplementary materials
+are available on GitHub (<https://github.com/bbartholdy/byoc-valid>)
+and archived on 4TU.ResearchData ([10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0](https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0)).
+FTIR data and spectra are available on 4TU.ResearchData
+[[10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b](https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b), @byocValidData2023].
+
+## Extended data {-}
+
+Detailed protocols for growing the oral biofilm and experimental procedures are available on protocols.io
+([10.17504/protocols.io.dm6gpj9rdgzp/v1](https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1)).
+
+Data can be further explored using the dashboard accompanying this article.
+
+https://websaur.shinyapps.io/byocDashboard/ <!-- change to Zenodo DOI -->
+
+# Software availability {-}
+
+Analysis scripts and source code for the manuscript and supplementary materials are available on GitHub.
+
+https://github.com/bbartholdy/byoc-valid
+
+The analysis scripts and source code are also archived on 4TU.ResearchData.
+
+https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0
+
+License: [MIT](https://opensource.org/license/MIT)
+
 
 # Acknowledgements {-}
 
@@ -78,22 +117,11 @@ The FTIR analysis was conducted at the Laboratory for Sedimentary Archaeology,
 Haifa University, courtesy of Prof. Ruth Shahack-Gross, with additional help from
 Dr. Yotam Asscher.
 
-This research has received funding from the European Research Council under the
+# Funding
+
+This project has received funding from the European Research Council under the
 European Union’s Horizon 2020 research and innovation program, grant agreement
-number STG–677576 ("HARVEST", funding BPB and AGH), as well as STG-948365 ("PROSPER", funding ZF),
-and Werner Siemens Foundation ("PALEOBIOTECHNOLOGY, funding IMV and CW).
-
-# Data Availability Statement {-}
-
-Human-filtered DNA sequencing data have been deposited in the ENA database under
-accession [PRJEB61886](https://www.ebi.ac.uk/ena/browser/view/PRJEB61886).
-Analysis scripts and source code for the manuscript and supplementary materials
-are available on GitHub (<https://github.com/bbartholdy/byoc-valid>)
-and archived on 4TU.ResearchData ([10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0](https://doi.org/10.4121/99932661-fe79-4f4e-a812-a8917ad18fd0)).
-FTIR data and spectra are available on 4TU.ResearchData
-([10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b](https://doi.org/10.4121/466b2588-9689-4d84-a8a0-5216aa39e40b)).
-Detailed protocols for growing the oral biofilm and experimental procedures are available on protocols.io
-([10.17504/protocols.io.dm6gpj9rdgzp/v1](https://dx.doi.org/10.17504/protocols.io.dm6gpj9rdgzp/v1)).
+number 677576 (Plant foods in human evolution: Factors affecting the harvest of nutrients from the floral environment [HARVEST]) (funding BPB and AGH), and grant agreement number 948365 (Hominin phyloproteomics for the Pleistocene: PalaeoPROteomics of Skeletal Parts for Evolutionary Research [PROSPER] (funding ZF). This project also received funding from Werner Siemens Foundation ("PALEOBIOTECHNOLOGY"), funding IMV and CW).
 
 # References {-}
 
